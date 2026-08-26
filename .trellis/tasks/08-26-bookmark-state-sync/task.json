@@ -1,0 +1,33 @@
+{
+  "id": "bookmark-state-sync",
+  "name": "bookmark-state-sync",
+  "title": "同步跨页面收藏状态与交互",
+  "description": "实现 public/private 收藏、pending/failure 行为和跨页面同 ID 状态同步。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "精确复刻 beta56 收藏操作，并通过 ID-keyed BookmarkStore 消除推荐卡片与详情页状态不同步。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-pixiv-network-token-refresh,08-26-recommended-feed-paging,08-26-illust-detail-viewer",
+    "execution_order": "9"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "flutter-android-scaffold",
+  "name": "flutter-android-scaffold",
+  "title": "建立现代 Flutter Android API 36 工程基线",
+  "description": "使用 Flutter 3.47.0 stable 官方模板，为现有 Pixiv Func Dart shell 补齐现代 Android API 36 工程基线，并完成本地质量门禁。",
+  "status": "in_progress",
+  "dev_type": null,
+  "scope": "Flutter Android API 36 scaffold and repository quality baseline",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "execution_order": "0"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "id": "secure-account-store",
+  "name": "secure-account-store",
+  "title": "建立安全多账号与启动状态",
+  "description": "实现 Account、CredentialStore、AccountStore、多账号切换和真实 StartupGate。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "建立可恢复、可测试且不会泄露秘密的账号域，使冷启动和后续认证请求由真实账号状态驱动。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-flutter-android-scaffold",
+    "execution_order": "2"
+  }
+}

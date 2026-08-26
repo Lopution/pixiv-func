@@ -1,0 +1,33 @@
+{
+  "id": "restore-icon-font",
+  "name": "restore-icon-font",
+  "title": "恢复原版 iconFont 字体资产",
+  "description": "迁入并注册 beta56 原版 icon.ttf，验证 Home 图标映射、显示和构建。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "恢复 beta56 的原始字体图标资产及注册，使当前 Home shell 和后续页面使用与原版一致的 glyph，而不是 Material fallback。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-flutter-android-scaffold",
+    "execution_order": "1"
+  }
+}

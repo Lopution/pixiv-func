@@ -1,0 +1,33 @@
+{
+  "id": "android-home-widgets",
+  "name": "android-home-widgets",
+  "title": "复刻 Android Home Widgets",
+  "description": "实现原版推荐/刷新 Widgets、后台更新、点击导航和账号安全边界。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "在不复制明文凭据的前提下，复刻beta56推荐/刷新Android Home Widgets及后台更新、点击导航。",
+  "package": null,
+  "priority": "P2",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-live-widgets-updater",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-recommended-feed-paging,08-26-secure-account-store,08-26-pixiv-network-token-refresh,08-26-android-platform-parity",
+    "execution_order": "24"
+  }
+}

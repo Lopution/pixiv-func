@@ -1,0 +1,33 @@
+{
+  "id": "comments-replies",
+  "name": "comments-replies",
+  "title": "复刻评论与回复",
+  "description": "实现评论列表、回复、emoji、stamp、翻译和本人评论删除。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "复刻beta56作品评论、回复和输入体验，并用正确的Comment ID/parent ID模型消除本地更新错误。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-comments-history-settings",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-illust-detail-viewer,08-26-user-profile-follow,08-26-pixiv-network-token-refresh,08-26-settings-parity",
+    "execution_order": "16"
+  }
+}

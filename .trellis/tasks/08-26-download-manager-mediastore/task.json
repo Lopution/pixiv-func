@@ -1,0 +1,33 @@
+{
+  "id": "download-manager-mediastore",
+  "name": "download-manager-mediastore",
+  "title": "实现流式下载与 MediaStore",
+  "description": "实现共享连接池、并发受限下载队列、流式写入和 Android MediaStore。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "建立可取消、可恢复且内存有界的作品下载基础，使详情页下载模式和后续 Ugoira 导出使用同一可靠流水线。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-downloads-ugoira-media",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-pixiv-network-token-refresh,08-26-android-platform-parity",
+    "execution_order": "7"
+  }
+}

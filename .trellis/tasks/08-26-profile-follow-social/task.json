@@ -1,0 +1,36 @@
+{
+  "id": "profile-follow-social",
+  "name": "profile-follow-social",
+  "title": "复刻用户主页、关注与资料编辑",
+  "description": "实现 User/Profile、Follow、作品与收藏 tabs、折叠 header 和资料编辑。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "作为中间父任务，协调用户主页/关注关系和本人资料编辑两个叶子任务，保证 User、Me 与跨页面用户状态一致。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-user-profile-follow",
+    "08-26-profile-edit"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "intermediate_parent",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-bookmark-state-sync,08-26-pixiv-network-token-refresh",
+    "coordination_after_children": "true"
+  }
+}

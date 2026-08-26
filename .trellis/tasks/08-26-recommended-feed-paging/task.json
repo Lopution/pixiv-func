@@ -1,0 +1,33 @@
+{
+  "id": "recommended-feed-paging",
+  "name": "recommended-feed-paging",
+  "title": "实现推荐作品流与可靠分页",
+  "description": "实现 IllustStore、推荐流、分页状态、去重、刷新、错误和状态保持。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "用真实 Pixiv API 打通登录后的 Recommended Illust 首页，并建立后续 Ranking/Search 共用的实体与分页基础。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-restore-icon-font,08-26-secure-account-store,08-26-oauth-pkce-webview-login,08-26-pixiv-network-token-refresh",
+    "execution_order": "6"
+  }
+}

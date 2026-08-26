@@ -1,0 +1,33 @@
+{
+  "id": "secure-clipboard-account-migration",
+  "name": "secure-clipboard-account-migration",
+  "title": "实现安全剪贴板账号迁移",
+  "description": "在保留复制粘贴 UX 的前提下实现版本化、完整性保护和敏感剪贴板生命周期。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "保留beta56复制账号数据→另一设备粘贴登录的入口，同时去除硬编码AES并诚实约束clipboard传输威胁。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-compat-network-account-migration",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-secure-account-store,08-26-oauth-pkce-webview-login,08-26-android-platform-parity",
+    "execution_order": "22"
+  }
+}

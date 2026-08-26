@@ -1,0 +1,37 @@
+{
+  "id": "comments-history-settings",
+  "name": "comments-history-settings",
+  "title": "复刻评论、历史与设置",
+  "description": "实现 comments/replies、History 数据生命周期和完整原版 Settings。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "作为中间父任务，协调评论、历史和设置三个独立叶子任务，并确保它们共享账号、实体、数据库和配置契约而不互相耦合。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-comments-replies",
+    "08-26-history-persistence",
+    "08-26-settings-parity"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "intermediate_parent",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-bookmark-state-sync,08-26-user-profile-follow",
+    "coordination_after_children": "true"
+  }
+}

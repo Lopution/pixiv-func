@@ -1,0 +1,33 @@
+{
+  "id": "ugoira-player-export",
+  "name": "ugoira-player-export",
+  "title": "实现 Ugoira 播放与 GIF 导出",
+  "description": "实现磁盘 ZIP、有界帧缓存、可见性播放控制和 GIF 保存。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "以磁盘ZIP和有界解码窗口复刻beta56 Ugoira封面、播放/暂停、离屏生命周期和GIF保存体验。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-downloads-ugoira-media",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "dispatch_mode": "inline",
+    "role": "leaf",
+    "status_contract": "planning_until_explicit_start_approval",
+    "depends_on": "08-26-illust-detail-viewer,08-26-download-manager-mediastore,08-26-pixiv-network-token-refresh",
+    "execution_order": "18"
+  }
+}
