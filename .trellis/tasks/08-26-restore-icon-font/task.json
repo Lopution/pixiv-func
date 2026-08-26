@@ -3,7 +3,7 @@
   "name": "restore-icon-font",
   "title": "恢复原版 iconFont 字体资产",
   "description": "迁入并注册 beta56 原版 icon.ttf，验证 Home 图标映射、显示和构建。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "恢复 beta56 的原始字体图标资产及注册，使当前 Home shell 和后续页面使用与原版一致的 glyph，而不是 Material fallback。",
   "package": null,
