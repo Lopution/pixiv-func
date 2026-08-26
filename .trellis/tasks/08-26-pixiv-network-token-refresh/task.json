@@ -3,7 +3,7 @@
   "name": "pixiv-network-token-refresh",
   "title": "建立 Pixiv 网络客户端与 Token 刷新",
   "description": "实现集中客户端身份、严格 TLS、统一错误和按账号 single-flight Token 刷新。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "提供所有业务 feature 共用的严格、可取消、可观测 Pixiv 网络层，并保证并发认证失败只触发一次按账号刷新。",
   "package": null,
