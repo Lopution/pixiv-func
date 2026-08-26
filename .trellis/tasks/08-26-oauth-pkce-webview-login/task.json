@@ -3,7 +3,7 @@
   "name": "oauth-pkce-webview-login",
   "title": "实现 Pixiv OAuth PKCE WebView 登录",
   "description": "实现一次性 PKCE、WebView 登录回调、token exchange 与安全登录退出流程。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "在保留 beta56 Login 可见体验的同时，用严格 TLS 和一次性 PKCE 完成真实 Pixiv 登录并安全写入 AccountStore。",
   "package": null,
