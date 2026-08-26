@@ -3,7 +3,7 @@
   "name": "android-platform-parity",
   "title": "补齐 Android API 36 平台行为",
   "description": "实现 edge-to-edge、predictive back、deep links、SEND、FileProvider 与平台媒体边界。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "在 API 36 上建立 Replica 所需的统一 Android 平台契约，使导航、外部 intent、文件与媒体操作安全且可真实验证。",
   "package": null,
