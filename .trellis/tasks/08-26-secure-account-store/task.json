@@ -3,7 +3,7 @@
   "name": "secure-account-store",
   "title": "建立安全多账号与启动状态",
   "description": "实现 Account、CredentialStore、AccountStore、多账号切换和真实 StartupGate。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "建立可恢复、可测试且不会泄露秘密的账号域，使冷启动和后续认证请求由真实账号状态驱动。",
   "package": null,
