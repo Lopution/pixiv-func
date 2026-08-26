@@ -3,7 +3,7 @@
   "name": "illust-detail-viewer",
   "title": "复刻作品详情与全屏查看器",
   "description": "实现作品详情、多页媒体、badges、tags、下载模式入口和原版 viewer。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "从推荐卡片进入真实作品详情，完整呈现单图/多页信息、下载模式和 beta56 全屏查看手势。",
   "package": null,
