@@ -3,7 +3,7 @@
   "name": "bookmark-state-sync",
   "title": "同步跨页面收藏状态与交互",
   "description": "实现 public/private 收藏、pending/failure 行为和跨页面同 ID 状态同步。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "精确复刻 beta56 收藏操作，并通过 ID-keyed BookmarkStore 消除推荐卡片与详情页状态不同步。",
   "package": null,
