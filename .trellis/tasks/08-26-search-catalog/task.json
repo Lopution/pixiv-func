@@ -3,7 +3,7 @@
   "name": "search-catalog",
   "title": "复刻 Search 与结果页",
   "description": "实现搜索首页、trending、autocomplete、ID 路由、过滤器与三类结果页。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "复刻 beta56 Search 首页、输入页和 Illust/Manga、Novel、User 三类结果，并用可取消 debounce 和共享实体状态实现稳定搜索。",
   "package": null,
