@@ -26,11 +26,11 @@
 
 ## Acceptance Criteria
 
-- [ ] 11 个 tabs 顺序、标签和 mode 请求与 beta56 对应。
-- [ ] 每个 tab 首次懒加载，切换往返保留列表/scroll/cursor；refresh/load-more 独立。
-- [ ] 同一作品在 Ranking/Recommended/Detail 的实体和 bookmark 状态同步。
-- [ ] 恶意 cursor、未知 mode、空/错误/取消有明确状态且不串到其他 tab。
-- [ ] controller/widget/integration tests、analyze、全量 test、debug build 和真实 API 多 mode 验证通过。
+- [x] 11 个 tabs 顺序、标签和 mode 请求与 beta56 对应。
+- [x] 每个 tab 首次懒加载，切换往返保留列表/scroll/cursor；refresh/load-more 独立。
+- [x] 同一作品在 Ranking/Recommended/Detail 的实体和 bookmark 状态同步。
+- [x] 恶意 cursor、未知 mode、空/错误/取消有明确状态且不串到其他 tab。
+- [x] controller/widget/integration tests、analyze、全量 test、debug build 和真实 API 多 mode 验证通过。
 
 ## Out of Scope
 

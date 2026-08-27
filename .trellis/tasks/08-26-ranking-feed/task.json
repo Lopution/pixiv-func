@@ -3,7 +3,7 @@
   "name": "ranking-feed",
   "title": "复刻 Ranking 榜单",
   "description": "实现 beta56 Ranking 分类、切换、分页、作品卡片和状态保持。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "复刻 beta56 的 11 类 Ranking tabs、双列作品流和分页状态，并复用共享作品/收藏模型。",
   "package": null,

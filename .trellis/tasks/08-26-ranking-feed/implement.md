@@ -52,3 +52,20 @@ git diff --check
 - 不残留本任务范围内的 placeholder、空操作、隐藏 mock、吞错或安全绕过。
 - 运行 trellis-check，按需更新 spec，提交仅包含本任务文件，再执行 finish/archive。
 
+## Completion Record (2026-08-27)
+
+- Implemented `RankingMode`, `/v1/illust/ranking` repository and one
+  Riverpod family controller per mode.
+- Wired the selected-only Ranking page into Home; tab controllers and
+  scroll controllers retain each mode's view state, while the shared
+  `IllustStore` and `BookmarkStore` remain the entity/mutation authorities.
+- Added cursor mode/filter/offset validation and transport cancellation;
+  added 6 focused controller/widget tests.
+- Validation: `flutter analyze` passed; full `flutter test` passed (174
+  tests); `task.py validate .trellis/tasks/08-26-ranking-feed` passed;
+  `git diff --check` passed.
+- MuMu validation on `127.0.0.1:7555`: installed the debug APK, opened
+  Ranking with the existing signed-in account, and observed real two-column
+  content for `day`, `day_r18`, and `day_male`; UIAutomator confirmed the
+  third tab selected and the page exposed `11` tabs. No credentials or
+  account mutations were performed.
