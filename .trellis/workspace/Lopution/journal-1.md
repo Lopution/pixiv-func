@@ -124,3 +124,24 @@ Session summary was not supplied.
 ### Status
 
 [OK] **Completed**
+
+
+## Session 5: Restricted Pixiv compatibility network implementation
+
+**Date**: 2026-08-28
+**Task**: Restricted Pixiv compatibility network implementation
+**Branch**: `main`
+
+### Summary
+
+Implemented exact-host direct-first policy, strict secure-DNS candidate path, shared API/OAuth/image/download integration, WebView fail-closed gate, and API35 MuMu evidence; API36 remains blocker.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `97ee84e` | (see git log) |
+
+### Status
+
+[OK] **Completed**
