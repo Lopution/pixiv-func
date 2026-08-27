@@ -3,7 +3,7 @@
   "name": "ugoira-player-export",
   "title": "实现 Ugoira 播放与 GIF 导出",
   "description": "实现磁盘 ZIP、有界帧缓存、可见性播放控制和 GIF 保存。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "以磁盘ZIP和有界解码窗口复刻beta56 Ugoira封面、播放/暂停、离屏生命周期和GIF保存体验。",
   "package": null,

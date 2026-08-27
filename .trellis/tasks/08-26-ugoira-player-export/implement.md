@@ -9,12 +9,12 @@
 
 ## Steps
 
-1. 核验当前metadata/ZIP及beta56视觉/时序，收集小/大/损坏样本。
-2. 定义安全limits、temp/index/frame source/cache/scheduler/export contracts。
-3. 实现stream ZIP、安全索引、有界decode/dispose和deadline播放。
+1. 核验当前metadata/ZIP及beta56视觉/时序，收集小/大/损坏样本；确认 repository 只依赖 shared Pixiv media transport，兼容网络由后续 P0 leaf 接入。
+2. 定义 typed archive/frame/pixel limits、owned temp/index/frame source/cache/scheduler/export job contracts。
+3. 实现stream ZIP、header-before-decode 安全索引、有界decode/dispose和deadline播放。
 4. 实现cover/play/pause/visibility/lifecycle/error UI。
-5. 实现有界GIF export与DownloadManager/MediaStore集成。
-6. 增加zip攻击、scheduler、cache/dispose、cancel/cleanup和GIF tests。
+5. 实现task-group exactly-once、有界GIF export、owned pending commit与DownloadManager/MediaStore集成。
+6. 增加zip攻击/伪造size/ratio/dimensions/pixel budget、scheduler、cache/dispose、cancel/cleanup和GIF tests。
 7. 运行analyze/test/build，在真机测峰值内存、离屏和导出。
 
 ## Validation
@@ -40,8 +40,10 @@ git diff --check
 - metadata/frame order/delay和deadline drift。
 - cache window/eviction/ui.Image dispose。
 - zip-slip/bomb/mismatch/corruption。
+- entry/frame count、compressed/uncompressed bytes、ratio、header dimensions/pixels 和 format allowlist。
 - tap/pause/offscreen/lifecycle/cancel。
 - GIF output delay/order/terminal/MediaStore cleanup。
+- media transport injection/failure/cancel contract；不得新增固定 IP、代理 URL 或独立 TLS override。
 
 ## Risky Files and Rollback Points
 
@@ -52,4 +54,3 @@ git diff --check
 - PRD全部acceptance criteria有真实证据，自动测试/模拟器/真机/真实账号明确区分。
 - 不残留placeholder、空操作、隐藏mock、吞错或安全绕过。
 - 运行trellis-check，按需更新spec，提交仅包含本任务文件，再finish/archive。
-
