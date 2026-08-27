@@ -3,7 +3,7 @@
   "name": "comments-replies",
   "title": "复刻评论与回复",
   "description": "实现评论列表、回复、emoji、stamp、翻译和本人评论删除。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "复刻beta56作品评论、回复和输入体验，并用正确的Comment ID/parent ID模型消除本地更新错误。",
   "package": null,
