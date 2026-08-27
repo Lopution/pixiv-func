@@ -1,6 +1,6 @@
 # Ugoira implementation evidence
 
-Date: 2026-08-27
+Date: 2026-08-28
 
 ## Implemented
 
@@ -43,13 +43,18 @@ Date: 2026-08-27
   navigation. After sending `KEYCODE_HOME`, a second `am start -W` returned
   `LaunchState: HOT` and the resumed screen rendered the same UI. This is a
   real API 35 launch/render/resume check, not a unit-test substitute.
+- The rendered home feed and the Settings screen were checked while the
+  existing account session was active. Settings displayed the current account
+  card, so this run confirms a real signed-in account session on API 35; the
+  account identifier is intentionally omitted from repository evidence.
 - This is `MuMu emulator-tested, not physical-device-tested`.
 
 ## Blockers and unverified scope
 
 - The available MuMu image is API 35, not API 36. API 36 playback/export,
   Android MediaStore behavior, and API 36 WebView behavior remain blockers.
-- No signed-in test account and fresh Ugoira API/ZIP sample were available in
-  this run, so real `app-api.pixiv.net` metadata, `pximg` ZIP/frame download,
-  playback, and MediaStore GIF acceptance remain unverified. The unit tests
-  use local fixtures only and are not evidence of production reachability.
+- A real Ugoira work was not opened in this run, so real
+  `app-api.pixiv.net` metadata, `pximg` ZIP/frame download, playback, and
+  MediaStore GIF acceptance remain unverified. This is an unverified Ugoira
+  coverage item, not a signed-in-account blocker; the unit tests use local
+  fixtures only and are not evidence of production reachability.
