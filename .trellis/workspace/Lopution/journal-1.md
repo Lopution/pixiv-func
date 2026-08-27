@@ -103,3 +103,24 @@ Session summary was not supplied.
 ### Next Steps
 
 - 启动 08-26-history-persistence，继续按执行序号推进
+
+
+## Session 4: Complete browsing history persistence
+
+**Date**: 2026-08-27
+**Task**: Complete browsing history persistence
+**Branch**: `main`
+
+### Summary
+
+完成 08-26-history-persistence：新增单连接 SQLite 历史库、紧凑记录、账号隔离 outbox、前台可见 Stopwatch 计时、历史页面与设置/作品/小说接入；补充迁移、事务、重试、损坏行和计时测试。flutter analyze、全量 flutter test（224）、debug APK、MuMu 页面与后台恢复检查均通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7d04ee0` | (see git log) |
+
+### Status
+
+[OK] **Completed**
