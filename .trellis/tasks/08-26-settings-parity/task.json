@@ -3,7 +3,7 @@
   "name": "settings-parity",
   "title": "复刻完整 Settings",
   "description": "实现原版设置页面、默认值、主题语言、浏览与下载选项持久化。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "补齐beta56 Settings信息架构和默认值，用版本化、类型安全的现代设置存储驱动主题、浏览、下载、历史、翻译和账号入口。",
   "package": null,

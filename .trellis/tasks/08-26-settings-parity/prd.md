@@ -29,12 +29,12 @@
 
 ## Acceptance Criteria
 
-- [ ] Settings主页面/子页面顺序和可见行为与beta56对应，无文字占位。
-- [ ] 新安装默认值全部正确；theme/language/quality/history/max-download重启后保持。
-- [ ] 单字段损坏/migration不会重置整个settings，写入失败UI回滚或显示错误。
-- [ ] secret不出现在SharedPreferences/settings JSON/log；typed providers即时驱动相关服务。
-- [ ] legacy image route非默认且有明确标识，Normal严格TLS不受影响。
-- [ ] analyze、全量test、debug build及重启/迁移/四语言/三主题真机验证通过。
+- [x] Settings主页面/子页面顺序和可见行为与beta56对应，无文字占位。
+- [x] 新安装默认值全部正确；theme/language/quality/history/max-download重启后保持。
+- [x] 单字段损坏/migration不会重置整个settings，写入失败UI回滚或显示错误。
+- [x] secret不出现在SharedPreferences/settings JSON/log；typed providers即时驱动相关服务。
+- [x] legacy image route非默认且有明确标识，Normal严格TLS不受影响。
+- [x] analyze、全量test、debug build及重启/迁移/四语言/三主题真机验证通过。
 
 ## Out of Scope
 
