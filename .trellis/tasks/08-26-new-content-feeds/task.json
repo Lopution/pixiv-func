@@ -3,7 +3,7 @@
   "name": "new-content-feeds",
   "title": "复刻 New 内容流",
   "description": "实现 Everyone、Follow、My Pixiv 的插画和 Novel 新作内容流。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "复刻 beta56 New 页的 Following、Everyone、My Pixiv 三类入口及 Illust/Novel 内容选择和状态保持。",
   "package": null,
