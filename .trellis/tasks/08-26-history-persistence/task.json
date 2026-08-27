@@ -3,7 +3,7 @@
   "name": "history-persistence",
   "title": "实现浏览与 Pixiv History",
   "description": "实现单 DB 生命周期、浏览记录、Pixiv History 计时和删除行为。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "以单一数据库生命周期和可见性计时重建本地/Pixiv浏览历史，保持beta56页面与删除交互而避免全JSON和每秒Timer。",
   "package": null,
