@@ -68,3 +68,38 @@ Session summary was not supplied.
 ### Status
 
 [OK] **Completed**
+
+
+## Session 3: Comments and replies implementation
+
+**Date**: 2026-08-27
+**Task**: Comments and replies implementation
+**Branch**: `main`
+
+### Summary
+
+完成评论与回复子任务：接入评论/回复分页、ID与thread store、非乐观发送/删除、emoji/stamp、翻译和详情入口；通过全量测试与 MuMu 只读评论 API 验证。
+
+### Main Changes
+
+- 新增 CommentEntity、CommentStore、CommentRepository、CommentActions 和分页控制器
+- 迁入 38 个 emoji 与 40 个 stamp 资源并注册 10/5 列输入面板
+- 新增评论页面、回复页、头像跳转、翻译、本人删除和安全失败态
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `92c9e96` | (see git log) |
+
+### Testing
+
+- [OK] flutter analyze；flutter test 216/216；flutter build apk --debug；Trellis validate；MuMu 127.0.0.1:7555 读取评论成功
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 启动 08-26-history-persistence，继续按执行序号推进

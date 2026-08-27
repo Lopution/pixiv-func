@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 2
+- **Total Sessions**: 3
 - **Last Active**: 2026-08-27
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~70 | Active |
+| `journal-1.md` | ~105 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 3 | 2026-08-27 | Comments and replies implementation | `92c9e96` | `main` |
 | 2 | 2026-08-27 | bookmark-state-sync：BookmarkStore + beta56 收藏按钮真机验收 | `5f5f66f`, `8bae089` | `main` |
 | 1 | 2026-08-27 | Illust detail viewer closeout: waterfall feed parity fix + MuMu verification | `ca0d2da` | `main` |
 <!-- @@@/auto:session-history -->
