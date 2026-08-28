@@ -187,3 +187,24 @@ Implemented typed ProfileEditController, bounded image/text validation, owner fe
 ### Status
 
 [OK] **Completed**
+
+
+## Session 8: Live player feasibility gate closed as real blocker
+
+**Date**: 2026-08-28
+**Task**: Live player feasibility gate closed as real blocker
+**Branch**: `main`
+
+### Summary
+
+Revalidated live endpoints on 2026-08-28 via in-app probe through the real PixivHttpClient/policy stack on MuMu API35 (127.0.0.1:16384, proxy null, Wi-Fi VALIDATED NOT_VPN): list/list?for_android/list?for_ios all HTTP 200 with lives=0, /v1/live/detail?live_id=0 HTTP 404, sketch.pixiv.net refused by PixivDestinationRegistry before I/O, web /lives redirects to closed 410. Gate failed (no live object), so no player dependency, no live UI, no fixture path; sanitized evidence + restored-APK screenshot stored in archived research. Fixed pre-existing icon_font golden failure (HomePage EventChannel subscription) via stub AndroidIntentSource; full suite 348 passed, analyze clean, debug build ok.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `e47d680` | (see git log) |
+
+### Status
+
+[OK] **Completed**
