@@ -74,17 +74,20 @@ Merged manifest/APK permission 审计通过：GitHub debug/release 含
 ```
 
 另外，`test/oauth_service_test.dart` 单文件 16 tests 通过；真实 loopback
-取消用例单独运行通过。全量门禁没有通过：
+取消用例单独运行通过。最终集成全量测试在串行和默认并发两种方式均通过，
+均为 405 tests：
 
-- 默认 `/opt/flutter-3.47.0/bin/flutter test --reporter compact` 在 `+401`
-  后卡在 `download_manager_test.dart` 的真实 socket cancellation case；
-  等待约 2 分 50 秒后中止，Flutter runner 报
-  `Bad state: Cannot close sink while adding stream` / `Cannot add event while
-  adding stream`。
-- `--concurrency=1` 的全量尝试在另一次 loopback/OAuth 交互中停在
-  `oauth_service_test.dart` 的 token exchange case；OAuth 文件单独运行仍
-  通过。该现象与测试文件之间的 WSL/Flutter runner loopback 资源竞争相符，
-  但在它被稳定复现并修复前，不能宣称全量测试通过。
+```text
+/opt/flutter-3.47.0/bin/flutter test --concurrency=1 --reporter compact
++405 All tests passed!
+
+/opt/flutter-3.47.0/bin/flutter test --reporter compact
++405 All tests passed!
+```
+
+此前曾观察到 WSL/Flutter runner 在真实 loopback cancellation/OAuth case 上的
+偶发长时间等待，但本次两种全量重跑均在约 43 秒内完成；该历史观察不再作为
+当前全量测试 blocker，后续若回归应重新收集失败日志而不是放宽断言。
 
 `git diff --check` 和当前最终 task 的 Trellis validation 均通过。
 
@@ -157,16 +160,14 @@ loopback/ECH 能力不足时保持显式 direct-only/unsupported。
 1. **API 36 设备门禁**：当前可核验 MuMu 是 API 35；没有 API 36 MuMu 镜像，
    API 36 WebView、MediaStore、headless Worker、intent/lifecycle 和完整
    真实账号矩阵不能宣称通过。
-2. **全量测试门禁**：跨文件 loopback/Flutter runner 卡死仍可复现；聚焦测试
-   和单文件测试通过，但不能填充成全量 pass。
-3. **Live 外部能力**：当日真实账号 list 无 live object，无法取得 detail
+2. **Live 外部能力**：当日真实账号 list 无 live object，无法取得 detail
    schema/HLS manifest；按 feasibility 设计保持未实现，不是 mock 缺失。
-4. **Profile/Reverse Image 外部合约**：资料写入没有审定官方 route，反向搜图
+3. **Profile/Reverse Image 外部合约**：资料写入没有审定官方 route，反向搜图
    没有可接受 provider/credential/privacy 方案；应用保留可见 unavailable。
-5. **可分发签名与 updater trust root**：release 仍是 debug signing，缺少
+4. **可分发签名与 updater trust root**：release 仍是 debug signing，缺少
    production keystore、公钥、签名 manifest/APK 和匹配 signer；不能创建
    远程 release 或宣称更新安装成功。
-6. **设备/变更覆盖**：真实 mutation、OAuth fresh exchange/refresh、系统重启
+5. **设备/变更覆盖**：真实 mutation、OAuth fresh exchange/refresh、系统重启
    widget restore、物理设备和运营商样本均需按 owning task 的范围补证；已登录
    账号本身不是阻塞理由。
 
