@@ -3,7 +3,7 @@
   "name": "reverse-image-search",
   "title": "实现反向图片搜索",
   "description": "实现应用内选图与 Android SEND image 输入的受控反向搜图链路。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "保留 beta56 粉色入口和结果体验，同时安全处理应用内选图及 Android SEND image，使用当时可用且合规的反向搜图服务。",
   "package": null,
@@ -28,7 +28,7 @@
     "role": "leaf",
     "status_contract": "planning_until_explicit_start_approval",
     "depends_on": "08-26-search-catalog,08-26-android-platform-parity,08-26-illust-detail-viewer",
-    "execution_order": "19",
+    "execution_order": "20",
     "freshness_gate": "revalidate_external_facts_at_start"
   }
 }
