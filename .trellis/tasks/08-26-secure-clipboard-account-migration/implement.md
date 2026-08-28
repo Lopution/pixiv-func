@@ -9,8 +9,8 @@
 
 ## Steps
 
-1. 完成clipboard transfer威胁模型和标准envelope方案评审，明确残余风险。
-2. 定义version/schema/size/time/nonce/integrity parser与ReplayStore。
+1. 完成clipboard reader/writer、accidental corruption和target-local replay威胁模型，明确零交互方案不提供authenticity/confidentiality。
+2. 定义version/schema/size/time/nonce/checksum parser与ReplayStore，错误类型不得超出实际保证。
 3. 实现Android sensitive clipboard/conditional auto-clear adapter。
 4. 实现export、explicit paste、strict validation、Pixiv verify和atomic import。
 5. 实现原版入口/反馈并增加不宣称安全边界的说明。
@@ -39,6 +39,7 @@ git diff --check
 
 - version/size/schema/base64 parser fuzz。
 - expiry/clock skew/nonce replay/tamper。
+- checksum重算无法抵御malicious writer的文档/测试边界；不得出现“authenticated/encrypted transfer”伪声明。
 - conditional clear不覆盖后续clipboard。
 - invalid credential/no half account。
 - cross-device success、secret/log/storage audit。
@@ -53,3 +54,44 @@ git diff --check
 - 不残留placeholder、空操作、隐藏mock、吞错或安全绕过。
 - 运行trellis-check，按需更新spec，提交仅包含本任务文件，再finish/archive。
 
+## Execution Record
+
+### Implemented
+
+- Added bounded version-1 `TransferEnvelope`, strict parser, explicit
+  unkeyed-corruption/replay threat boundary and secure target-local replay
+  storage.
+- Added exact-host pre-import verification with supplied credential, optional
+  refresh, server-authoritative profile metadata and atomic account import.
+- Added Android sensitive clipboard channel, five-minute conditional clear,
+  explicit Settings/Login entry points, localized residual-risk wording and
+  regression tests for account-store rollback.
+
+### Compiled and tested
+
+- Focused transfer/account/network tests: 39 passed.
+- Changed-file `flutter analyze`: passed with no issues.
+- Full test run: 347 passed and the existing VM-only
+  `test/icon_font_test.dart` event-channel `MissingPluginException` failed;
+  the isolated reproduction is documented in
+  `research/implementation-evidence.md`.
+- `flutter build apk --debug`: passed; APK SHA-256 is
+  `1b982a7fd811d635dc371c517ad426f0419393f1969cd48b5fd2d7f8bfb11bc8`.
+- `./gradlew :app:compileDebugKotlin --no-daemon`: passed.
+
+### Device-tested
+
+- `MuMu emulator-tested, not physical-device-tested` on verified MuMu
+  `127.0.0.1:16384`, API/SDK 35, proxy `null`, validated Wi-Fi/NAT and no
+  VPN according to the required preflight.
+- Installed and cold-launched the debug APK. Existing real signed-in account
+  exported through Settings long press; Login help displayed the warning and
+  paste entry; a real-account recognized transfer attempt was exercised with
+  no credential output, and the account remained after force-stop/relaunch.
+- API 36, a second independent device and physical-device coverage remain
+  unverified; API 35 results are not represented as API 36 evidence. The real
+  account login/read chain is working and is not a blocker.
+
+See `research/clipboard-threat-model.md` and
+`research/implementation-evidence.md` for the exact residual-risk and
+verification boundaries.
