@@ -10,11 +10,12 @@
 ## Steps
 
 1. 提取beta56Widget layouts/update/click行为，核验API36 AppWidget/WorkManager要求。
-2. 研究并选定可实测的安全background credential/data bridge。
-3. 实现providers/receivers/layouts/unique worker与bounded image renderer。
-4. 实现account revision/reauth/no-account states和typed deep link clicks。
-5. 增加worker uniqueness、security、account switch、bitmap和PendingIntent tests。
-6. 运行analyze/test/build，在真机验证添加/resize/reboot/background/remove。
+2. 定义并实现atomic/versioned/account-revision WidgetSnapshot；先完成无秘密native渲染路径。
+3. 以API36进程冷启验证headless Flutter是否能复用现有AccountStore/PixivHttpClient/TokenRefreshGate 与 shared `NetworkAccessPolicy`；失败则记录blocker，不新建native credential/refresh/DoH/IP/proxy栈。
+4. 实现providers/receivers/layouts、按family/revision命名的unique worker、resize去抖与bounded image/IPC renderer。
+5. 实现account switch/reauth/no-account清理、same-account last-good和typed deep link clicks。
+6. 增加snapshot schema/age/corrupt/atomicity、worker uniqueness、security、account switch、bitmap/IPC和PendingIntent identity tests。
+7. 运行analyze/test/build，在真机验证添加/resize风暴/reboot/process-death/background/remove。
 
 ## Validation
 
@@ -40,7 +41,9 @@ git diff --check
 - account/no-account/reauth/switch cache clearing。
 - PendingIntent/deep link security。
 - network retry/TLS/bitmap bounds。
+- snapshot schema/account revision/atomic replace、same-account last-good vs account-invalid clear、RemoteViews IPC budget。
 - reboot/app update/API36 background behavior。
+- system proxy/VPN off 的 headless direct-first/compatible route、network revision 与 carrier/date evidence；Widget 不私有化兼容路径。
 
 ## Risky Files and Rollback Points
 
@@ -51,4 +54,3 @@ git diff --check
 - PRD全部acceptance criteria有真实证据，自动测试/模拟器/真机/真实账号明确区分。
 - 不残留placeholder、空操作、隐藏mock、吞错或安全绕过。
 - 运行trellis-check，按需更新spec，提交仅包含本任务文件，再finish/archive。
-

@@ -6,14 +6,15 @@
 
 ## Architecture and Boundaries
 
-- WidgetDataBridge只暴露最小、短期、非秘密render model；认证请求通过安全native credential adapter或headless Dart方案。
-- WidgetUpdateCoordinator使用unique WorkManager并按widget IDs/account revision生成。
-- RemoteViews renderer加载受限bitmap并创建immutable/explicit PendingIntents。
+- WidgetSnapshotStore以atomic/versioned envelope只暴露最小、短期、非秘密render model，key绑定account revision；native不拥有credential adapter。
+- WidgetUpdateCoordinator使用unique WorkManager并按widget family/account revision生成；网络刷新只通过经设备证明的headless Dart复用现有认证栈。
+- headless network 也必须注入 shared `NetworkAccessPolicy`/`PixivDestinationRegistry`；Widget native 层不保存 DoH、IP、proxy 或 TLS 配置，只消费无秘密 snapshot。
+- RemoteViews renderer加载受限bitmap，区分same-account last-good与account-invalid clear，并创建immutable/explicit/data-unique PendingIntents。
 - Account change event触发清除旧render cache和立即refresh。
 
 ## Data Flow
 
-widget schedule/refresh → secure account capability → strict recommended request → bounded image → RemoteViews update；click→typed deep link；account invalid→redacted state。
+Flutter feed success → atomic secret-free snapshot；widget schedule/refresh → snapshot render，或verified headless auth→strict recommended→new snapshot → bounded RemoteViews；click→typed deep link；account revision invalid→clear。
 
 ## Compatibility, Security, and Migration
 
@@ -30,4 +31,3 @@ widget schedule/refresh → secure account capability → strict recommended req
 
 - 本任务使用独立提交，只回滚本任务新增接口、实现、配置和测试。
 - 不重写历史、不覆盖无关工作树改动；中间父任务不直接回滚独立叶子提交。
-

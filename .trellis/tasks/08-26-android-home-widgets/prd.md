@@ -12,18 +12,20 @@
 
 ## Dependencies
 
-- 08-26-recommended-feed-paging、secure-account-store、pixiv-network-token-refresh与android-platform-parity完成。
+- 08-26-recommended-feed-paging、secure-account-store、pixiv-network-token-refresh、android-platform-parity 与 P0 `08-26-restricted-compat-network` 完成。
 
 ## Requirements
 
 - R1: 从beta56提取Widget尺寸、圆角、图片、progress、refresh按钮、更新周期和click行为；不新增复杂交互。
-- R2: 设计后台认证方案，复用Android Keystore保护的current account credential或受控headless Flutter，不把token/cookie写普通SharedPreferences/RemoteViews。
+- R2: 优先由 Flutter 生成 versioned、account-revision keyed 的无秘密WidgetSnapshot，只含作品ID/标题/作者/受控图片引用/生成时间；native不得读取Account/Credential数据库或复制token/cookie到SharedPreferences、WorkData、RemoteViews。
 - R3: Recommend Widget加载真实推荐封面，Refresh Widget/按钮触发唯一受限工作；点击作品通过pixivfunc deep link进入Detail。
-- R4: WorkManager使用unique work、网络约束、系统调度和有界重试，不启动常驻timer/service。
+- R4: 若beta56周期网络刷新需要app进程外认证，只能在实测证明可用时由受控headless Flutter复用同一AccountStore/PixivHttpClient/TokenRefreshGate；不得另写native refresh栈。WorkManager使用unique work、网络约束、系统调度和有界重试，不启动常驻timer/service。
+- R4a: headless Flutter 只有在可复用 shared `NetworkAccessPolicy` 并通过系统 proxy/VPN off 的 API 36 冷启网络验证后，才能使用大陆兼容 route；不能在 native worker 内另建 DoH、固定 IP 或代理。
 - R5: 多Widget IDs、resize、删除最后Widget、app update/reboot和账号切换正确注册/取消/刷新。
-- R6: 无账号、设备credential不可用、reauth、R18/AI block、网络失败显示安全明确状态，不保留上一账号敏感图。
-- R7: 图片下载遵循strict TLS/allowlist与有界bitmap尺寸，缓存/临时文件按Widget lifecycle清理。
+- R6: account invalid/switch/reauth 必须立即清除旧账号snapshot；瞬时网络或单张图片失败可保留同账号last-good并安排有界重试，二者不得混为同一fallback。
+- R7: 图片下载遵循strict TLS/allowlist，按Widget options计算尺寸并同时限制单图pixels、总bitmap bytes和RemoteViews IPC预算；缓存/临时文件按Widget lifecycle清理。
 - R8: receiver/provider exported、PendingIntent mutability和intent参数符合当前Android安全要求。
+- R9: one-shot/periodic work 名称包含Widget family/account revision并采用明确KEEP/UPDATE/REPLACE策略；resize事件去抖，最后一个Widget删除时取消工作。每个slot的PendingIntent使用唯一data identity，避免跨Widget实例串作品。
 
 ## Acceptance Criteria
 
@@ -32,6 +34,9 @@
 - [ ] 无账号/账号切换/reauth/锁定时不泄露旧账号图片或credential并提示打开app。
 - [ ] 点击推荐安全进入正确Detail，恶意PendingIntent/deep link参数被拒绝。
 - [ ] 普通prefs/log/RemoteViews不含token/cookie，网络/bitmap内存有界。
+- [ ] WidgetSnapshot schema/version/age/account revision、corrupt/oversize和原子替换测试通过；account switch清旧图，瞬时失败保留同账号last-good。
+- [ ] RemoteViews在最大支持尺寸下不超过定义的pixel/IPC budget，resize风暴不反复取消在途worker，slot PendingIntent不碰撞。
+- [ ] Widget 后台刷新消费与前台相同的 direct-first/route health；network revision/账号变化不会复用旧 compatible candidate 或把 last-good 推给另一网络。
 - [ ] analyze、全量test、各Android test/debug build和reboot/background真机验证通过。
 
 ## Out of Scope
@@ -42,7 +47,7 @@
 
 ## Risks and Deferred Items
 
-- flutter_secure_storage与native/headless访问兼容性需实测；无法安全获取凭据时Widget应要求打开app刷新，不能降级明文。
+- headless Flutter、secure storage plugin和WorkManager在进程冷启/OEM后台限制下需实测；无法复用同一认证栈时，周期网络刷新成为blocker或需产品批准改为“打开app刷新”，不能降级明文或默默减少beta56行为。
 
 ## Source Anchors
 
@@ -51,4 +56,4 @@
 
 ## Open Questions
 
-无阻塞性产品决策。时效性技术事实按Requirements中的research gate在实现开始时重新核验，不改变本任务行为边界。
+当前没有阻塞性产品决策。若 API36/OEM 实测证明无法在不复制credential栈的情况下保持beta56周期后台刷新，必须回到planning确认“打开app刷新”的可见差异或保持blocker，不能自行选择降级。
