@@ -166,3 +166,24 @@ Implemented strict Android intent and shared-image validation, versioned WebView
 ### Status
 
 [OK] **Completed**
+
+
+## Session 7: Profile edit boundary and API35 MuMu verification
+
+**Date**: 2026-08-28
+**Task**: Profile edit boundary and API35 MuMu verification
+**Branch**: `main`
+
+### Summary
+
+Implemented typed ProfileEditController, bounded image/text validation, owner fencing, confirmed-only AccountStore/UserStore commit, reachable profile edit UI and explicit unavailable submit route. Verified API35 MuMu 127.0.0.1:16384 with proxy null, non-VPN validated Wi-Fi, real signed-in read-only profile flow and disabled Save. Focused profile/settings tests passed; full suite 321 passed with existing icon_font MissingPluginException. Archived profile-edit; API36 and live mutation remain explicit blockers.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `cd3435e` | (see git log) |
+
+### Status
+
+[OK] **Completed**
