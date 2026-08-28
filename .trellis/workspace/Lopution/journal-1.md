@@ -145,3 +145,24 @@ Implemented exact-host direct-first policy, strict secure-DNS candidate path, sh
 ### Status
 
 [OK] **Completed**
+
+
+## Session 6: Android platform boundary hardening
+
+**Date**: 2026-08-28
+**Task**: Android platform boundary hardening
+**Branch**: `main`
+
+### Summary
+
+Implemented strict Android intent and shared-image validation, versioned WebView capability and route sessions with exact-host/revision/owner fencing, PKCE state and login lifecycle handling, and lifecycle-aware double-back behavior. Focused and all 37 split serial test files passed; flutter analyze and debug APK build passed. MuMu emulator API 35 validated with real logged-in account, WebView lifecycle and root back; API 36 and physical/carrier coverage remain explicit blockers. Archived 08-27-android-platform-boundary-hardening.
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ff4dd2e` | (see git log) |
+
+### Status
+
+[OK] **Completed**
