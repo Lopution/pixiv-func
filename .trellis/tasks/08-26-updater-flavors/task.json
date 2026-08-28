@@ -3,7 +3,7 @@
   "name": "updater-flavors",
   "title": "实现 GitHub 与 F-Droid Updater flavors",
   "description": "隔离 GitHub self-updater 与 F-Droid 无安装权限构建，并实现原版更新体验。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "复刻About中的检查更新体验，同时通过flavor彻底隔离GitHub自更新与F-Droid无安装权限构建。",
   "package": null,

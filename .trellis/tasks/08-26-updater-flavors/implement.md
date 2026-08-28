@@ -10,11 +10,11 @@
 ## Steps
 
 1. 核验当前Flutter/AGP flavor和Android安装要求，提取beta56About/updater UI。
-2. 定义flavors、UpdateCapability、ReleaseInfo/version policy和manifest overlays。
-3. 实现GitHub check/error/UI与F-Droid no-network/no-button behavior。
-4. 接入DownloadManager、APK hash/package/signature verifier和InstallerAdapter。
-5. 增加release parsing/version/flavor/manifest/download/install/cleanup tests。
-6. 构建两个flavor debug/release并在API36验证GitHub安装拒绝/允许流程。
+2. 定义flavors、UpdateCapability、signed manifest schema/public-key rotation、ReleaseInfo/channel policy和manifest overlays。
+3. 实现bounded manifest+detached signature fetch、fail-closed verify、GitHub UI与F-Droid no-dependency/no-network/no-button behavior。
+4. 接入single-flight DownloadManager、exact size/SHA-256/package/installed-signer verifier、download state reattach和InstallerAdapter。
+5. 增加valid/invalid/missing signature、unknown schema/channel、oversize、version/flavor/redirect/download/install/cleanup tests。
+6. 构建两个flavor debug/release，审计依赖与merged manifest，并在API36验证GitHub安装拒绝/允许流程。
 
 ## Validation
 
@@ -40,6 +40,7 @@ git diff --check
 - flavor dependency and no F-Droid network path。
 - merged manifest permission assertions。
 - APK hash/package/signature/redirect。
+- signed manifest/public key/size/hash/package/installed signer、concurrent check/apply和restart reattach。
 - FileProvider/install permission/deny/cancel/cleanup。
 
 ## Risky Files and Rollback Points
@@ -51,4 +52,3 @@ git diff --check
 - PRD全部acceptance criteria有真实证据，自动测试/模拟器/真机/真实账号明确区分。
 - 不残留placeholder、空操作、隐藏mock、吞错或安全绕过。
 - 运行trellis-check，按需更新spec，提交仅包含本任务文件，再finish/archive。
-

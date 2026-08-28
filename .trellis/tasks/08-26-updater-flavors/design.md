@@ -7,18 +7,18 @@
 ## Architecture and Boundaries
 
 - UpdateCapability由flavor编译注入；F-Droid绑定NoSelfUpdateService且UI显示商店说明。
-- GitHubReleaseService返回typedReleaseInfo并执行严格repo/host/version policy。
+- SignedManifestService先以编译期公钥验签、限长和schema校验，再返回typed ReleaseInfo；GitHubReleaseService不能绕过该信任根。
 - UpdateDownloadCoordinator复用DownloadManager但使用受控APK sink和验证器。
-- InstallerAdapter封装FileProvider/permission/Intent并验证package/signature。
+- InstallerAdapter封装FileProvider/permission/Intent并验证package与APK signing certificate等于当前安装 signer。
 
 ## Data Flow
 
-About check → flavor service → typed release compare → user confirm → streamed APK + verify → installer intent → result/cleanup；F-Droid→store-managed message。
+About check → fetch bounded manifest+signature → verify pinned public key → typed release/channel compare → user confirm → single-flight streamed APK + exact size/hash/package/signer verify → installer intent → result/cleanup；F-Droid→store-managed message且无updater graph。
 
 ## Compatibility, Security, and Migration
 
 - 保留beta56检查/进度/确认体验，权限按现代flavor隔离。
-- 签名材料通过外部配置，仓库只保存验证/配置接口。
+- manifest私钥与release签名材料只通过外部CI安全输入；App/仓库只保存可公开的验证公钥和schema，缺失时fail closed。
 
 ## Important Trade-offs
 
@@ -30,4 +30,3 @@ About check → flavor service → typed release compare → user confirm → st
 
 - 本任务使用独立提交，只回滚本任务新增接口、实现、配置和测试。
 - 不重写历史、不覆盖无关工作树改动；中间父任务不直接回滚独立叶子提交。
-
