@@ -6,18 +6,21 @@
 
 ## Architecture and Boundaries
 
-- LiveRepository隔离list/detail/schema，LiveStreamResolver验证HLS variants/hosts。
+- FeasibilityProbe 是实现前独立阶段，只产出日期、endpoint/auth/schema/HLS/host-policy 结论；通过后才引入 LiveRepository、player dependency 与 UI。
+- LiveRepository隔离list/detail/schema，LiveStreamResolver验证HLS variants/redirect hosts。
+- LiveRepository/LiveStreamResolver 只能消费 shared `NetworkAccessPolicy`；当天核验通过的 HLS host 才能进入 registry，未知 redirect/第三方 relay 仍被拒绝。
 - LivePlayerController封装player state、gesture arbitration、quality/position、lifecycle和resource leases。
 - Orientation/Wakelock adapters为引用计数lease并在finally/dispose恢复。
 - Owner/follow只引用UserStore/FollowStore。
 
 ## Data Flow
 
-Live list/detail → strict stream resolver → player controller → 16:9 UI/controls；fullscreen lease；lifecycle/error cleanup；owner→shared profile/follow。
+feasibility evidence → approved dependency → Live list/detail → strict stream resolver → player controller → 16:9 UI/controls；fullscreen lease；lifecycle/error cleanup；owner→shared profile/follow。
 
 ## Compatibility, Security, and Migration
 
 - 保持beta56可见播放器，不使用旧proxy。
+- 若大陆兼容网络已通过，Live 只复用 strict route/health；loopback/WebView 规则不适用于原生 HLS，不能把 WebView route steering 当播放器代理。
 - endpoint研究结论写task research且限定日期，后续失效不改为伪数据。
 
 ## Important Trade-offs
@@ -30,4 +33,3 @@ Live list/detail → strict stream resolver → player controller → 16:9 UI/co
 
 - 本任务使用独立提交，只回滚本任务新增接口、实现、配置和测试。
 - 不重写历史、不覆盖无关工作树改动；中间父任务不直接回滚独立叶子提交。
-

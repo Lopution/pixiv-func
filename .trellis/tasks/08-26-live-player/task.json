@@ -3,11 +3,11 @@
   "name": "live-player",
   "title": "复刻 Live 播放器",
   "description": "核验当前 Live 接口并复刻 16:9、控件、清晰度、进度、全屏和关注区域。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": "重新核验Pixiv Sketch Live当前可用链路，并在可用时复刻beta56播放器、清晰度、全屏和作者关注体验。",
   "package": null,
-  "priority": "P2",
+  "priority": "P0",
   "creator": "Lopution",
   "assignee": "Lopution",
   "createdAt": "2026-08-26",
@@ -27,8 +27,11 @@
     "dispatch_mode": "inline",
     "role": "leaf",
     "status_contract": "planning_until_explicit_start_approval",
-    "depends_on": "08-26-pixiv-network-token-refresh,08-26-user-profile-follow,08-26-android-platform-parity",
+    "depends_on": "08-26-pixiv-network-token-refresh,08-26-user-profile-follow,08-26-android-platform-parity,08-26-restricted-compat-network",
     "execution_order": "23",
-    "freshness_gate": "revalidate_external_facts_at_start"
+    "freshness_gate": "revalidate_external_facts_at_start",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn",
+    "blocking_decision": "approved_automatic_domain_scoped_internal_compat_transport",
+    "decision_recorded_at": "2026-08-27"
   }
 }
