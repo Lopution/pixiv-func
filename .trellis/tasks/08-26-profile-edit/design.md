@@ -6,14 +6,15 @@
 
 ## Architecture and Boundaries
 
-- ProfileEditRepository暴露capabilities/loadDraft/submit；实现按当前安全通道选择API或受限Web adapter。
-- ProfileDraftController拥有baseRevision、dirty fields、validation、upload states和accountId guard。
+- ProfileEditRepository暴露 `loadCapabilities/loadDraft/submit(ProfilePatch)`；实现按当前安全通道选择 API 或受限 Web adapter。
+- API/Web adapter 的 host、TLS、DNS 和 route 由 shared `NetworkAccessPolicy` 提供；Profile task 不接受自定义 proxy/host，资料图片与 submit 的错误必须保留 route/failure 分类。
+- ProfileDraftController拥有baseRevision、capabilities、dirty-field diff、validation、upload states和accountId guard；密码使用单独 ephemeral submit input，不属于可序列化 draft。
 - ImagePreprocessor复用ReverseImage的受控文件基础但使用Profile尺寸/裁剪策略。
-- 成功response经过UserMapper后一次性commit到UserStore/AccountStore。
+- typed submit outcome 把 field error、verification pending 与 confirmed response 分开；只有 confirmed response 经过 UserMapper 后一次性 commit 到 UserStore/AccountStore。
 
 ## Data Flow
 
-current account/profile → load capabilities+draft → edit/validate/image preprocess → submit(account+baseRevision) → authoritative response → atomic stores update；error/cancel保持draft。
+current account/profile → load capabilities+draft → edit/diff/validate/image preprocess → build minimal patch + ephemeral password → submit(account+baseRevision) → confirmed atomic update | verification pending | field error；error/cancel保持非秘密 draft。
 
 ## Compatibility, Security, and Migration
 
@@ -30,4 +31,3 @@ current account/profile → load capabilities+draft → edit/validate/image prep
 
 - 本任务使用独立提交，只回滚本任务新增接口、实现、配置和测试。
 - 不重写历史、不覆盖无关工作树改动；中间父任务不直接回滚独立叶子提交。
-
