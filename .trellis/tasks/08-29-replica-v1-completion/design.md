@@ -90,7 +90,51 @@ channel。现有 6 个 channel 全是 Activity 作用域。
 
 没有这张表就只能猜，而猜出来的 native 传输层就是下一个"为假想需求建的基础设施"。
 
-## 风险与回滚
+## UI 缺陷的两个真正根因（R7）
+
+用户报的 5 项里，U1/U3/U4 是局部布局问题，改动范围就是它们自己。U2 和 U5 不是。
+
+### U2：`copyWith` 漏字段，被 store 放大成「日期永远未知」
+
+`createDate` 是 `IllustEntity` 构造器最后一个参数（后加的），也是 `copyWith` 唯一没有转发的
+字段。单看 `copyWith` 只是漏了一行，但 `IllustStore.mergeAll` 对**每个已存在的实体**都走
+`copyWith`：
+
+```
+feed 响应  → mergeAll → existing == null → 原样存入（createDate 还在）
+detail 响应 → mergeAll → existing != null → copyWith(...) → createDate = null
+```
+
+所以只要你打开过详情页，日期就没了——而日期只在详情页显示。两个正确的组件（一个负责合并
+不倒退，一个负责局部更新）叠在一起产生了一个恒真的 bug。`updateBookmark` 同理。
+
+修 `copyWith` 是一行，但**同型排查是必须的**：任何「构造器加字段 / copyWith 未同步」都会被
+store 放大成同样的静默丢失。值得考虑让 `copyWith` 的字段完整性可测，而不是靠人眼。
+
+### U5：注释宣称 snapshot-first，实际首帧是 spinner
+
+`illust_detail_controller.dart` 写着「Snapshot-first (R1): stale data renders immediately」，
+`illust_detail_page.dart` 也有 `IllustDetailLoading` → 渲染 snapshot 的分支。两处都是真的
+意图，但**都不可达**：
+
+- `_load` 从不返回 `IllustDetailLoading`，该分支是死代码。
+- `AsyncNotifier.build()` 返回 `Future`，Riverpod 首帧必然发 `AsyncLoading`，与 `_load`
+  内部能不能同步拿到 snapshot 无关。`async.when(loading: () => spinner)` 于是吃掉了首帧。
+
+后果不只是「没有动画」：feed 已经把实体放进 `IllustStore`，用户点进去却看到转圈，等一次
+网络往返才看到本来就在内存里的内容。Hero 没有目标端只是这件事的表征。
+
+修法是让页面在 `AsyncLoading` 且 store 有快照时直接渲染快照，而不是新增状态——`IllustStore`
+已经是共享真相源，控制器不需要再复述一遍加载态。
+
+### U6：简介是 HTML，且需要一条出站 intent
+
+`AndroidIntentChannel` 目前只有**入站**（接收系统发来的 intent），没有 outbound open-url；
+仓库也没有 `url_launcher` 依赖。站内链接可以复用已有的 `showUserPage`（见
+`comment_item.dart`）和 `IllustDetailPage` 路由，站外链接则需要新增能力。解析本身应当是
+纯函数 + typed span，与 Novel 的 typed markup 同构，可离线单测。
+
+
 
 - 路由记忆若没有 TTL，用户换到可用网络后会被钉在慢路径上。TTL + revision 双重清除。
 - DoH resolver 若被误用于非 Pixiv 主机就成了通用解析器；靠 `resolve()` 只接受

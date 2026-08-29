@@ -49,6 +49,50 @@
     按 A（用户可解）/ B（需密钥材料）/ C（外部依赖无解）分类，逐条写归属与解开条件。
     不解决、不冒充完成。
 
+## R7：真机试用暴露的 UI 缺陷
+
+与网络线无依赖，可独立并行推进。**先做 U2/U5，它们是数据与状态层的真 bug；U1/U3/U4 是
+布局层，改完立刻可截图验证。**
+
+12. **U2 · `createDate` 在合并时丢失**
+    `lib/core/entity/illust_entity.dart`：`copyWith` 转发 `createDate`。
+    然后**排查同型**——检查其它实体（`IllustUser`、`NovelEntity`、`CommentEntity` 等）是否
+    存在「构造器加了字段但 copyWith 漏转发」。测试要钉住往返不变式而非单个字段：
+    `mergeAll([e]) → get()` 应保留所有非合并语义字段。
+
+13. **U5 · 详情页首帧渲染 store 快照**
+    `lib/features/illust/detail/illust_detail_page.dart`：`AsyncLoading` 且
+    `illustStoreProvider.get(id) != null` 时直接 `_buildContent`，不再无条件 spinner。
+    删掉不可达的 `IllustDetailLoading` 分支或让 `_load` 真正产出它——二选一，不留死代码。
+    Hero 目标端随之在首帧存在，动画自然恢复，无需改 `ReplicaPageRoute`。
+    **排查同型**：Ranking/New/Search/Profile 是否有相同的 `async.when(loading:)` 吃掉快照。
+
+14. **U1 · 主页安全区**
+    `lib/features/home/recommended/recommended_illust_page.dart`：顶部加
+    `MediaQuery.viewPadding.top` 的 `SliverPadding`（或 `SafeArea(bottom: false)`）。
+    不加 AppBar。注意别把 `RefreshIndicator` 的触发区一起推下去。
+    顺带确认 `home_page.dart` 的 `BottomAppBar` 在手势导航下的底部 inset。
+
+15. **U3 · viewer 缩放**
+    `lib/features/illust/viewer/image_viewer_page.dart`：给 `PixivImage` 视口紧约束
+    （`SizedBox.expand` 或 `width/height: double.infinity`），让 `BoxFit.contain` 有放大目标。
+    收敛 `_onTransformed` 的每帧 `setState`——只有 `_activeZoomed` 翻转时才需要重建
+    （它唯一的消费者是 `physics`）。保持 `minScale`/`maxScale` 0.9–6.0 不变。
+
+16. **U4 · 退出提示**
+    `lib/features/home/home_page.dart`：SnackBar `duration` 绑定到
+    `RootBackCoordinator.exitWindow`（不要写字面量 1 秒，两处必须同源），
+    `behavior: floating` + 淡入淡出。提示的存在时间即「还能连按退出」的时间。
+
+17. **U6 · 简介富文本**
+    新增纯函数 HTML → typed span 解析（`<br>` 换行、实体解码、`<a href>`），与 Novel 的
+    typed markup 同构，可离线单测；未知标签保持可观察，不静默吞掉。
+    站内 pixiv 链接复用 `showUserPage`（`comment_item.dart`）与 `IllustDetailPage` 路由；
+    站外链接需要给 `AndroidIntentChannel` 加一条**出站** open-url（当前只有入站），
+    或引入 `url_launcher`——优先前者，与仓库既有的 channel 边界一致。
+    简介入口改成紧凑可点区块（不占满宽度），位置不变。
+
+
 ## 验证
 
 ```bash
@@ -70,6 +114,11 @@ git diff --check
 | `test/network_probe_test.dart` | 分层结果的确定性映射 |
 | `test/restricted_compat_network_test.dart` | `tlsHandshake` 可回退 / `certificateMismatch` 不可回退；路由 memo；两出口共用 ladder |
 | `test/settings_test.dart` | 新 i18n key 四语言齐全 |
+| `test/illust_store_test.dart` | `mergeAll` → `get` 往返保留 `createDate`（钉住 copyWith 完整性，非单字段断言） |
+| `test/illust_detail_page_test.dart` | store 有快照时首帧渲染内容而非 spinner；Hero 目标端在首帧存在 |
+| `test/image_viewer_test.dart` | 图片按视口尺寸布局，不按固有尺寸；`_activeZoomed` 翻转才重建 |
+| `test/home_page_test.dart` | 退出提示时长 == `RootBackCoordinator.exitWindow`；顶部内边距 == `viewPadding.top` |
+| `test/illust_caption_test.dart` | HTML → typed span：`<br>`、实体、`<a href>`、未知标签保持可观察 |
 
 已知环境不稳定（与本任务无关，改动前即存在）：`oauth_service_test.dart` token exchange 与
 `download_manager_test.dart` real sockets，WSL 下 `dart:io` loopback 并发丢连接，测试文件自带
@@ -77,7 +126,15 @@ git diff --check
 
 ## 设备验证
 
-**由用户亲自执行，本任务不代跑。** 交付物是带探测页的 debug APK。需要的证据：
+分两类，不要混为一谈：
+
+**R7 的 UI 改动——本任务自己验，必须留证。** 按 memory 约定真机安装 APK + 截图存到
+`research/screenshots/`。RMX5200（API 36，arm64）已可用 adb 连接，`flutter devices` 因序列号
+含空格解析失败，用 `adb -t <transport_id> install -r` 绕过。U1/U3/U4/U6 是肉眼可判的布局与
+交互，改完必须有前后对比图；U2/U5 除截图外还要有回归测试。
+
+**R1–R4 的网络与 Android 版本矩阵——由用户亲自执行，本任务不代跑。**
+交付物是带探测页的 debug APK。需要的证据：
 
 - 真实境内网络（系统 proxy/VPN 关闭、无外部代理 App）下的分层探测报告，按日期、运营商、
   网络类型、IP family 记录
@@ -90,6 +147,8 @@ git diff --check
 - `lib/core/network/compat/network_policy.dart`（ladder 合并同时影响 API 与下载两个出口）
 - `lib/core/network/compat/network_contracts.dart`（回退分类改动影响所有网络失败路径）
 - `android/app/build.gradle.kts`（minSdk）
+- `lib/core/entity/illust_entity.dart`（`copyWith` 是所有 store 合并的必经之路）
+- `lib/features/illust/detail/illust_detail_page.dart`（首帧行为同时影响内容、Hero 与快照契约）
 
 ## Completion Gate
 

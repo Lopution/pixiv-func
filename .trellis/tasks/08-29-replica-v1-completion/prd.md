@@ -82,6 +82,33 @@ Kotlin 侧以 OkHttp 实现省 SNI 传输：自定义 `Dns` + 清空 `SSLParamet
 archives_read_only` 不回写，改为在本任务的 `research/archived-evidence-drift.md` 记录具体
 文件与失效原因。
 
+### R7. 真机试用暴露的 UI 缺陷
+
+2026-08-29 用户在 RMX5200（API 36）上试用 `eb3a87f` 构建，报了 5 个问题。逐个查证后，其中
+两个的根因比表面症状严重得多：**日期字段在每次实体合并时被静默丢弃**，以及**详情页宣称的
+snapshot-first 契约在首次进入时根本不可达**。5 个都不是外观偏好，是缺陷。
+
+| # | 症状 | 根因 |
+|---|---|---|
+| U1 | 主页顶部与系统状态栏重叠，其它 tab 正常 | `RecommendedIllustPage` 是唯一 `Scaffold` 既无 `appBar` 也无 `SafeArea` 的 tab；Ranking/New/Search/Settings 都有 AppBar，会自动吃掉 `MediaQuery.padding.top`。设备 targetSdk 36，Android 15+ **强制** edge-to-edge，而全仓库没有任何 `SystemChrome` / edge-to-edge 处理 |
+| U2 | 所有作品都显示「投稿日期未知」 | `IllustEntity.copyWith` 不转发 `createDate`——它是构造器最后一个参数，也是 copyWith 唯一漏掉的字段。`IllustStore.mergeAll` 对每个已知实体都走 `copyWith`，`updateBookmark` 同样，所以详情响应一合并进来日期就没了 |
+| U3 | 多图缩放不正常 | `InteractiveViewer(child: Center(child: PixivImage(fit: contain)))`：`Center` 给的是宽松约束，`RenderImage` 因此按**自身固有尺寸**（原始像素 ÷ DPR）布局而不是铺满视口，`BoxFit.contain` 没有可放大的目标。另：`_onTransformed` 每帧 `setState` 重建整个 `PageView` |
+| U4 | 「再按一次退出」提示生硬 | 默认 `SnackBar` 显示 4 秒，而 `RootBackCoordinator.exitWindow` 是 1 秒——提示还在的时候早就不能连按退出了，提示本身在说谎 |
+| U5 | 首次进入作品无动画，加载过一次才有 | 比动画严重：`IllustDetailController._load` 从不返回 `IllustDetailLoading`，且 `AsyncNotifier.build()` 返回 Future，首帧必然是 `AsyncLoading` → 页面渲染 spinner。**feed 早已把实体放进 `IllustStore`，却从不在首帧渲染**，所以既没有内容也没有 Hero 目标端，`IllustDetailLoading` 分支是死代码 |
+| U6 | （用户截图中可见，未单独提出）简介渲染出字面量 `<br />` | Pixiv 简介是 HTML，当前直接塞进 `Text` |
+
+已确定的处置（2026-08-29 用户决策）：
+
+- **U1**：只加安全区顶部内边距，不加 AppBar——保留信息流的沉浸观感，只消除重叠。
+- **U2**：修 `copyWith`；日期行与统计行的排版一并整理。
+- **U3**：给图片视口紧约束，让 `contain` 有放大目标；顺带收敛每帧重建。
+- **U4**：SnackBar 时长对齐 1 秒判定窗口，改 floating + 淡入淡出。
+- **U5**：首帧直接渲染 `IllustStore` 快照，Hero 目标端随之在首帧存在，动画自然恢复。
+- **U6**：简介渲染为**链接可点的富文本**（`<br>` 换行、实体解码、`<a href>` 可点）。站内
+  pixiv 链接走已有内部路由（`showUserPage`、`IllustDetailPage`），站外链接需要一条出站
+  intent 能力——当前 `AndroidIntentChannel` 只有入站，没有 outbound open-url。
+- 简介入口做成**紧凑可点区块**（不占满宽度），位置不变。
+
 ## Acceptance Criteria
 
 - [ ] AC1：`DohResolver` 是 `NetworkAccessPolicy` 的默认 resolver，且有测试证明它只对 registry
@@ -95,6 +122,10 @@ archives_read_only` 不回写，改为在本任务的 `research/archived-evidenc
 - [ ] AC8：设备验证由用户亲自执行，结果回填后再决定 Phase 2。**未经实测不得宣称大陆可用。**
 - [ ] AC9：残余阻塞清单完成，6 项逐条有归属与解开条件；A/B/C 三类的处置差异写明。
       本轮不解决其中任何一项，也不得把任何一项标成已完成或不需要。
+- [ ] AC10：U1–U6 全部修复，每项有**钉住根因而非症状**的回归测试：`copyWith` 保留
+      `createDate` 且 `mergeAll` 往返不丢失；详情页首帧渲染 store 快照且 Hero 目标端存在；
+      viewer 图片按视口而非固有尺寸布局；退出提示时长等于 `RootBackCoordinator.exitWindow`；
+      简介 HTML 解码为 typed span。UI 改动按 memory 约定真机安装 + 截图留证。
 
 ## Non-Goals
 
@@ -111,3 +142,7 @@ archives_read_only` 不回写，改为在本任务的 `research/archived-evidenc
 - 境外 DoH 端点在境内的可达性时通时不通；境内合规 DoH 对 pixiv 不会返回真实结果。
 - `i.pximg.net` 的 CDN 边缘地址比 API 主机漂得快，固定兜底表会腐化。
 - 本仓库无 API 36 与 API 29 镜像，两个版本的验收都依赖用户的真实设备。
+- U2 与 U5 各自暴露一类**系统性**问题，不能只当单点缺陷修：前者是「构造器加了字段但
+  `copyWith` 没跟上」，同类漏字段在其它实体上可能已经存在；后者是「注释宣称的契约与
+  `AsyncNotifier` 的实际首帧行为不符」，同样的 `async.when(loading:)` 写法在其它 snapshot-first
+  页面（Ranking/New/Search/Profile）可能重复。修复时需顺带排查同型，不做则如实记录。

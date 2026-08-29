@@ -36,7 +36,8 @@
     "08-26-compat-network-account-migration",
     "08-26-live-widgets-updater",
     "08-26-replica-v1-integration-release",
-    "08-29-replica-v1-completion"
+    "08-29-replica-v1-completion",
+    "08-29-cn-direct-transport"
   ],
   "parent": null,
   "relatedFiles": [],

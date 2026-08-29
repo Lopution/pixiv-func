@@ -208,3 +208,26 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Status
 
 [OK] **Completed**
+
+
+## Session 9: 08-29-replica-v1-completion 实施：DoH 接线、SNI spike 重大发现、R7 六项修复
+
+**Date**: 2026-08-29
+**Task**: 08-29-replica-v1-completion 实施：DoH 接线、SNI spike 重大发现、R7 六项修复
+**Branch**: `main`
+
+### Summary
+
+完成 08-29-replica-v1-completion 主体实施：SNI spike 三项平台行为钉死（connectionFactory 明文泄漏重大发现→secureDns 阶梯补 SecureSocket.secure 包装）；tlsHandshake 可回退；DNS wire codec + DohResolver 默认接线 + 路由记忆 + 双出口共用 ladder；分层探测页 + 网络设置 + 四语言 i18n；minSdk=29 + 剪贴板 capability <33 警告；U1-U6 全部修复含同型排查（copyWith 唯一漏字段 createDate；feed 页无快照场景不为同型）。新增测试 87+ 全过，analyze clean，debug APK 已装 RMX5200（transport 22，minSdk 29 生效）。全量测试仅 environment-flaky 用例偶发（WSL loopback）。
+
+### Git Commits
+
+(No commits - planning session)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 用户真机验证 U1-U6 + 大陆分层探测报告回填；A1-A5 残余阻塞待用户

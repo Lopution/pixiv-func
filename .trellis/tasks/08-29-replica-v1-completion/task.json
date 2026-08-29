@@ -3,9 +3,9 @@
   "name": "replica-v1-completion",
   "title": "完成 Replica v1：大陆直连、Android 10 与收尾",
   "description": "统筹 Replica v1 的全部剩余工作：大陆直连 Phase 1（DoH 接线、回退分类修复、路由记忆、分层探测页）、Android 10 优雅降级落地，以及 Widgets/Updater/集成验收三条线的残余阻塞。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
-  "scope": "大陆直连 Phase 1（纯 Dart：DoH 接线、回退分类修复、路由记忆、ladder 合并、分层探测页）+ Android 10 优雅降级 + 收编 Widgets/Updater/集成验收的残余阻塞。Phase 2 的 native 省 SNI 传输仅在真机实测证明 SNI 被封后才启动。",
+  "scope": "大陆直连 Phase 1（纯 Dart：DoH 接线、回退分类修复、路由记忆、ladder 合并、分层探测页）+ Android 10 优雅降级 + 收编 Widgets/Updater/集成验收的残余阻塞。Phase 2 的 native 省 SNI 传输仅在真机实测证明 SNI 被封后才启动。 另含 R7：2026-08-29 RMX5200 真机试用报出的 6 个 UI 缺陷（含 createDate 在 copyWith 丢失、详情页 snapshot-first 首帧不可达两个系统性问题）。",
   "package": null,
   "priority": "P0",
   "creator": "Lopution",
@@ -29,7 +29,14 @@
     "lib/features/settings/settings_page.dart",
     "android/app/build.gradle.kts",
     "android/app/src/main/kotlin/io/github/lopution/pixivfunc/AccountTransferClipboardChannel.kt",
-    ".trellis/tasks/08-29-replica-v1-completion/research/residual-blockers.md"
+    ".trellis/tasks/08-29-replica-v1-completion/research/residual-blockers.md",
+    "lib/core/entity/illust_entity.dart",
+    "lib/core/entity/illust_store.dart",
+    "lib/features/illust/detail/illust_detail_page.dart",
+    "lib/features/illust/detail/illust_detail_controller.dart",
+    "lib/features/illust/viewer/image_viewer_page.dart",
+    "lib/features/home/home_page.dart",
+    "lib/features/home/recommended/recommended_illust_page.dart"
   ],
   "notes": "",
   "meta": {
