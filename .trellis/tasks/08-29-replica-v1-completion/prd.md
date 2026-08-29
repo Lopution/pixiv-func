@@ -70,8 +70,9 @@ Kotlin 侧以 OkHttp 实现省 SNI 传输：自定义 `Dns` + 清空 `SSLParamet
 - **B 类（需用户提供密钥材料）**：生产 keystore / 公钥 / 签名 manifest / 匹配 signer 均不存在，
   因此 updater 的验签成功→安装、安装拒绝、用户取消整条系统分支**无从验证**；release 仍是
   debug signing。密钥不进仓库，在到位前不用 mock 冒充验签结果。
-- **C 类（外部依赖，客户端无解）**：Live（核验当日三个 filter 均 `lives=0`）、Profile 写入官方
-  route、反向搜图 provider。保持可见 unavailable，不写 mock、不引依赖。
+- **C 类（外部依赖，客户端无解）**：Profile 写入官方 route、反向搜图 provider。保持可见
+  unavailable，不写 mock、不引依赖。Live 原属此类，2026-08-29 直接移出 Replica v1 范围——
+  受众极小而成本不可控，继续挂在清单里只会伪装成「早晚要做」。
 
 本轮**不解决任何一项**，只做归属与阻塞原因的如实记录。
 
@@ -92,7 +93,7 @@ archives_read_only` 不回写，改为在本任务的 `research/archived-evidenc
 - [ ] AC6：`flutter analyze` clean，`flutter test` 全量通过（WSL loopback 环境不稳定用例除外）。
 - [ ] AC7：归档证据失效清单完成。
 - [ ] AC8：设备验证由用户亲自执行，结果回填后再决定 Phase 2。**未经实测不得宣称大陆可用。**
-- [ ] AC9：残余阻塞清单完成，7 项逐条有归属与解开条件；A/B/C 三类的处置差异写明。
+- [ ] AC9：残余阻塞清单完成，6 项逐条有归属与解开条件；A/B/C 三类的处置差异写明。
       本轮不解决其中任何一项，也不得把任何一项标成已完成或不需要。
 
 ## Non-Goals

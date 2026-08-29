@@ -32,16 +32,23 @@ B1/B2 是同一份密钥材料的两个用途。按全局规则，密钥不进�
 
 ## C. 外部依赖，客户端侧无解
 
-这三项不是「还没做」，是**当前没有可实现的正确形态**。按 feasibility blocker 保留可见的
+这两项不是「还没做」，是**当前没有可实现的正确形态**。按 feasibility blocker 保留可见的
 unavailable 状态，不写 mock、不引依赖。
 
 | # | 项 | 来源 | 阻塞原因 | 何时重估 |
 |---|---|---|---|---|
-| C1 | Live 外部能力 | live-player / integration | 核验当日真实账号 API 三个 filter 均 `lives=0`，取不到 valid id / detail schema / HLS manifest | 有真实 live object 的那天重新核验 |
-| C2 | Profile 写入官方 route | profile-edit / integration | 没有审定过的官方写入合约 | 找到并核实官方 route 后 |
-| C3 | 反向搜图 provider | reverse-image-search / integration | 没有可接受的 provider / credential / privacy 方案 | 有符合隐私边界的方案后 |
+| C1 | Profile 写入官方 route | profile-edit / integration | 没有审定过的官方写入合约 | 找到并核实官方 route 后 |
+| C2 | 反向搜图 provider | reverse-image-search / integration | 没有可接受的 provider / credential / privacy 方案 | 有符合隐私边界的方案后 |
 
-C1 的形态是对的：无证据就不实现，好过实现一个猜出来的 schema。
+这两项的形态是对的：无证据就不实现，好过实现一个猜出来的合约。
+
+### 已移出范围：Live
+
+Live 曾是 C 类第三项（核验当日三个 filter 均 `lives=0`，取不到 valid id / detail schema /
+HLS manifest）。**2026-08-29 决定直接移出 Replica v1 范围**，不再作为待解阻塞：受众极小，
+而实现成本高且不可控——没有公开接口合约，必须先抓到真实 live object 才能确定 schema。
+继续挂在清单里会让它看起来是「早晚要做」，实际不会做。理由记在父 PRD 的 Out of Scope；
+归档叶子 `08-26-live-player` 保留为该判断的记录。
 
 ## 叶子归档核对
 
@@ -55,7 +62,7 @@ C1 的形态是对的：无证据就不实现，好过实现一个猜出来的 s
 |---|---|---|
 | `08-26-android-home-widgets` | API 35 真机 8 张截图 | A1、A3 |
 | `08-26-updater-flavors` | 四变体构建、merged manifest 权限审计、F-Droid 无安装权限（API 35 真机确认） | A1、B1 |
-| `08-26-replica-v1-integration-release` | 许可/归属修正、provenance 审计、静态审计、全量测试、四变体构建 | A1、A4、B2、C1、C2、C3 |
+| `08-26-replica-v1-integration-release` | 许可/归属修正、provenance 审计、静态审计、全量测试、四变体构建 | A1、A4、B2、C1、C2（Live 已移出范围） |
 
 这三个叶子的 `implement.md` 末尾各有一段任务关闭说明，写明 `completed` 的口径与去向；
 `task.json.notes` 同义。归档件按 `writeback_policy: archives_read_only` 不再回写。

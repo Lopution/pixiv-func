@@ -35,12 +35,12 @@
 | `ugoira-player-export` | `lib/pages/illust/ugoira_viewer/`、`lib/components/frame_gif/` | Ugoira 播放和 GIF 导出；改为有界解码 |
 | `restricted-compat-network` | `lib/app/api/web_api_client.dart`、`lib/app/platform/webview/` | 兼容路径的用户意图；固定 IP、全局证书放行和 SSL proceed 禁止复用 |
 | `secure-clipboard-account-migration` | `lib/pages/login/login.dart`、`lib/app/encrypt/encrypt.dart` | 剪贴板导入/导出入口；旧静态加密方案不复用 |
-| `live-player` | `lib/pages/live/`、`lib/pages/recommended/live/`、`lib/components/live_previewer/` | 16:9、控制层、清晰度、全屏和作者入口；接口当日核验 |
+| ~~`live-player`~~ | — | **2026-08-29 移出范围**，源码锚点不再使用 |
 | `android-home-widgets` | `android/app/src/main/kotlin/moe/xiaocao/pixiv/appwidget/`、对应 `res/layout` 与 `res/xml` | 推荐/刷新小组件；秘密不得进入普通偏好 |
 | `updater-flavors` | `lib/app/updater/updater.dart`、`android/app/src/main/AndroidManifest.xml` | GitHub 更新入口；权限改由 flavor 隔离 |
 
 ## 使用规则
 
 1. 每个叶子任务开始时再次打开其源码锚点，并把更精确的行为证据写入该任务 `research/`。
-2. OAuth、Pixiv API、反向搜图、Live、Android/WebView API 等时效性结论必须在实现开始当天核验；无法核验时保持明确 blocker。
+2. OAuth、Pixiv API、反向搜图、Android/WebView API 等时效性结论必须在实现开始当天核验；无法核验时保持明确 blocker。
 3. 固定源码决定 Replica 行为，不授权恢复 TLS 绕过、明文秘密、无界内存、固定 IP 或全局高风险权限。

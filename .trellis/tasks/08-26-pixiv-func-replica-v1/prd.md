@@ -10,7 +10,7 @@
 - 可见体验包括页面结构、导航层级、手势、按钮位置、信息密度、颜色、字号、动画、loading/toast、返回与长按行为、收藏/关注交互和页面状态恢复；Replica v1 不主动重新设计这些行为。
 - 内部实现允许现代化重写，包括 OAuth、Token 刷新、网络、状态管理、缓存、数据库、下载、Ugoira、WebView、Android 原生桥接、生命周期和安全存储。
 - 截至 2026-08-27，原 Replica 树的 27 个实现叶子已有 18 个归档：工程/icon、账号/OAuth/网络、Recommended/Detail/Bookmark、Android platform、Ranking/New/Search、User/Profile/Follow、Settings/Comments/History、Novel 与 DownloadManager；归档表示对应任务流程完成，不自动等于全部真机/真实 API/最终业务验收通过。另有 5 个独立 hardening leaves，不计入这 27 项。
-- 当前仓库已具有真实 StartupGate/AccountStore/OAuth/网络、共享实体与分页、主要内容页面、下载/MediaStore 和 Android intent 边界；原树剩余范围中 Ugoira 已进入 `in_progress`，Reverse Image、Profile edit、Compatibility network、Clipboard migration、Live、Widgets、Updater 与最终 Integration Release 共 8 个叶子仍为 `planning`。
+- 当前仓库已具有真实 StartupGate/AccountStore/OAuth/网络、共享实体与分页、主要内容页面、下载/MediaStore 和 Android intent 边界；原树剩余范围中 Ugoira 已进入 `in_progress`，Reverse Image、Profile edit、Compatibility network、Clipboard migration、Widgets、Updater 与最终 Integration Release 仍为 `planning`（Live 已于 2026-08-29 移出范围，见 Out of Scope）。
 - 仍缺少的跨功能证据和完成后发现的 hardening 缺口由开放叶子与最终集成任务承接，不通过改写 archive 记录伪装为已实现。
 - 开源审查后已创建独立 top-level `08-27-replica-v1-hardening` 及五个 owning leaves；它们不加入本父任务原有 17 个 direct children，但其证据是本父任务和最终集成的 release blocker。
 - Trellis 使用 `codex.dispatch_mode: inline`；实现和检查由主会话直接完成，不使用 subagent。
@@ -79,12 +79,11 @@
 
 ### R8. Replica 功能面
 
-- 第一条链完成后，完整覆盖 Ranking、New、Search、User/Profile、Follow、Novel、Comments、History、Settings、Downloads、Ugoira、Reverse image、Profile edit、Live、Widgets 和 Updater；实际落地按 `implement.md` 的无循环依赖顺序推进，必要基础能力可先于其消费者完成，但不得改变原版可见行为或缩减范围。
+- 第一条链完成后，完整覆盖 Ranking、New、Search、User/Profile、Follow、Novel、Comments、History、Settings、Downloads、Ugoira、Reverse image、Profile edit、Widgets 和 Updater；实际落地按 `implement.md` 的无循环依赖顺序推进，必要基础能力可先于其消费者完成，但不得改变原版可见行为或缩减范围。
 - Search 保持 fake search box、粉色反向搜图入口、两列 trending tags、Illust/Manga、Novel、User tabs、数字 ID 路由和 cancellable debounce。
 - Comments 保持头像跳转、emoji、stamp、translate、reply icon、删除本人评论和加载回复，并避免 reply ID 与 parent ID 混用。
 - Novel 使用现代详情 API 与稳定分页布局，保持水平阅读、左右 30% 点击翻页和底部阅读百分比。
 - Profile 保持 expanded/collapsed action 差异和完全折叠时才显示居中标题。
-- Live 保持 16:9 播放、单击控件、双击播放暂停、清晰度、进度、横屏全屏及作者关注区域，不新增聊天 UI。
 
 ### R9. 媒体、下载、历史与性能
 
@@ -98,7 +97,7 @@
 - 默认值保持 max downloads=3、local history=on、Pixiv history=on、preview high quality=on、theme=system。
 - 历史图片源 `210.140.92.148` 只能作为解析失败后的兜底地址，不得成为默认路由，也不得成为安全判断依据。
 - Updater 区分 GitHub 与 F-Droid flavor；F-Droid 禁用 self updater 且不请求 `REQUEST_INSTALL_PACKAGES`。
-- Replica v1 不新增 custom bookmark tags、Live 弹幕、私信、发布作品、pixivision、二维码/公钥配对，也不补做原版未完整实现的 Novel save/share。
+- Replica v1 不新增 custom bookmark tags、私信、发布作品、pixivision、二维码/公钥配对，也不补做原版未完整实现的 Novel save/share；Live 整体已移出范围。
 
 ### R11. 验证与完成声明
 
@@ -121,7 +120,7 @@
 - 多页下载与 Ugoira 使用显式 task-group、提交时设置快照、owned temporary/pending output、terminal progress flush 和确定的进程重启策略；不得留下幽灵 running task 或未归属 MediaStore pending item。
 - Ugoira archive/frame limits 必须同时约束 entry count、压缩/解压字节、重复/路径、frame count、单帧 bytes、dimensions 与 pixel budget，播放和导出仍采用滑动窗口/流式处理。
 - Widget 优先消费版本化、account-revision keyed、无秘密 render snapshot；若后台网络刷新需要 headless Flutter，必须复用同一认证/刷新栈并经 API 36 实测。Updater 必须以固定公钥验证 signed manifest，并校验 exact size、SHA-256、package 与 APK signing certificate。
-- Reverse Image 与 Live 采用 capability/feasibility gate；外部服务只剩交互式网页或 endpoint 无法证明时保持差异审批或 blocker，不以 HTML replay、fixture、mock 或 TLS 降级制造完成。
+- Reverse Image 采用 capability gate；外部服务只剩交互式网页或 endpoint 无法证明时保持差异审批或 blocker，不以 HTML replay、fixture、mock 或 TLS 降级制造完成。
 - Mainland access 采用 stable failure taxonomy 与脱敏诊断，并提供分出口、分层（系统 DNS / DoH / TCP / TLS / 真实请求）的探测页，使阻断层次可被实测定位。最终证据必须在系统 proxy/VPN 关闭且无外部代理 App 的真机上覆盖 OAuth/API/pximg/download，并按日期、运营商、IP family、Android 版本和实际 route 记录。样本不足时不得宣称大陆普遍可用。
 
 ## Acceptance Criteria
@@ -131,7 +130,7 @@
 - [ ] AC3：OAuth PKCE 在真实 Android WebView 中完成登录；verifier 一次性、授权码与会话绑定、退到后台再返回会话仍可用、第三方 IdP 跳转不被拦截，均通过测试与真机验证。
 - [ ] AC4：Pixiv 网络客户端和按账号 single-flight Token 刷新通过并发、重试上限、恶意 next URL 与失效 refresh 测试。
 - [ ] AC5：在真实账号和 Android 设备上完整走通 `Login → Recommended → Detail → Bookmark`，同一作品跨页面收藏状态一致且交互符合 beta56。
-- [ ] AC6：Ranking、New、Search、Profile/Follow、Novel、Comments、History、Settings、Downloads、Ugoira、Reverse image、Profile edit、Live、Widgets、Updater 均有对应可见行为验收和回归测试。
+- [ ] AC6：Ranking、New、Search、Profile/Follow、Novel、Comments、History、Settings、Downloads、Ugoira、Reverse image、Profile edit、Widgets、Updater 均有对应可见行为验收和回归测试。
 - [ ] AC7：API 36 edge-to-edge、predictive back、双击退出、deep links、`SEND image/*`、FileProvider、WebView 和 MediaStore 在受支持设备上验证。
 - [ ] AC8：下载、Ugoira、历史与分页在失败、取消、后台/前台、长列表和大媒体场景下无伪成功、重复回调或无界内存路径。
 - [ ] AC9：README、LICENSE/NOTICE、原作者归属、flavor 权限和发布说明与实际实现一致，能够构建经过验证的 debug 与 release 产物；发布远程版本不属于本任务自动授权范围。
@@ -142,7 +141,8 @@
 ## Out of Scope
 
 - Replica v1 之后的主动 UX 重设计或 Material 3 风格迁移。
-- custom bookmark tags、Live 弹幕、私信、发布作品、pixivision。
+- custom bookmark tags、私信、发布作品、pixivision。
+- **Live（2026-08-29 移出范围）**：包含播放器、预览入口与弹幕。原因是投入产出不成立——受众极小，而实现成本高且不可控：接口无公开合约、需当日抓真实 live object 才能确定 detail schema 与 HLS manifest，核验当日三个 filter 均返回 `lives=0`，无法在没有样本的情况下写出正确实现。归档叶子 `08-26-live-player` 保留为该判断的记录。
 - 二维码/公钥配对式账号迁移。
 - 原版未完整实现的 Novel save/share。
 - 未经单独授权的 Play Store、F-Droid、GitHub Release 发布或其他远程写入。
@@ -150,7 +150,7 @@
 
 ## Risks and Deferred Items
 
-- Pixiv OAuth、客户端身份、API、Live 与 WebView 行为会变化；相关子任务开始时必须用当前可信实现或运行时证据重新核验，不得盲抄历史常量。
+- Pixiv OAuth、客户端身份、API 与 WebView 行为会变化；相关子任务开始时必须用当前可信实现或运行时证据重新核验，不得盲抄历史常量。
 - 原版镜像 commit 是可见行为事实来源，但现代 Android、安全和性能实现以当前平台要求为准；冲突时遵循“体验冻结，内部重写”。
 - 当前仓库 `LICENSE` 实际为 GPL v3，而 README/需求要求 AGPL-3.0-only；许可证与归属修正必须在发布验收前完成并单独审查。
 - 真实账号、设备、签名材料或外部服务不可用时，对应验收保持明确未完成，不得以 mock 替代业务接受。

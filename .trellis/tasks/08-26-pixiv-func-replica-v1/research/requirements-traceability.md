@@ -23,7 +23,7 @@
 | 12 | `08-26-novel-reader` | 叶子 |
 | 13 | `08-26-downloads-ugoira-media` | 中间父任务：`download-manager-mediastore`、`ugoira-player-export` |
 | 14 | `08-26-compat-network-account-migration` | 中间父任务：`restricted-compat-network`、`secure-clipboard-account-migration` |
-| 15 | `08-26-live-widgets-updater` | 中间父任务：`live-player`、`android-home-widgets`、`updater-flavors` |
+| 15 | `08-26-live-widgets-updater` | 中间父任务：`live-player`（已移出范围）、`android-home-widgets`、`updater-flavors` |
 | 16 | `08-26-replica-v1-integration-release` | 叶子 |
 
 状态注记：截至 2026-08-27，原 Replica 树的 `08-26-ugoira-player-export` 是当前唯一 `in_progress` 实现叶子；`08-26-restricted-compat-network` 是下一个 P0 `planning` 候选，另有 8 个原树实现叶子仍为 `planning`。审查后新增的 5 个 hardening leaves 属于独立 top-level `08-27-replica-v1-hardening`，不计入本表 17 项矩阵。
@@ -61,7 +61,7 @@
 | 二十七 | 流式下载队列、并发 3、MediaStore 与进度 | PRD R7、R9 | 任务 13 |
 | 二十八 | History 单 DB 生命周期、紧凑 schema 与可见性计时 | PRD R9 | 任务 11 |
 | 二十九 | Profile header 折叠状态与 action | PRD R8 | 任务 10 |
-| 三十 | Live player 行为、当前接口核验、不新增 chat | PRD R8、风险 | 任务 15 |
+| 三十 | ~~Live player 行为~~ | **2026-08-29 移出范围** | 不再有 owning task |
 | 三十一 | 剪贴板迁移安全封装与原版 UX | PRD R3 | 任务 14 |
 | 三十二 | 原版默认设置与固定 IP 降级边界 | PRD R10 | 任务 11、13、14 |
 | 三十三 | GitHub/F-Droid updater flavor 权限 | PRD R7、R10 | 任务 15 |

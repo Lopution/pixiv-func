@@ -25,7 +25,7 @@
 | `08-26-novel-reader` | 叶子 | 当前 Novel API 与水平阅读 |
 | `08-26-downloads-ugoira-media` | 中间父任务 | `download-manager-mediastore`、`ugoira-player-export` |
 | `08-26-compat-network-account-migration` | 中间父任务 | `restricted-compat-network`、`secure-clipboard-account-migration` |
-| `08-26-live-widgets-updater` | 中间父任务 | `live-player`、`android-home-widgets`、`updater-flavors` |
+| `08-26-live-widgets-updater` | 中间父任务 | `live-player`（已移出范围）、`android-home-widgets`、`updater-flavors` |
 | `08-26-replica-v1-integration-release` | 叶子 | 全量回归、许可、release 构建与最终证据矩阵 |
 
 ## 3. Dependency-safe leaf order
@@ -57,7 +57,7 @@
 | 20 | `08-26-reverse-image-search` | 实时核验后的图片检索链路 |
 | 21 | `08-26-profile-edit` | 原版资料编辑入口与提交；复用已完成的 access policy |
 | 22 | `08-26-secure-clipboard-account-migration` | 有残余风险说明的受控账号迁移 |
-| 23 | `08-26-live-player` | 当日核验可用时的 Live 体验；否则明确 blocker |
+| 23 | ~~`08-26-live-player`~~ | **2026-08-29 移出范围**，不再实现；理由见父 PRD Out of Scope |
 | 24 | `08-26-android-home-widgets` | 无明文凭据的小组件 |
 | 25 | `08-26-updater-flavors` | GitHub/F-Droid 权限隔离 |
 | 26 | `08-26-replica-v1-integration-release` | Replica v1 最终完成判定 |
@@ -81,7 +81,7 @@
 ### Milestone 2 — Replica breadth
 
 - 当前 Ugoira 工作边界完成后，先完成 `restricted-compat-network`：统一 API/OAuth/image/download/WebView 的 strict route，并建立大陆无外部代理真实网络矩阵；Q1 已允许该 App 内部范围，但仍需叶子自身 start approval。
-- 随后按上表依赖顺序完成 Reverse Image、Profile edit、clipboard 和 late-parity 功能；Profile/Live/Widget 复用同一 access policy，不自行写 host/proxy fallback。
+- 随后按上表依赖顺序完成 Reverse Image、Profile edit、clipboard 和 late-parity 功能；Profile/Widget 复用同一 access policy，不自行写 host/proxy fallback。
 - 每个功能先核对 beta56 可见行为，再建立现代内部实现和聚焦测试。
 - Gate：PRD R8–R10 的每项功能都有实现证据、自动化回归和必要的设备/API 验收；AC12 按 transport 出口记录，样本不足时不宣称大陆普遍可用。
 
@@ -137,7 +137,7 @@ git diff --check
 ## 7. Research checkpoints
 
 - 每个可见功能开始前，读取 beta56 对应源码并把关键 file/line 或截图证据写入该子任务 `research/`。
-- OAuth client identity、Pixiv API、Live endpoint、Android/WebView API 等时效性事实在对应子任务中从当前可信主源重新核验。
+- OAuth client identity、Pixiv API、Android/WebView API 等时效性事实在对应子任务中从当前可信主源重新核验。
 - 大陆运营商路径与 Pixiv 主机地址在实现开始时做当日实测；省 SNI 是否仍然有效必须以探测页结果为准，不能由设计推导。
 - 研究结论只能决定内部实现细节；任何改变 Replica 可见体验的发现必须回到父 PRD 并重新走用户审阅。
 - 开放叶子开始时同时读取 `../08-27-open-source-pixiv-app-plan-audit/research/source-evidence.md` 中自己的采用/拒绝项；所有外部链接固定到 commit，禁止把第三方 client secret、固定 IP 或 current branch 当事实源。
@@ -163,7 +163,7 @@ git diff --check
 | Mutation ownership | Bookmark、Follow、Comments、Profile edit | account owner、dedupe/superseded revision、429 分类、切换/退出取消；无后台隐式重放 |
 | Typed Novel markup | Novel | newpage/chapter/ruby/jump/image/unknown fixtures、长文 chunk/budget、取消后不提交 |
 | Media job/recovery | Download、Ugoira | group exactly-once、submission snapshot、owned cleanup、restart/pending policy、archive/frame/pixel limits |
-| External capability | Reverse Image、Live | 观测日期、endpoint/provider capability、真实失败；WebView 差异需审批，Live 无证据不引依赖 |
+| External capability | Reverse Image | 观测日期、provider capability、真实失败；WebView 差异需审批 |
 | Android background | Widgets | versioned secret-free snapshot、headless proof 或 blocker、unique work、IPC budget、account invalid cleanup |
 | Update trust | Updater | signed manifest fail-closed、size/hash/package/signer、single-flight、F-Droid compile-time absence |
 | Release evidence | Integration | 17 项审查矩阵逐项关闭；自动化、模拟器、真机、真实 API 分层记录 |
