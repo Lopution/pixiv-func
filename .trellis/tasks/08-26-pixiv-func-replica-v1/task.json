@@ -2,10 +2,10 @@
   "id": "pixiv-func-replica-v1",
   "name": "pixiv-func-replica-v1",
   "title": "完成 Pixiv Func Replica v1 全量复刻",
-  "description": "以现代 Flutter/Android 内部实现原样复刻 Pixiv Func beta56 的 Replica v1 用户体验，并按可独立验收的阶段任务推进。",
+  "description": "以现代 Flutter/Android 内部实现原样复刻 Pixiv Func beta56，并让大陆用户无需外部代理/VPN尽可能使用Pixiv。",
   "status": "planning",
   "dev_type": null,
-  "scope": "Pixiv Func Replica v1 full parity roadmap and integration acceptance",
+  "scope": "Pixiv Func Replica v1 full parity, mainland no-external-proxy access roadmap, and integration acceptance",
   "package": null,
   "priority": "P0",
   "creator": "Lopution",
@@ -35,7 +35,8 @@
     "08-26-downloads-ugoira-media",
     "08-26-compat-network-account-migration",
     "08-26-live-widgets-updater",
-    "08-26-replica-v1-integration-release"
+    "08-26-replica-v1-integration-release",
+    "08-29-replica-v1-completion"
   ],
   "parent": null,
   "relatedFiles": [],
@@ -43,11 +44,17 @@
   "meta": {
     "reference_repo": "svenfuss/pixiv_func_mobile",
     "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
-    "dispatch_mode": "inline",
     "role": "roadmap_parent",
     "planning_snapshot_date": "2026-08-26",
+    "last_plan_audit_date": "2026-08-27",
     "time_sensitive_recheck_by": "2026-08-28",
     "planned_new_tasks": "32",
-    "implementation_leaf_count_including_scaffold": "27"
+    "implementation_leaf_count_including_scaffold": "27",
+    "archived_implementation_leaf_count": "18",
+    "planning_implementation_leaf_count": "8",
+    "in_progress_implementation_leaf_count": "1",
+    "open_source_audit_task": "08-27-open-source-pixiv-app-plan-audit",
+    "hardening_parent_task": "08-27-replica-v1-hardening",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn"
   }
 }

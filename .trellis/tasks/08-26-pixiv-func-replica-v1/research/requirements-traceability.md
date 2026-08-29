@@ -8,7 +8,7 @@
 
 | 编号 | 实际任务目录 | 类型或叶子 |
 |---|---|---|
-| 0 | `08-26-flutter-android-scaffold` | 叶子；当前唯一 `in_progress` |
+| 0 | `08-26-flutter-android-scaffold` | 已归档叶子 |
 | 1 | `08-26-restore-icon-font` | 叶子 |
 | 2 | `08-26-secure-account-store` | 叶子 |
 | 3 | `08-26-oauth-pkce-webview-login` | 叶子 |
@@ -25,6 +25,8 @@
 | 14 | `08-26-compat-network-account-migration` | 中间父任务：`restricted-compat-network`、`secure-clipboard-account-migration` |
 | 15 | `08-26-live-widgets-updater` | 中间父任务：`live-player`、`android-home-widgets`、`updater-flavors` |
 | 16 | `08-26-replica-v1-integration-release` | 叶子 |
+
+状态注记：截至 2026-08-27，原 Replica 树的 `08-26-ugoira-player-export` 是当前唯一 `in_progress` 实现叶子；`08-26-restricted-compat-network` 是下一个 P0 `planning` 候选，另有 8 个原树实现叶子仍为 `planning`。审查后新增的 5 个 hardening leaves 属于独立 top-level `08-27-replica-v1-hardening`，不计入本表 17 项矩阵。
 
 ## Traceability
 

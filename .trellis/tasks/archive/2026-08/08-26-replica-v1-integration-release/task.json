@@ -1,0 +1,33 @@
+{
+  "id": "replica-v1-integration-release",
+  "name": "replica-v1-integration-release",
+  "title": "完成 Replica v1 集成与发布验收",
+  "description": "执行全量回归、真机与真实账号验收、许可归属、release 构建和最终文档。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "在所有功能叶子任务完成后，对 Replica v1 做跨功能、真机、安全、性能、许可和可发布构建验收，形成诚实的完成结论。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "实现范围关闭；未完成的验收与阻塞已转入 08-29-replica-v1-completion R5。completed 指任务关闭，不代表功能已验收。",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "leaf",
+    "depends_on": "08-26-flutter-android-scaffold,08-26-restore-icon-font,08-26-secure-account-store,08-26-oauth-pkce-webview-login,08-26-pixiv-network-token-refresh,08-26-android-platform-parity,08-26-recommended-feed-paging,08-26-download-manager-mediastore,08-26-illust-detail-viewer,08-26-bookmark-state-sync,08-26-ranking-feed,08-26-settings-parity,08-26-user-profile-follow,08-26-novel-reader,08-26-new-content-feeds,08-26-search-catalog,08-26-comments-replies,08-26-history-persistence,08-26-ugoira-player-export,08-26-reverse-image-search,08-26-profile-edit,08-26-restricted-compat-network,08-26-secure-clipboard-account-migration,08-26-live-player,08-26-android-home-widgets,08-26-updater-flavors,08-27-feed-generation-commit-hardening,08-27-mutation-ownership-hardening,08-27-novel-markup-hardening,08-27-media-job-recovery-hardening,08-27-android-platform-boundary-hardening",
+    "execution_order": "26",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn",
+    "hardening_parent_task": "08-27-replica-v1-hardening"
+  }
+}

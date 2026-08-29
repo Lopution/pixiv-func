@@ -1,0 +1,34 @@
+{
+  "id": "downloads-ugoira-media",
+  "name": "downloads-ugoira-media",
+  "title": "实现下载、Ugoira 与媒体流水线",
+  "description": "实现流式下载队列、MediaStore、Ugoira 有界解码和 GIF 保存。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "作为中间父任务，协调流式DownloadManager和Ugoira播放/导出两个叶子任务，统一媒体网络、磁盘、MediaStore和生命周期边界。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-download-manager-mediastore",
+    "08-26-ugoira-player-export"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "intermediate_parent",
+    "depends_on": "08-26-pixiv-network-token-refresh,08-26-android-platform-parity",
+    "coordination_after_children": "true"
+  }
+}

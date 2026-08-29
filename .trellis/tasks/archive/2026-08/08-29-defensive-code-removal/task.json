@@ -1,0 +1,38 @@
+{
+  "id": "defensive-code-removal",
+  "name": "defensive-code-removal",
+  "title": "移除过度防御性代码",
+  "description": "删除为假想需求建设、反过来支配真实需求的防御性基础设施：登录导航拒绝、networkRevision 第三重闸门、剪贴板重放协议、next_url 参数白名单，以及一批无消费者的死基础设施。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "只删除非必要的防御性代码与其死基础设施，不新增功能。保留真实边界：PKCE 会话、服务端凭据校验、下载跳转同源、Pixiv API 单一源站。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-29",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [
+    "lib/features/login/login_webview_page.dart",
+    "lib/core/auth/pkce.dart",
+    "lib/core/auth/oauth_service.dart",
+    "lib/core/auth/account_transfer.dart",
+    "lib/core/network/next_page_parser.dart",
+    "lib/core/paging/feed_request_context.dart",
+    "lib/core/mutation/mutation_boundary.dart",
+    "lib/core/network/compat/network_policy.dart"
+  ],
+  "notes": "",
+  "meta": {
+    "role": "leaf",
+    "verification": "flutter analyze clean; flutter test 全量通过（2 个 WSL loopback 环境不稳定用例除外）; MuMu API 35 真机安装截图见 research/screenshots/"
+  }
+}

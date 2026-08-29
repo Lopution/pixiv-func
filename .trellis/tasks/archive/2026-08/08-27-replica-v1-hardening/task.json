@@ -1,0 +1,43 @@
+{
+  "id": "replica-v1-hardening",
+  "name": "replica-v1-hardening",
+  "title": "Replica v1 归档补强与集成修复",
+  "description": "承接开源审查后对已归档 Replica v1 任务发现的可执行补强，保持归档历史只读，并按可独立验收的叶子任务修复跨代提交、写操作归属、Novel 标记、媒体恢复和 Android 平台边界。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "Replica v1 archived-task hardening parent and integration coordination",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-27",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-27-feed-generation-commit-hardening",
+    "08-27-mutation-ownership-hardening",
+    "08-27-novel-markup-hardening",
+    "08-27-media-job-recovery-hardening",
+    "08-27-android-platform-boundary-hardening"
+  ],
+  "parent": null,
+  "relatedFiles": [
+    ".trellis/tasks/08-26-pixiv-func-replica-v1/prd.md",
+    ".trellis/tasks/08-26-pixiv-func-replica-v1/implement.md",
+    ".trellis/tasks/08-27-open-source-pixiv-app-plan-audit/research/source-evidence.md"
+  ],
+  "notes": "",
+  "meta": {
+    "role": "hardening_parent",
+    "reference_task": "08-26-pixiv-func-replica-v1",
+    "source_audit": "08-27-open-source-pixiv-app-plan-audit",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn",
+    "writeback_policy": "archives_read_only",
+    "blocks_task": "08-26-replica-v1-integration-release"
+  }
+}

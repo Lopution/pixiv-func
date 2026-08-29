@@ -1,0 +1,31 @@
+{
+  "id": "updater-flavors",
+  "name": "updater-flavors",
+  "title": "实现 GitHub 与 F-Droid Updater flavors",
+  "description": "隔离 GitHub self-updater 与 F-Droid 无安装权限构建，并实现原版更新体验。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "复刻About中的检查更新体验，同时通过flavor彻底隔离GitHub自更新与F-Droid无安装权限构建。",
+  "package": null,
+  "priority": "P2",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "实现范围关闭；未完成的验收与阻塞已转入 08-29-replica-v1-completion R5。completed 指任务关闭，不代表功能已验收。",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "leaf",
+    "depends_on": "08-26-download-manager-mediastore,08-26-android-platform-parity",
+    "execution_order": "25"
+  }
+}

@@ -2,15 +2,15 @@
 
 ## 1. Parent-task rule
 
-本目录是父任务，只负责完整范围、依赖、任务地图和最终验收，不直接运行 `task.py start` 承载全部实现。全部后续任务已创建并完成 PRD/design/implement 规划；实现时一次只启动一个依赖已满足且再次获批的叶子任务。仓库保持 Codex inline 模式，不派发 subagent。
+本目录是父任务，只负责完整范围、依赖、任务地图和最终验收，不直接运行 `task.py start` 承载全部实现。原 Replica 树的 27 个实现叶子已创建；截至 2026-08-27，其中 18 个已归档、`08-26-ugoira-player-export` 处于 `in_progress`、8 个仍在 planning。另有 5 个独立 hardening leaves 由 `08-27-replica-v1-hardening` 协调。实现时一次只启动一个依赖已满足且再次获批的叶子任务。仓库保持 Codex inline 模式，不派发 subagent。
 
 ## 2. Actual task hierarchy
 
-父任务当前有 17 个直接子任务。其中 6 个是只协调范围和验收的中间父任务，不能承载产品实现；总计 27 个实现叶子（含正在收尾的 scaffold）。
+父任务当前有 17 个直接子任务。其中 6 个是只协调范围和验收的中间父任务，不能承载产品实现；原树总计 27 个实现叶子，补强树另有 5 个实现叶子。任务归档不替代 Milestone 所要求的设备/API证据。
 
 | 直接子任务 | 类型 | 叶子范围 |
 |---|---|---|
-| `08-26-flutter-android-scaffold` | 已在途叶子 | Flutter 3.47 / API 36 工程基线收尾 |
+| `08-26-flutter-android-scaffold` | 已归档叶子 | Flutter 3.47 / API 36 工程基线 |
 | `08-26-restore-icon-font` | 叶子 | 原版 `iconFont` 资产与注册 |
 | `08-26-secure-account-store` | 叶子 | 账号模型、安全凭据、多账号和 StartupGate |
 | `08-26-oauth-pkce-webview-login` | 叶子 | 一次性 PKCE 与严格 WebView 登录 |
@@ -53,9 +53,9 @@
 | 16 | `08-26-comments-replies` | 评论、回复和用户跳转 |
 | 17 | `08-26-history-persistence` | 作品/小说历史与生命周期记录 |
 | 18 | `08-26-ugoira-player-export` | 有界 Ugoira 播放与 GIF 导出 |
-| 19 | `08-26-reverse-image-search` | 实时核验后的图片检索链路 |
-| 20 | `08-26-profile-edit` | 原版资料编辑入口与提交 |
-| 21 | `08-26-restricted-compat-network` | 可选、受限的 compatibility route |
+| 19 | `08-26-restricted-compat-network` | 大陆无外部代理 P0：shared direct-first/strict compatibility transport 与真实网络 Gate |
+| 20 | `08-26-reverse-image-search` | 实时核验后的图片检索链路 |
+| 21 | `08-26-profile-edit` | 原版资料编辑入口与提交；复用已完成的 access policy |
 | 22 | `08-26-secure-clipboard-account-migration` | 有残余风险说明的受控账号迁移 |
 | 23 | `08-26-live-player` | 当日核验可用时的 Live 体验；否则明确 blocker |
 | 24 | `08-26-android-home-widgets` | 无明文凭据的小组件 |
@@ -80,9 +80,10 @@
 
 ### Milestone 2 — Replica breadth
 
-- 按上表依赖顺序完成 discovery、profile/social、comments/history/settings、novel、media、compatibility 和 late-parity 功能。
+- 当前 Ugoira 工作边界完成后，先完成 `restricted-compat-network`：统一 API/OAuth/image/download/WebView 的 strict route，并建立大陆无外部代理真实网络矩阵；Q1 已允许该 App 内部范围，但仍需叶子自身 start approval。
+- 随后按上表依赖顺序完成 Reverse Image、Profile edit、clipboard 和 late-parity 功能；Profile/Live/Widget 复用同一 access policy，不自行写 host/proxy fallback。
 - 每个功能先核对 beta56 可见行为，再建立现代内部实现和聚焦测试。
-- Gate：PRD R8–R10 的每项功能都有实现证据、自动化回归和必要的设备/API 验收。
+- Gate：PRD R8–R10 的每项功能都有实现证据、自动化回归和必要的设备/API 验收；AC12 按 transport 出口记录，样本不足时不宣称大陆普遍可用。
 
 ### Milestone 3 — Integrated Replica v1
 
@@ -131,14 +132,43 @@ git diff --check
 - Bookmark：短按 public、长按 public/private、pending spinner、失败恢复、同 ID 跨页面同步。
 - Viewer：多页、`n/total`、`0.9x–6.0x` zoom。
 - Android：API 36、predictive back、约 1 秒双击退出、deep links、`SEND image/*`、FileProvider 和 MediaStore。
+- Mainland access：system proxy/VPN off、无外部代理 App；OAuth/API/pximg/download/WebView 分出口；direct-first/failure taxonomy、original-host TLS、network switch、移动/联通/电信样本范围。
 
 ## 7. Research checkpoints
 
 - 每个可见功能开始前，读取 beta56 对应源码并把关键 file/line 或截图证据写入该子任务 `research/`。
 - OAuth client identity、Pixiv API、Live endpoint、Android/WebView API 等时效性事实在对应子任务中从当前可信主源重新核验。
+- 大陆运营商路径与 Pixiv 主机地址在实现开始时做当日实测；省 SNI 是否仍然有效必须以探测页结果为准，不能由设计推导。
 - 研究结论只能决定内部实现细节；任何改变 Replica 可见体验的发现必须回到父 PRD 并重新走用户审阅。
+- 开放叶子开始时同时读取 `../08-27-open-source-pixiv-app-plan-audit/research/source-evidence.md` 中自己的采用/拒绝项；所有外部链接固定到 commit，禁止把第三方 client secret、固定 IP 或 current branch 当事实源。
 
-## 8. Risky files and rollback points
+## 8. Open-source audit hardening gates
+
+这些 Gate 不改变 17 个直接子任务的现有树，也不把已归档任务改写为“当时已完成”。已归档实现暴露的缺口由独立的 top-level `08-27-replica-v1-hardening` 承接；该父任务只协调，不计入原 17 项，也不直接承载产品实现。五个 hardening leaf 均需单独审批后启动，完成证据再由最终集成任务消费。
+
+当前补强任务树：
+
+- `08-27-feed-generation-commit-hardening`：Recommended/Ranking/New/Search/Profile 的 generation、entity 和 cursor commit。
+- `08-27-mutation-ownership-hardening`：Bookmark/Follow/Comments/Profile mutation 的 account/revision、dedupe、429 和取消。
+- `08-27-novel-markup-hardening`：typed Novel markup、unknown preservation、长文 chunk/budget 和取消。
+- `08-27-media-job-recovery-hardening`：Download/Ugoira group、submission snapshot、restart、pending cleanup 和资源上限；等待当前 Ugoira 叶子完成。
+- `08-27-android-platform-boundary-hardening`：intent、FileProvider、MediaStore 和生命周期。
+
+这些叶子阻塞 `08-26-replica-v1-integration-release` 的对应 hardening matrix，但不替代原有功能任务或其归档记录。
+
+| Gate | 适用任务 | 必须证据 |
+|---|---|---|
+| Mainland no-external-proxy access | Compatibility、OAuth/API、Download/Ugoira、Profile、Widgets、Integration | exact-host shared transport、direct-first、failure taxonomy、DoH + original-host TLS、分层探测页、无外部代理真机矩阵；省 SNI 需自验证链与 SAN，固定 IP 仅兜底，禁止关证书校验/改写 Host/第三方反代 |
+| Feed generation commit | Recommended、Ranking、New、Search、Profile | refresh-wins、旧代响应不 merge entity/cursor、账号/筛选隔离、同 ID 重排/删除/新增 |
+| Mutation ownership | Bookmark、Follow、Comments、Profile edit | account owner、dedupe/superseded revision、429 分类、切换/退出取消；无后台隐式重放 |
+| Typed Novel markup | Novel | newpage/chapter/ruby/jump/image/unknown fixtures、长文 chunk/budget、取消后不提交 |
+| Media job/recovery | Download、Ugoira | group exactly-once、submission snapshot、owned cleanup、restart/pending policy、archive/frame/pixel limits |
+| External capability | Reverse Image、Live | 观测日期、endpoint/provider capability、真实失败；WebView 差异需审批，Live 无证据不引依赖 |
+| Android background | Widgets | versioned secret-free snapshot、headless proof 或 blocker、unique work、IPC budget、account invalid cleanup |
+| Update trust | Updater | signed manifest fail-closed、size/hash/package/signer、single-flight、F-Droid compile-time absence |
+| Release evidence | Integration | 17 项审查矩阵逐项关闭；自动化、模拟器、真机、真实 API 分层记录 |
+
+## 9. Risky files and rollback points
 
 - `pubspec.yaml`、`pubspec.lock`：插件引入按子任务最小化，锁文件随同验证。
 - `android/app/src/main/AndroidManifest.xml`、Gradle/flavor 配置：权限与 intent 分阶段添加，检查 merged manifest。
@@ -146,8 +176,8 @@ git diff --check
 - navigation、StartupGate、Home tab state：保持现有 shell 与引导状态，不跨子任务批量重写。
 - 每个子任务独立提交；不得 reset、force push、重写历史或清理无关未跟踪文件。
 
-## 9. Start gate
+## 10. Start gate
 
 - 本父任务 `prd.md`、`design.md`、`implement.md` 已完成后，只进入用户审阅，不启动父任务。
-- 用户批准本规划后，先完成现有 scaffold 子任务的 spec/commit/archive 收尾；随后单独请求并取得 `08-26-restore-icon-font` 的 start 批准。其余任务保持 `planning`。
+- 本次开源审查规划与 Q1 决议不自动启动产品实现；当前 `08-26-ugoira-player-export` 已是独立在途工作，完成其边界后，下一个 planning 候选改为 P0 `08-26-restricted-compat-network`，仍需自己的 final planning review 与明确 start 批准。
 - 如果父任务范围、功能边界或验收条件发生实质变化，必须更新三份产物并重新取得批准。

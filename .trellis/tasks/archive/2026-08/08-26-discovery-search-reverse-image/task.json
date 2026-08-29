@@ -1,0 +1,36 @@
+{
+  "id": "discovery-search-reverse-image",
+  "name": "discovery-search-reverse-image",
+  "title": "复刻发现、搜索与反向搜图",
+  "description": "实现 Ranking、New、Search、trending、过滤、自动完成和反向搜图。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "作为中间父任务，协调 Ranking、New、Search 和 Reverse Image 四个独立功能，使它们复用已验证的实体、分页、收藏和 Android 输入边界。",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-ranking-feed",
+    "08-26-new-content-feeds",
+    "08-26-search-catalog",
+    "08-26-reverse-image-search"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "intermediate_parent",
+    "depends_on": "08-26-bookmark-state-sync,08-26-android-platform-parity",
+    "coordination_after_children": "true"
+  }
+}

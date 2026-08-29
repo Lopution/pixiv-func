@@ -1,0 +1,36 @@
+{
+  "id": "live-widgets-updater",
+  "name": "live-widgets-updater",
+  "title": "复刻 Live、Widgets 与 Updater",
+  "description": "实现 Live 播放体验、Android Widgets 和 GitHub/F-Droid updater 边界。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "作为中间父任务，协调Live播放器、Android Home Widgets和Updater flavors三个高时效叶子任务，并隔离它们的网络、后台和权限风险。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-live-player",
+    "08-26-android-home-widgets",
+    "08-26-updater-flavors"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "intermediate_parent",
+    "depends_on": "08-26-android-platform-parity,08-26-user-profile-follow,08-26-download-manager-mediastore,08-26-pixiv-network-token-refresh,08-26-restricted-compat-network",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn",
+    "coordination_after_children": "true"
+  }
+}

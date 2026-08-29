@@ -1,0 +1,35 @@
+{
+  "id": "compat-network-account-migration",
+  "name": "compat-network-account-migration",
+  "title": "实现兼容网络与安全账号迁移",
+  "description": "协调大陆无外部代理的 strict compatibility transport 与安全剪贴板账号迁移。",
+  "status": "completed",
+  "dev_type": null,
+  "scope": "协调大陆无外部代理 P0 网络能力和安全剪贴板迁移，保持严格TLS与账号存储。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-26",
+  "completedAt": "2026-08-29",
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "08-26-restricted-compat-network",
+    "08-26-secure-clipboard-account-migration"
+  ],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "reference_commit": "c62b18ccb92a64fedde81c8d5a2bc95cfc8f5989",
+    "role": "intermediate_parent",
+    "depends_on": "08-26-pixiv-network-token-refresh,08-26-oauth-pkce-webview-login,08-26-secure-account-store,08-26-android-platform-parity",
+    "coordination_after_children": "true",
+    "product_goal": "mainland_access_without_external_proxy_or_vpn"
+  }
+}

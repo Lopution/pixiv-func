@@ -1,0 +1,41 @@
+{
+  "id": "replica-v1-completion",
+  "name": "replica-v1-completion",
+  "title": "完成 Replica v1：大陆直连、Android 10 与收尾",
+  "description": "统筹 Replica v1 的全部剩余工作：大陆直连 Phase 1（DoH 接线、回退分类修复、路由记忆、分层探测页）、Android 10 优雅降级落地，以及 Widgets/Updater/集成验收三条线的残余阻塞。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "大陆直连 Phase 1（纯 Dart：DoH 接线、回退分类修复、路由记忆、ladder 合并、分层探测页）+ Android 10 优雅降级 + 收编 Widgets/Updater/集成验收的残余阻塞。Phase 2 的 native 省 SNI 传输仅在真机实测证明 SNI 被封后才启动。",
+  "package": null,
+  "priority": "P0",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-08-29",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [],
+  "parent": "08-26-pixiv-func-replica-v1",
+  "relatedFiles": [
+    "lib/core/network/compat/network_contracts.dart",
+    "lib/core/network/compat/network_policy.dart",
+    "lib/core/network/compat/secure_resolver.dart",
+    "lib/core/network/compat/strict_http_client.dart",
+    "lib/core/network/compat/policy_download_transport.dart",
+    "lib/features/settings/settings_page.dart",
+    "android/app/build.gradle.kts",
+    "android/app/src/main/kotlin/io/github/lopution/pixivfunc/AccountTransferClipboardChannel.kt",
+    ".trellis/tasks/08-29-replica-v1-completion/research/residual-blockers.md"
+  ],
+  "notes": "",
+  "meta": {
+    "role": "leaf",
+    "supersedes": "08-26-android-home-widgets,08-26-updater-flavors,08-26-replica-v1-integration-release",
+    "device_verification": "user_owned",
+    "writeback_policy": "archives_read_only"
+  }
+}
