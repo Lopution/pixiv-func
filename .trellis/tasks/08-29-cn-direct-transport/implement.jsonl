@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/index.md", "reason": "网络层与错误处理的后端约定入口"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "传输失败分类与降级必须遵循既有错误约定，不得吞错"}
+{"file": ".trellis/tasks/08-29-cn-direct-transport/research/third-party-clients-survey.md", "reason": "ECH/SNI/DNS 策略的事实依据与三家客户端实现细节"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "改动横跨 Dart 策略层 / Rust 传输层 / Android WebView 三层"}

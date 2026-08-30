@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "检查传输层与策略层的质量约定"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "验证降级路径没有静默失败或隐藏 mock"}
+{"file": ".trellis/tasks/08-29-cn-direct-transport/research/third-party-clients-survey.md", "reason": "核对实现与调研结论是否一致（尤其证书校验红线）"}
