@@ -252,3 +252,24 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Status
 
 [OK] **Completed**
+
+
+## Session 11: 修复移动端 UI 动画与个人页问题
+
+**Date**: 2026-08-31
+**Task**: 修复移动端 UI 动画与个人页问题
+**Branch**: `main`
+
+### Summary
+
+按作用域隔离作品 Hero 并传入列表快照，使详情首帧同步渲染；简介默认显示；彻底移除个人页设置入口；补充回归测试与 frontend spec。相关分析、聚焦测试和 github debug APK 通过；全量测试有两个既有 loopback 超时，当前无连接设备未做设备复测。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `39181c2` | (see git log) |
+
+### Status
+
+[OK] **Completed**
