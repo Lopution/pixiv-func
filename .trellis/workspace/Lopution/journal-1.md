@@ -231,3 +231,24 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Next Steps
 
 - 用户真机验证 U1-U6 + 大陆分层探测报告回填；A1-A5 残余阻塞待用户
+
+
+## Session 10: 修复 Pixiv 默认 ECH 网络路径
+
+**Date**: 2026-08-31
+**Task**: 修复 Pixiv 默认 ECH 网络路径
+**Branch**: `main`
+
+### Summary
+
+完成 rhttp ECH 传输、Dart 路由阶梯、DoH HTTPS RR 解析、下载与 WebView 登录拦截的质量修复；移除依赖本机 /tmp/ech65.out 的不可复现测试入口，补充仓库 fixture 约束。flutter analyze、串行全量 flutter test、Rust cargo check/test、Android github debug APK 构建、任务校验和 git diff --check 均通过；尚未进行物理真机或真实境内网络验收。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9c8a44a` | (see git log) |
+
+### Status
+
+[OK] **Completed**
