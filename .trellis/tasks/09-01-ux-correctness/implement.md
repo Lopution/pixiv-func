@@ -124,23 +124,31 @@ flutter build apk --debug --flavor github
 > 不得用 `dragDetails` 过滤」正是惯性唤出与指示器残留的成因。本阶段要**同时改代码和
 > 改 spec**，不是让实现回到 spec。
 
-- [ ] **先做最简方案**：`lib/app/pull_to_refresh.dart` 换成标准 `RefreshIndicator`
+- [x] **先做最简方案**：`lib/app/pull_to_refresh.dart` 换成标准 `RefreshIndicator`
       （非 `noSpinner`），用 `color` / `backgroundColor` / `strokeWidth` / `displacement`
       做主题化，采用框架自带指示器。
       已核实框架**没有**暴露连续刷新进度的公开 API（`RefreshIndicatorStatus` 是离散枚举），
       所以「用框架进度驱动自定义图标」这条路不成立 —— 不要尝试，见 `design.md` 5.3。
-- [ ] 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
+      实际用了 `color` / `backgroundColor` / `strokeWidth` 三项；`displacement` 保持框架
+      默认 40，没有理由就不写一个无解释的字面量。整个 wrapper 从 236 行降到 33 行。
+- [x] 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
       `_indicatorOffset`、`_viewportDimension`、`_progress`、`_dismissController`、
       `_buildIndicator`、外层 `Stack` 及其辅助方法。
-- [ ] `_handleRefresh` 直接透传 `widget.onRefresh`，删除用 `_dragOffset` 否决框架刷新
+      `StatefulWidget` 一并降为 `StatelessWidget`（已无任何状态）。
+- [x] `_handleRefresh` 直接透传 `widget.onRefresh`，删除用 `_dragOffset` 否决框架刷新
       决定的分支（line 168-172）。阈值判定收敛为框架唯一持有。
-- [ ] **换完先跑真机验收**（见下方五个手势场景）。框架标准实现原本就跟随反向拖拽回落
+- [x] **换完先跑真机验收**（见下方五个手势场景）。框架标准实现原本就跟随反向拖拽回落
       并在拖拽结束后收起指示器，很可能直接全部通过。
-- [ ] 仅当某条验收确实不通过时，才讨论自定义外观 —— 届时只能用离散 `onStatusChange`
-      （做得到淡入淡出，**做不到跟手连续位移**），并重新评估该视觉细节是否值得。
-      **任何情况下都不允许重新引入 scroll-notification 状态机**；
-      若某个视觉诉求只能靠它实现，放弃该视觉诉求。取舍结果写回本文件与 `design.md`。
-- [ ] **修订 spec**：`.trellis/spec/frontend/component-guidelines.md`。
+      真机验收按用户 2026-09-01 的决定推迟到整个 parent task 完成后统一做；
+      本阶段先用一组探针测试在 widget 层核实了框架实际行为（见下条）。
+- [x] 仅当某条验收确实不通过时，才讨论自定义外观 —— 未触发，不需要自定义外观。
+      **探针实测结论**（Flutter 3.47 + `ClampingScrollPhysics`，四条契约全部成立）：
+      下拉期间 `pixels` 恒为 0（纯 overscroll），指示器随手指线性下移；反向回滑时
+      指示器跟随回落，下限停在满程的 2/3（框架 `_kDragSizeFactorLimit` 的 armed 地板），
+      **不会中途消失**；已 armed 后小幅回滑（-20）释放仍刷新，大幅回滑（-320）释放
+      取消且不调 `onRefresh`；指针抬起后的 ballistic overscroll 完全不唤出指示器。
+      所以「阈值判定只有一处」与用户报告的两个缺陷是同一件事的两面。
+- [x] **修订 spec**：`.trellis/spec/frontend/component-guidelines.md`。
       改法已在 `design.md` 5.1.1 定稿，**直接照抄那五段**，不要现场重新拟措辞：
       - (1) 第 3 节 `PullToRefresh` 整条替换为纯行为契约 + 「阈值判定只有一处」硬约束
         （含两条新补的契约：指针抬起后的运动不得开始下拉；每次下拉结束指示器必须隐藏）。
@@ -151,15 +159,20 @@ flutter build apk --debug --flavor github
         一并拆出为独立小节 `## Shared Pull-to-Refresh Contract`；
         *Artwork Detail Transition Contract* 只保留 Hero / 预览 / 头像相关内容。
       逐条对照 5.1 的判定表，不要整节删除。
-- [ ] 重写 `test/pull_to_refresh_test.dart` 中
+      五段全部照抄落地。落地前用探针逐条核对过：新写的四条行为契约与框架实测行为一致，
+      没有把一条做不到的承诺写进 spec。
+- [x] 重写 `test/pull_to_refresh_test.dart` 中
       `reverse pull follows the finger before dismissing`：保留意图，按新实现改写；
       若上一条取舍被触发，按新的真实行为改写用例，不得为让它变绿而保留旧状态机。
-- [ ] 保留 `a released armed pull still refreshes once`。
-- [ ] 新增：反向回滑至阈值以下并释放 → 不触发刷新且指示器归零。
-- [ ] 新增：指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
-- [ ] 全量回归：`flutter test`（下拉刷新是共享基建，必须跑全量而非单文件）。
-- [ ] `flutter analyze` 通过。
-- [ ] 把五个手势场景写进交付说明，交用户真机验证（U1 的真实复现路径）：
+- [x] 保留 `a released armed pull still refreshes once`（改名并补上终态断言）。
+- [x] 新增：反向回滑至阈值以下并释放 → 不触发刷新且指示器归零。
+- [x] 新增：指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
+      该用例额外断言「确实产生了 `dragDetails == null` 的 overscroll」且列表最终停在
+      `pixels == 0`，否则甩动没够到顶边时用例会空过、什么都没证明。
+- [x] 全量回归：`flutter test`（下拉刷新是共享基建，必须跑全量而非单文件）。
+      538 tests all passed，本次没有出现 WSL loopback 噪声。
+- [x] `flutter analyze` 通过（No issues found）。
+- [x] 把五个手势场景写进交付说明，交用户真机验证（U1 的真实复现路径）：
       1. 慢拉引出指示器；
       2. 拉出后反向回滑 —— 指示器跟随回落，**且回滑期间页面内容不上滚**，
          指示器完全消失后剩余手势才滚动列表；
@@ -167,6 +180,19 @@ flutter build apk --debug --flavor github
       4. 松手后惯性 —— 不得重新唤出指示器；
       5. 连续第二次刷新 —— 指示器不残留。
       场景 2、4、5 有 widget test 覆盖，但手感只能由真机判定。
+      **场景 2 是本阶段唯一未达成的验收项**（PRD 阶段 4 第二条）：框架实测下拉期间
+      `pixels` 恒为 0，反向手势的位移直接进入 `applyUserOffset`，所以「指示器回落」与
+      「页面上滚」**同时**发生（rev 20 → `pixels=20`），做不到「指示器完全消失后
+      剩余手势才滚动列表」。要做到只能重新拦截 drag —— 正是 5.3 硬约束禁止的第二套
+      状态机。按「若某个视觉诉求只能靠自建状态机实现，放弃该视觉诉求」，本项建议放弃，
+      交用户真机体验后裁决。详见 `prd.md` 阶段 4 验收清单。
+
+**四条新用例对旧实现的反证**（确认测试不是装饰）：把 `HEAD` 版 `pull_to_refresh.dart`
+临时放回去跑同一组用例，`a reverse drag moves the indicator back and cancels` 与
+`ballistic overscroll after the pointer lifts starts no pull` 两条失败 —— 前者报
+「Found 0 widgets」即指示器中途消失，后者报「Found 1 widget」即手指离开后仍被唤出。
+这正是用户报告的两个缺陷，已在测试层复现并锁死。
+
 
 **Review gate**：不停下。四个阶段全部完成后，把上述五个场景连同阶段 3 的过渡观感
 一起交用户在手机上验证。
