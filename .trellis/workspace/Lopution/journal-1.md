@@ -273,3 +273,24 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Status
 
 [OK] **Completed**
+
+
+## Session 12: Pixiv 网络与作品转场修复
+
+**Date**: 2026-09-01
+**Task**: Pixiv 网络与作品转场修复
+**Branch**: `main`
+
+### Summary
+
+完成无代理网络路径、ECH 缓存与探测结论优化；修复首图/头像预热、Hero 作用域与视口裁剪、反向下拉刷新；analyze、聚焦测试 41 项、全量测试 522 项和 github debug APK 构建均通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2eaf5aa` | (see git log) |
+
+### Status
+
+[OK] **Completed**

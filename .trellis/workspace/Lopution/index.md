@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 11
-- **Last Active**: 2026-08-31
+- **Total Sessions**: 12
+- **Last Active**: 2026-09-01
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~275 | Active |
+| `journal-1.md` | ~296 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 12 | 2026-09-01 | Pixiv 网络与作品转场修复 | `2eaf5aa` | `main` |
 | 11 | 2026-08-31 | 修复移动端 UI 动画与个人页问题 | `39181c2` | `main` |
 | 10 | 2026-08-31 | 修复 Pixiv 默认 ECH 网络路径 | `9c8a44a` | `main` |
 | 9 | 2026-08-29 | 08-29-replica-v1-completion 实施：DoH 接线、SNI spike 重大发现、R7 六项修复 | - | `main` |
