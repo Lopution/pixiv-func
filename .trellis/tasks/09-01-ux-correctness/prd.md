@@ -2,18 +2,123 @@
 
 ## Goal
 
-TBD.
+修复用户在真实设备上每天都会碰到的界面与交互错误。本 child 不做 UX 重构，也不碰网络、
+下载、账号逻辑：它是一组边界清楚的垂直修复，加上最后一项共享滚动基建的收敛。
+
+覆盖审计编号：U1, U2, U8, U9, D7, C11, C20（限本 child 触及的页面）。
 
 ## Requirements
 
-- TBD
+### R1. 作品详情页作者区域可点击（U9）
+
+现状：详情页作者区域（头像 + 用户名 + account）是一个纯 `Row`，没有任何点击响应。
+`showUserPage` 已在同文件被 import 并使用，但只服务于简介正文里的 pixiv 用户链接。
+
+- 头像、用户名、account 构成的整个区域可点击，进入该作者的用户页。
+- 沿用现有的 `showUserPage(context, userId)`，不改路由架构。
+- 保留区域现有的 `Key('illust-author-avatar')`，不破坏已有测试定位。
+
+### R2. 登录页设置读取失败不再白屏（C11）
+
+现状：设置读取的 loading 与 error 分支都返回空 `ReplicaScaffold`，用户看到一片空白，
+既不知道在加载还是失败，也没有任何恢复手段。
+
+- loading：显示正常的加载指示。
+- error：显示错误信息与「重试」，重试真实重新读取设置。
+- 这是应该做的真实错误处理，不是防御式编程；不要用「回退到默认设置继续渲染」掩盖失败。
+
+### R3. 详情页硬编码中文进 i18n（C20）
+
+现状：`illust_detail_page.dart` 共 9 处直接写死中文，UI 语言切到日语/英语/俄语时仍显示中文。
+涉及：页面标题回退、投稿日期（未知 / 有值两种）、尺寸、打开链接失败提示、作品受限、
+作品不存在、加载失败、重试按钮。
+
+- 全部进现有 `ReplicaStrings`，四种语言（zh / en / ja / ru）都要补齐，不留 TODO。
+- 不更换 i18n 框架。
+- 本 child 只处理详情页；其它页面的硬编码中文不在本 child 范围内。
+
+### R4. 搜索热门标签显示代表图（U2）
+
+现状：`/v1/trending-tags/illust` 已返回 representative illust，Func 已解析并写入
+`IllustStore`，但卡片只显示一行标签文字，代表作品仅在长按时使用。
+
+- 卡片展示 API 自带的 representative 图片。
+- 点击卡片 = 搜索该标签（保持现有主操作语义不变）。
+- 进入代表作品作为次要操作保留（现为长按）。
+- 当天第一次进入搜索页取一次；日期变化前再次进入不重复请求。
+- 不为每个标签单独发搜索请求，不引入客户端随机算法。
+
+### R5. 个人主页 Header 连续过渡（D7 / U8）
+
+现状：`ReplicaProfileHeaderGeometry.avatarRadius` 已经算好了 72→20 的插值，**但从未被使用**。
+`_ExpandedProfile` 硬编码 `radius: 72`（直径 144dp），`_CollapsedProfile` 硬编码 `radius: 20`，
+两者由 `isFullyCollapsed` 二选一切换。展开态整块（含头像）按 `1 - progress` 一起淡出，
+所以实际观感是：一个 144dp 的大头像保持大小不变地整体淡出，最后突然换成小头像。默认
+「无头像」占位因此会巨大化并淡出，视觉上像背景水印。
+
+- 展开态头像直径约 96–112dp（当前 144dp 偏大）。
+- 头像尺寸与位置随滚动连续插值，不做两态切换。
+- 头像始终作为身份元素存在，不与背景图共用同一条淡出曲线。
+- 背景图随滚动淡出保持。
+- 用户名过渡为 toolbar title。
+
+### R6. 下拉刷新手势收敛（U1，P0，独立阶段）
+
+现状（真机复现）：
+- 下拉引出图标后反向回滑，图标不跟随手指回落，而是与列表一起上移。
+- 手指已离开屏幕后，惯性 / overscroll 仍可能重新唤出刷新图标，甚至让图标停在屏幕上不消失。
+
+- 回到 Flutter 标准 `RefreshIndicator` 的触发与生命周期语义，由框架单独持有「是否达到
+  刷新阈值」这一判断，不再并存第二套阈值。
+- 若视觉必须自定义，只自定义 indicator 的外观，不重新实现完整的 scroll lifecycle。
+- 手指离开屏幕后产生的 overscroll 不得重新进入下拉跟踪状态。
+- 任何一次下拉结束（刷新或取消）后，指示器必须回到不可见状态，不允许残留。
+
+> 顺序约束：本项必须在本 child 内最后实施，并作为独立阶段独立验收。
+> `lib/app/pull_to_refresh.dart` 被全部 feed 页共用，且
+> `09-01-settings-productization` 的 C9「过滤后自动续拉填满一屏」要以本项完成后的
+> 滚动基建为准 —— 地基未换完不设计续拉行为。
 
 ## Acceptance Criteria
 
-- [ ] TBD
+### 阶段 1（U9 + C11 + C20）
+
+- [ ] 详情页点击作者头像、用户名或 account 任一处，都进入该作者的用户页。
+- [ ] 登录页设置读取中显示加载态；读取失败显示错误与重试，点重试真实重新读取。
+- [ ] UI 语言切到日语与英语，详情页 9 处文案全部随之改变，无残留中文。
+
+### 阶段 2（U2）
+
+- [ ] 搜索页热门标签卡片显示代表图。
+- [ ] 点击卡片进入该标签的搜索结果。
+- [ ] 次要操作可进入代表作品。
+- [ ] 同一天内反复进出搜索页，不重复请求 trending-tags；跨日后重新获取。
+
+### 阶段 3（D7 / U8）
+
+- [ ] 展开态头像直径落在 96–112dp。
+- [ ] 从展开滚到折叠，头像尺寸与位置连续变化，没有突然替换的瞬间。
+- [ ] 头像在过渡全程可见，不随背景图一起淡出。
+- [ ] 折叠后用户名出现在 toolbar 位置。
+- [ ] 无头像用户不再出现巨大占位淡出的观感。
+
+### 阶段 4（U1）
+
+- [ ] 下拉引出图标后反向回滑，图标跟随手指连续回落。
+- [ ] 手指离开屏幕后的惯性滚动与 overscroll 不再唤出图标。
+- [ ] 快速多次下拉、下拉后甩动、连续第二次刷新，图标都不残留在屏幕上。
+- [ ] 达到阈值释放仍然真实触发一次刷新，且只触发一次。
+- [ ] 未达阈值释放不触发刷新。
+
+### 全阶段
+
+- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [ ] 每个阶段各自安装 APK 真机验证并截图留证到 `research/screenshots/`。
+- [ ] 不修改网络、下载、账号相关代码；本 child 不触碰其它 child 的范围。
 
 ## Notes
 
-- Keep `prd.md` focused on requirements, constraints, and acceptance criteria.
-- Lightweight tasks can remain PRD-only.
-- For complex tasks, add `design.md` for technical design and `implement.md` for execution planning before `task.py start`.
+- 上级需求与跨 child 约束见 `../09-01-func-1-0-hardening/prd.md`。
+- 审计断言复核（含各处证据行号）见
+  `../09-01-func-1-0-hardening/research/audit-verification.md`。
+- 技术设计见 `design.md`，执行顺序与验证命令见 `implement.md`。

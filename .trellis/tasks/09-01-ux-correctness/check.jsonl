@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "验收对照契约；阶段 4 后需确认代码与该 spec 已同步修订"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "测试失败时先判定是否为已知环境噪声"}
+{"file": ".trellis/tasks/09-01-func-1-0-hardening/prd.md", "reason": "确认未违反 R6 禁止清单与跨 child 边界"}
+{"file": ".trellis/spec/frontend/index.md", "reason": "frontend 层 Quality Check 入口"}

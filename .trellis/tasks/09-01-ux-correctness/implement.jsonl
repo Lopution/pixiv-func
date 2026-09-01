@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-01-func-1-0-hardening/prd.md", "reason": "上级需求、跨 child 约束与 R6 禁止清单"}
+{"file": ".trellis/tasks/09-01-func-1-0-hardening/research/audit-verification.md", "reason": "各条审计断言在 HEAD 上的证据行号与复核结论"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "详情页过渡契约；其中 PullToRefresh 现行条款在阶段 4 需按 design.md 5.1 修订"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "构建工具链路径与全量 flutter test 的 loopback flakiness 判定"}
