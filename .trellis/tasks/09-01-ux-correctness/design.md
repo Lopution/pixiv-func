@@ -297,10 +297,13 @@ trigger semantics，这个 wrapper 只负责渲染指示器。**实现与该声�
 因此「用框架暴露的刷新进度驱动一个自定义指示器」这条路**在 API 层面就不成立**，
 不能作为方案写下去。
 
-**首选方案：直接换成标准 `RefreshIndicator`，放弃自定义指示器外观。**
+**方案：标准 `RefreshIndicator` + 在 wrapper 内把 ambient physics 换成带回弹的 physics。**
+两部分缺一不可：前者收敛状态机，后者实现 R6「回滑期间页面内容不上滚」。
+
+**第一部分：换回标准 `RefreshIndicator`，放弃自定义指示器外观。**
 
 - 用标准构造（非 `noSpinner`），采用框架自带的 Material 指示器，通过 `color` /
-  `backgroundColor` / `strokeWidth` / `displacement` 做主题化。
+  `backgroundColor` / `strokeWidth` 做主题化。
 - 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
   `_indicatorOffset`、`_viewportDimension`、`_progress`、`_dismissController`、
   `_buildIndicator` 以及外层 `Stack`。
@@ -308,16 +311,98 @@ trigger semantics，这个 wrapper 只负责渲染指示器。**实现与该声�
 - 结果：阈值判定、指针状态、惯性处理、指示器进退全部交还框架，这些正是 5.2 四条根因的
   所在地。
 
-**先做这个，然后按 R6 的五条验收在真机上检验。** 框架标准实现原本就在 armed 后跟随反向
-拖拽回落、并在拖拽结束后收起指示器 —— 5.2 的四条根因都源自 wrapper 的并行状态机，
-而不是框架本身。所以首选方案有很大概率直接满足全部验收，包括「指示器消失前页面不上滚」。
+**第二部分：把 ambient physics 换成 `BouncingScrollPhysics`。**
 
-**只有当真机验收发现框架标准行为确实不满足某条**时，才讨论自定义外观。届时的可用手段
-只有离散 `onStatusChange`（可做淡入淡出与状态切换，**做不到跟手连续位移**），
-并且必须重新回答「这个视觉细节值不值得」这个问题。
+只做第一部分不足以满足 R6 第三条 —— 这一点由 2026-09-02 的实测确认，不是推断：
+在 `ClampingScrollPhysics` 下，下拉期间 `pixels` **恒为 0**，指示器占用的那段下拉距离
+**根本不存在于滚动坐标系里**。因此反向手势的位移直接进入 `applyUserOffset`，
+列表立刻上滚（实测反向 20px → `pixels=20`），与指示器回落同时发生。
 
-**硬约束**：阈值判定只有一处且必须是框架的；本文件不得再监听 `ScrollNotification`
-来推导下拉状态。如果某个视觉诉求只能靠自建状态机实现，**放弃该视觉诉求，不放弃正确性**。
+关键判断：这不是「框架表达不了这个视觉」，而是**选错了 physics** ——
+clamping 下压根没有可供反向手势抵消的余量。换成 `BouncingScrollPhysics` 后，
+下拉把这段距离存成负 `pixels`，反向手势必须先把它抵消回 0 才能推动列表。
+需求于是变成框架的**自然行为**，一行状态机都不用写。
+
+实测（`BouncingScrollPhysics` + 标准 `RefreshIndicator`，先下拉 160px 再反向）：
+
+| 反向累计 | `pixels` | 指示器 dy |
+|---|---|---|
+| -30 | -78.4 | 45.3 |
+| -120 | -36.9 | 8.3 |
+| -150 | -21.7 | -5.2（已收出可视区） |
+| -180 | -5.6 | -19.5 |
+| -210 | **+20.0**（列表此时才开始上滚） | -24.5 |
+
+`pixels` 全程为负直到指示器收完才转正，即「图标完全消失后，剩余手势才开始滚动列表」。
+同一组探针还确认：达到阈值释放仍 `refresh=1`；松手后的惯性回弹实际产生了 -82.2 的
+overscroll，却**没有**唤出指示器（`summoned=false`）—— 回弹不会重新触发下拉。
+
+实现要点：
+
+- `PullToRefresh` 内用 `ScrollConfiguration` 把 ambient physics 覆盖为
+  `BouncingScrollPhysics`，同时 `overscroll: false` 关掉 Android 的边缘辉光 ——
+  回弹与辉光是同一诉求的两种表达，同时开启会重复。
+- 各页面自己写的 `AlwaysScrollableScrollPhysics()` 会 `applyTo` 新的 ambient，
+  结果是 `AlwaysScrollable(parent: Bouncing)`，**13 个调用点一个都不用改**。
+- 作用域仅限 `PullToRefresh` 子树。已逐个核对 13 个调用点，每个 wrapper 内只有一个
+  scrollable，不存在被误伤的嵌套滚动区。
+
+**取舍（需知悉）**：下拉期间列表内容会随手指下移（iOS 风格回弹），不再是 Material
+那种「内容不动、指示器悬浮」。这是 R6 第三条的必要代价 —— 那段距离必须真实存在于
+滚动坐标系里，才可能在反向时被先消耗掉。两者不可兼得。
+
+**第三部分：指示器改由 overscroll 驱动（`RefreshIndicator.noSpinner`）。**
+
+第二部分单独仍不够 —— 这一点同样由实测确认，不是推断。框架自带指示器在
+`_checkDragOffset` 里有一条 armed 地板（`refresh_indicator.dart:521`
+`newValue = math.max(newValue, 1.0 / _kDragSizeFactorLimit)`）：一旦越过阈值进入
+armed，指示器位置最低只能收到满程的 2/3，**不会**随反向手势归零。
+
+实测（分步下拉 6/8/10/14 × 40px，全部 armed，`refresh=1`）：反向回滑全程
+`goneAt=-1` —— 指示器从未离开屏幕；而 `pixels` 照常转正（如 6×40 那组在反向 270px
+处 `pixels=5.1`），列表开始上滚时指示器仍挂在 2/3 位置。**这正是「图标与列表一起
+上移」**，也就是说只做前两部分等于没解决用户报告的现象。
+
+注意 armed 的触发比想象的容易：`_mode` 在 `alpha == 0xFF` 时就置 armed，
+对应 value ≈ 0.667，即 `viewportDimension / 6` 的 overscroll —— 240px 的分步下拉
+就已经 armed。**armed 是真机上的常态路径，不是边缘情况**，因此不能用未 armed 的
+下拉去写测试（初版测试正是用 160px 下拉才「通过」的，属于假绿）。
+
+改法：用 `RefreshIndicator.noSpinner`（框架仍然完整持有阈值、指针状态、惯性处理与
+`onRefresh` 触发，只是不画自己的 spinner），指示器由本 wrapper 渲染，且：
+
+- **连续量**（位置 / 可见性）取自 `notification.metrics.pixels` 的 leading-edge
+  overscroll。它是**镜像**而非累加 —— 每次通知直接重算，不可能与滚动位置失步。
+  overscroll 归零与列表开始滚动是同一时刻，需求因此成立。
+- **离散状态**（是否处于下拉、是否刷新中）取自 `onStatusChange` 的
+  `RefreshIndicatorStatus`。**只有** `drag` / `armed` 才画指示器 ——
+  这一条是必须的：手指抬起后的惯性回弹同样产生 overscroll，只看 overscroll 会把
+  指示器重新唤出来，即用户报告的另一个缺陷（实测复现过）。框架已经回答了
+  「现在是不是在下拉」，直接取答案，不要重新推导。
+
+**这为什么不是第二套状态机**：本 wrapper 不累加任何距离、不做任何阈值判定、
+不否决框架的刷新决定。阈值判定仍然只有框架一处。老代码的问题从来不是
+「监听了 `ScrollNotification`」，而是「用监听结果做了第二次阈值判定并据此否决框架」。
+这两件事必须区分开，否则会误伤唯一可行的解法。
+
+**三个决策各自必要，已用测试反证**（把实现临时退回中间版本跑核心用例）：
+
+| 版本 | 核心用例结果 |
+|---|---|
+| 标准 `RefreshIndicator` + clamping | 失败：`pixels` 恒为 0，下拉没被存成 overscroll |
+| 标准 `RefreshIndicator` + bouncing | 失败：`pixels=7.47` 时指示器仍在屏上（armed 地板） |
+| `noSpinner` + overscroll 驱动 + bouncing | 通过 |
+
+**硬约束**：阈值判定只有一处且必须是框架的；不得累加自己的拖拽距离，不得否决
+框架已经做出的刷新决定。读取 `metrics.pixels` 用于**渲染**是允许的 ——
+它是框架的权威值，镜像它不产生第二个真相源。
+
+**教训修正**：本节初稿曾写「如果某个视觉诉求只能靠自建状态机实现，放弃该视觉诉求」，
+并据此两次判定 R6 第三条无法实现（先是怪框架，后是怪 armed 地板）。两次都是错的：
+第一次真正的原因是选错了 physics，第二次是把「不得重建状态机」错读成了
+「不得读取框架状态」。正确的次序是：**先确认在框架的全部原语（physics / 手势 /
+布局 / 状态回调）里都无路可走，才谈放弃需求**。PRD 是需求，design 是设计，
+设计做不到时改的是设计。
 
 ### 5.4 测试处置
 
@@ -328,10 +413,13 @@ trigger semantics，这个 wrapper 只负责渲染指示器。**实现与该声�
   取舍被触发，该用例按新的真实行为改写，不允许为了让它变绿而保留旧状态机。
 - `a released armed pull still refreshes once` —— 意图正确，保留。
 
-新增两条（审计明确要求）：
+新增三条（审计明确要求两条，R6 第三条追加一条）：
 
 - 反向回滑至阈值以下并释放 → 不触发刷新，且指示器归零。
 - 指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
+- **反向回滑期间 `pixels` 不得转正，直到指示器收出可视区** —— 即 R6
+  「回滑期间页面内容不上滚」。这条必须断言滚动坐标而不只是断言观感，
+  否则换回 clamping physics 时不会有任何用例变红。
 
 **全部用例的共同要求**：每一条都必须断言指示器的**终态可见性**，而不只是 release 之前的
 运动轨迹。旧用例只断言了 release 前的位移，这正是「指示器卡在屏幕上」能通过既有测试的
