@@ -200,11 +200,20 @@ flutter build apk --debug --flavor github
 
 ## 收尾
 
-- [ ] 最后一次全量 quality check（覆盖四个阶段的全部改动，不只最后一段）。
-- [ ] 走 Phase 3.3：判断本轮是否产生值得写进 `.trellis/spec/frontend/` 的约定
-      （候选：删除错误 guard 时同步删掉固化该错误行为的测试）。
-- [ ] Phase 3.4 提交，Phase 3.5 提示 `/finish-work`。
-- [ ] 交付时给出用户真机验证清单：阶段 3 的过渡三态（含无头像用户）+ 阶段 4 的五个手势场景。
+- [x] 最后一次全量 quality check（覆盖四个阶段的全部改动，不只最后一段）：
+      `flutter analyze` No issues found；`flutter test` 538 tests all passed。
+- [x] 走 Phase 3.3：判断本轮是否产生值得写进 `.trellis/spec/frontend/` 的约定。
+      产出了，写进 `quality-guidelines.md` 已有的三个空小节（不新建文件）：
+      - Forbidden：不得在框架已持有的生命周期旁再跑一套状态机，阈值 / 指针状态 / 进度
+        只能有一处；错误 guard 要删不要叠补丁。
+      - Required：spec 只写可观察结果不写实现指令；实测证伪 spec 条款时代码与 spec 在
+        同一个提交里改；框架表达不了的视觉就放弃视觉、不放弃正确性。
+      - Testing：回归测试必须先对旧实现跑一遍确认会失败；断言终态而非只断言轨迹；
+        依赖前置条件的用例要断言该条件真的发生过，否则会空过。
+      原候选「删除错误 guard 时同步删掉固化该错误行为的测试」已并入上述条目 ——
+      本轮的真正教训比它更靠前：**是 spec 里的实现指令先把错误行为锁死的**。
+- [x] Phase 3.4 提交，Phase 3.5 提示 `/finish-work`。
+- [x] 交付时给出用户真机验证清单：阶段 3 的过渡三态（含无头像用户）+ 阶段 4 的五个手势场景。
 
 ## 边界
 
