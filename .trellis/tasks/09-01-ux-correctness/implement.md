@@ -57,7 +57,8 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] `flutter analyze` 与 `flutter test` 通过。
 - [ ] 装机截图：详情页作者区域点击前后、登录页错误态、详情页日语与英语各一张。
 
-**Review gate**：截图交用户确认后再进入阶段 2。
+**Review gate**：截图留证即可，**不停下等确认**，直接进入阶段 2。
+本阶段三项都由 widget test 覆盖，视觉风险低。
 **Rollback point**：阶段 1 单独成一个提交。
 
 ## 阶段 2：热门标签代表图（U2）
@@ -66,14 +67,15 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
       展示 `tag.representative` 的预览图。
 - [ ] `onTap` 保持「搜索该标签」语义不变；进入代表作品保留为次要操作。
 - [ ] `representative == null` 时退回纯文字形态与现有提示，不显示破图占位。
-- [ ] `lib/core/search/search_trending_controller.dart` 加当天首次获取判定：
-      同日重复进入搜索页不再请求，跨日重新获取。
-      不引入通用页面缓存框架，不为单个 tag 单独发请求。
-- [ ] 补测试：同日二次进入不触发第二次请求；跨日触发重新获取。
+- [ ] `lib/core/search/search_trending_controller.dart:8`：去掉 `.autoDispose`，
+      让 provider 在 App 生命周期内常驻，进出搜索页不再重复请求。
+      **不加日期判定，不加持久化缓存**（理由见 `design.md` 三）。
+- [ ] 补测试：二次进入搜索页不触发第二次 trending-tags 请求。
 - [ ] `flutter analyze` 与 `flutter test` 通过。
 - [ ] 装机截图：搜索页热门标签（有代表图）、点击后的搜索结果页。
 
-**Review gate**：截图交用户确认后再进入阶段 3。
+**Review gate**：截图留证即可，**不停下等确认**，直接进入阶段 3。
+本阶段正确性由 widget test 覆盖，视觉风险低。
 **Rollback point**：阶段 2 单独成一个提交。
 
 ## 阶段 3：Profile Header 连续过渡（D7 / U8）
@@ -95,8 +97,8 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] `flutter analyze` 与 `flutter test` 通过。
 - [ ] 装机截图：展开态、过渡中间态、折叠态各一张；另拍一组无头像用户的同样三态。
 
-**Review gate**：截图交用户确认后再进入阶段 4。中间态与无头像用户这两组是 U8 的核心证据，
-不能省。
+**Review gate**：**停下来交用户真机确认**。过渡动画无法由 widget test 判定观感，
+中间态与无头像用户这两组是 U8 的核心证据，不能省。确认通过后再进入阶段 4。
 **Rollback point**：阶段 3 单独成一个提交。
 
 ## 阶段 4：下拉刷新收敛（U1，P0）
@@ -110,14 +112,22 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 > 不得用 `dragDetails` 过滤」正是惯性唤出与指示器残留的成因。本阶段要**同时改代码和
 > 改 spec**，不是让实现回到 spec。
 
-- [ ] 删除自建 scroll-notification 状态机：`_onScroll`、`_tracking`、`_dragOffset`、
-      `_indicatorOffset`、`_viewportDimension` 及其辅助方法。
-- [ ] 删除 `_handleRefresh` 中用 `_dragOffset` 否决框架刷新决定的分支（line 168-172）。
-      阈值判定收敛为框架唯一持有。
-- [ ] 指示器视觉进度改由框架暴露的刷新进度驱动；本文件不再监听 `ScrollNotification`。
-- [ ] 若确认框架无法在不自建状态机的前提下实现「反向回滑连续跟随」，
-      放弃该视觉细节、保留框架标准行为，并把该取舍写进本文件与 `design.md`。
-      **不允许为这一处观感重新造状态机。**
+- [ ] **先做最简方案**：`lib/app/pull_to_refresh.dart` 换成标准 `RefreshIndicator`
+      （非 `noSpinner`），用 `color` / `backgroundColor` / `strokeWidth` / `displacement`
+      做主题化，采用框架自带指示器。
+      已核实框架**没有**暴露连续刷新进度的公开 API（`RefreshIndicatorStatus` 是离散枚举），
+      所以「用框架进度驱动自定义图标」这条路不成立 —— 不要尝试，见 `design.md` 5.3。
+- [ ] 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
+      `_indicatorOffset`、`_viewportDimension`、`_progress`、`_dismissController`、
+      `_buildIndicator`、外层 `Stack` 及其辅助方法。
+- [ ] `_handleRefresh` 直接透传 `widget.onRefresh`，删除用 `_dragOffset` 否决框架刷新
+      决定的分支（line 168-172）。阈值判定收敛为框架唯一持有。
+- [ ] **换完先跑真机验收**（见下方五个手势场景）。框架标准实现原本就跟随反向拖拽回落
+      并在拖拽结束后收起指示器，很可能直接全部通过。
+- [ ] 仅当某条验收确实不通过时，才讨论自定义外观 —— 届时只能用离散 `onStatusChange`
+      （做得到淡入淡出，**做不到跟手连续位移**），并重新评估该视觉细节是否值得。
+      **任何情况下都不允许重新引入 scroll-notification 状态机**；
+      若某个视觉诉求只能靠它实现，放弃该视觉诉求。取舍结果写回本文件与 `design.md`。
 - [ ] **修订 spec**：`.trellis/spec/frontend/component-guidelines.md`。
       改法已在 `design.md` 5.1.1 定稿，**直接照抄那五段**，不要现场重新拟措辞：
       - (1) 第 3 节 `PullToRefresh` 整条替换为纯行为契约 + 「阈值判定只有一处」硬约束
@@ -137,8 +147,13 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] 新增：指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
 - [ ] 全量回归：`flutter test`（下拉刷新是共享基建，必须跑全量而非单文件）。
 - [ ] `flutter analyze` 通过。
-- [ ] 装机验证并录证：慢拉、拉出后回滑、快速甩动、松手后惯性、连续第二次刷新。
-      这五个场景是 U1 的真实复现路径，逐个确认。
+- [ ] 装机验证并录证五个手势场景（U1 的真实复现路径，逐个确认）：
+      1. 慢拉引出指示器；
+      2. 拉出后反向回滑 —— 指示器跟随回落，**且回滑期间页面内容不上滚**，
+         指示器完全消失后剩余手势才滚动列表；
+      3. 快速甩动；
+      4. 松手后惯性 —— 不得重新唤出指示器；
+      5. 连续第二次刷新 —— 指示器不残留。
 
 **Review gate**：本阶段必须由用户在真机上亲自确认全部五个手势场景，通过后本 child 才算完成。
 **Rollback point**：阶段 4 单独成一个提交（代码与 spec 修订同一个提交，不拆开）。

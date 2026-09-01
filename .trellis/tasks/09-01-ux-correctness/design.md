@@ -85,8 +85,19 @@ settings。错误态文案不能依赖 `settingsProvider`，需退回系统语�
 - 进入代表作品保留为次要操作。
 - `representative == null` 时保留纯文字形态与现有提示，不显示破图占位。
 
-**缓存**：按「当天首次进入取一次」。`search_trending_controller.dart` 已持有列表状态，
-在其上加日期判定即可，不引入通用页面缓存框架。不为每个 tag 单独发请求。
+**缓存**：现状是 `FutureProvider.autoDispose`（`search_trending_controller.dart:8`）——
+最后一个 listener 移除即销毁，所以**每次进入搜索页都会重新请求一次** trending-tags。
+
+**最小改法：去掉 `.autoDispose`。** provider 在 App 生命周期内常驻，进出搜索页不再重复
+请求，这就是 U2 那条要求的真实诉求。
+
+**不要**为此引入日期判定或持久化缓存：跨日刷新在实践中由 App 重启自然发生；即便 App
+连续运行跨日，多显示一天的旧热门标签也没有任何产品后果。为这点收益新增一层缓存基础设施，
+正是 parent PRD R6 要避免的。
+
+副作用是 provider 不再随页面销毁，`ref.onDispose(token.cancel)` 也就不会在离开页面时
+取消请求 —— 这反而是想要的：请求跑完并留下结果，下次进入直接有数据。
+`ref.watch(accountStoreProvider.select(...))` 的账号切换重建行为保持不变。
 
 ## 四、阶段 3：D7/U8 Profile Header
 
@@ -276,17 +287,37 @@ trigger semantics，这个 wrapper 只负责渲染指示器。**实现与该声�
 
 ### 5.3 方案
 
-- **阈值与刷新触发唯一地由框架持有。** 删除 `_dragOffset` 这条自建判定链，
-  `_handleRefresh` 不再否决框架的刷新决定。
-- **删除自建的 scroll-notification 状态机**（`_tracking` / `_dragOffset` /
-  `_indicatorOffset` / `_viewportDimension` 及 `_onScroll`）。指示器的视觉进度改由框架
-  暴露的刷新进度驱动。
-- 具体形态（标准 `RefreshIndicator` + 主题化，或继续用 `noSpinner` 但仅消费框架给出的
-  进度量）在实现时依 Flutter 当前 API 能力择一。**硬约束**：判定只有一处，且必须是框架
-  的那一处；本文件不得再监听 `ScrollNotification` 来推导下拉状态。
-- 若最终确认框架无法在不自建状态机的前提下满足「反向回滑连续跟随」这一视觉诉求，
-  则放弃该视觉细节，保留框架标准行为 —— 正确性优先于这一处观感。这个取舍要在实现阶段
-  显式记录，不要为了它再造一遍状态机。
+**先决核查（2026-09-01，已在 Flutter 3.47 源码确认）**：
+`packages/flutter/lib/src/material/refresh_indicator.dart` 的公开成员里，与状态有关的
+只有 `onStatusChange`（`ValueChanged<RefreshIndicatorStatus?>`），而
+`RefreshIndicatorStatus` 是**离散**枚举：`drag / armed / snap / refresh / done / canceled`。
+全文件不存在任何暴露连续进度（0..1）的公开 getter 或 `Animation<double>`，
+内部 `_positionController` 是私有的。
+
+因此「用框架暴露的刷新进度驱动一个自定义指示器」这条路**在 API 层面就不成立**，
+不能作为方案写下去。
+
+**首选方案：直接换成标准 `RefreshIndicator`，放弃自定义指示器外观。**
+
+- 用标准构造（非 `noSpinner`），采用框架自带的 Material 指示器，通过 `color` /
+  `backgroundColor` / `strokeWidth` / `displacement` 做主题化。
+- 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
+  `_indicatorOffset`、`_viewportDimension`、`_progress`、`_dismissController`、
+  `_buildIndicator` 以及外层 `Stack`。
+- `_handleRefresh` 直接透传 `widget.onRefresh`，不再用 `_dragOffset` 否决框架的刷新决定。
+- 结果：阈值判定、指针状态、惯性处理、指示器进退全部交还框架，这些正是 5.2 四条根因的
+  所在地。
+
+**先做这个，然后按 R6 的五条验收在真机上检验。** 框架标准实现原本就在 armed 后跟随反向
+拖拽回落、并在拖拽结束后收起指示器 —— 5.2 的四条根因都源自 wrapper 的并行状态机，
+而不是框架本身。所以首选方案有很大概率直接满足全部验收，包括「指示器消失前页面不上滚」。
+
+**只有当真机验收发现框架标准行为确实不满足某条**时，才讨论自定义外观。届时的可用手段
+只有离散 `onStatusChange`（可做淡入淡出与状态切换，**做不到跟手连续位移**），
+并且必须重新回答「这个视觉细节值不值得」这个问题。
+
+**硬约束**：阈值判定只有一处且必须是框架的；本文件不得再监听 `ScrollNotification`
+来推导下拉状态。如果某个视觉诉求只能靠自建状态机实现，**放弃该视觉诉求，不放弃正确性**。
 
 ### 5.4 测试处置
 
