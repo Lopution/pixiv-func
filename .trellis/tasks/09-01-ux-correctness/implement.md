@@ -39,58 +39,75 @@ Pixiv 网络与真实账号数据，逐阶段截图既拍不到关键状态，�
 flutter build apk --debug --flavor github
 ```
 
-## 阶段 1：低耦合垂直修复（U9 + C11 + C20）
+## 阶段 1：低耦合垂直修复（U9 + C11 + C20）— 已完成 `e6a8fd7`
 
-- [ ] **U9**：`lib/features/illust/detail/illust_detail_page.dart:571-609` 的作者 `Row`
+- [x] **U9**：`lib/features/illust/detail/illust_detail_page.dart:571-609` 的作者 `Row`
       外层加手势包裹，回调 `showUserPage(context, entity.user.id)`。
       不移动 `Key('illust-author-avatar')`，不改布局尺寸与间距 —— spec
       （`component-guidelines.md` 第 4 节）要求该头像保持 48px slot 与占位符不变。
-- [ ] **C11**：`lib/features/login/login_page.dart:117-123` 的 loading 分支改为进度指示；
+- [x] **C11**：`lib/features/login/login_page.dart:117-123` 的 loading 分支改为进度指示；
       error 分支改为错误说明 + 重试，重试执行 `ref.invalidate(settingsProvider)`。
       错误态文案走 `Localizations.localeOf(context)` + `ReplicaStrings.fromTag`，
       **不得**依赖 `settingsProvider`（该分支拿不到 settings）。
-- [ ] **C20**：详情页 9 处硬编码中文迁入 `lib/core/i18n/replica_strings.dart`，
+- [x] **C20**：详情页 9 处硬编码中文迁入 `lib/core/i18n/replica_strings.dart`，
       行号 254 / 619 / 620 / 641 / 807 / 889 / 907 / 930 / 934。
       zh / en / ja / ru 四块全部补齐，带插值的用参数化形式，不拼接翻译片段。
-- [ ] 为 U9 补一条 widget test：点击作者区域触发用户页导航。
-- [ ] 为 C11 补一条 widget test：settings 出错时渲染错误态且重试可用。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [x] 为 U9 补一条 widget test：点击作者区域触发用户页导航。
+- [x] 为 C11 补一条 widget test：settings 出错时渲染错误态且重试可用。
+- [x] `flutter analyze` 与 `flutter test` 通过。
 
 **Review gate**：无需停下等确认，直接进入阶段 2。本阶段三项都由 widget test 覆盖。
 **Rollback point**：阶段 1 单独成一个提交。
 
-## 阶段 2：热门标签代表图（U2）
+## 阶段 2：热门标签代表图（U2）— 已完成 `f6c9da9`
 
-- [ ] `lib/features/search/search_page.dart` 的 `_TrendingTagTile` 改为图文卡片，
+- [x] `lib/features/search/search_page.dart` 的 `_TrendingTagTile` 改为图文卡片，
       展示 `tag.representative` 的预览图。
-- [ ] `onTap` 保持「搜索该标签」语义不变；进入代表作品保留为次要操作。
-- [ ] `representative == null` 时退回纯文字形态与现有提示，不显示破图占位。
-- [ ] `lib/core/search/search_trending_controller.dart:8`：去掉 `.autoDispose`，
+- [x] `onTap` 保持「搜索该标签」语义不变；进入代表作品保留为次要操作。
+- [x] `representative == null` 时退回纯文字形态与现有提示，不显示破图占位。
+- [x] `lib/core/search/search_trending_controller.dart:8`：去掉 `.autoDispose`，
       让 provider 在 App 生命周期内常驻，进出搜索页不再重复请求。
       **不加日期判定，不加持久化缓存**（理由见 `design.md` 三）。
-- [ ] 补测试：二次进入搜索页不触发第二次 trending-tags 请求。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [x] 补测试：二次进入搜索页不触发第二次 trending-tags 请求。
+- [x] `flutter analyze` 与 `flutter test` 通过。
 
 **Review gate**：无需停下等确认，直接进入阶段 3。本阶段正确性由 widget test 覆盖。
 **Rollback point**：阶段 2 单独成一个提交。
 
-## 阶段 3：Profile Header 连续过渡（D7 / U8）
+## 阶段 3：Profile Header 连续过渡（D7 / U8）— 已完成 `af44831`
 
-- [ ] `lib/features/profile/profile_header_delegate.dart`：把 `_Avatar` 从
-      `_ExpandedProfile`(line 173) 与 `_CollapsedProfile`(line 308) 内部移出，
+- [x] `lib/features/profile/profile_header_delegate.dart`：把 `_Avatar` 从
+      `_ExpandedProfile` 与 `_CollapsedProfile` 内部移出，
       提升为 delegate `Stack` 中一个独立层。
-- [ ] 头像层**不**被 `backgroundOpacity` 包裹（背景淡出，头像不淡出）。
-- [ ] 半径改用 `geometry.avatarRadius`，展开端从 72 调到 48–56（直径 96–112dp），
-      折叠端保持 20。具体档位按真机观感定，定完把选择理由写进本文件。
-- [ ] 头像位置在展开锚点与折叠锚点之间按 `geometry.progress` 连续插值。
-- [ ] 用户名在折叠端出现于 toolbar 居中位置，与展开态名字做交叉淡入淡出。
-- [ ] 校验过渡全程头像不与 back button（`canPop` 为真/假两种起点）、
+- [x] 头像层**不**被 `backgroundOpacity` 包裹（背景淡出，头像不淡出）。
+- [x] 半径改用 `geometry.avatarRadius`，展开端从 72 调到 **52**（直径 104dp），
+      折叠端保持 20。
+      取 52 的理由：PRD 给的区间是 96–112dp，52 正是中点；而且它让头像底边仍然落在
+      `backgroundHeight + 24`（沿用旧布局的 24px 悬垂量），所以与背景带的重叠观感、
+      到名字行的间距都和改动前一致，变的只有头像本身的大小。取 48 会让头像在 252dp
+      高的背景带里显得空，取 56 又太接近旧的偏大观感。
+      **该档位属于需用户真机确认项。**
+- [x] 头像位置在展开锚点与折叠锚点之间按 `geometry.progress` 连续插值。
+      头像的行程提前在 progress 0.9 结束（`_avatarSettleProgress`），理由见下条。
+- [x] 用户名在折叠端出现于 toolbar 居中位置，与展开态名字做交叉淡入淡出。
+      实现：折叠层不再由 `isFullyCollapsed` 二选一渲染，改为按 `collapsedOpacity`
+      淡入，并钉在顶部 `minExtent` 高的 toolbar 带内 —— 若让它填满收缩中的盒子，
+      标题会从画面中部往上滑，并与移动中的头像相撞。命中测试维持原状：折叠层在
+      完全折叠前套 `IgnorePointer`，展开层在完全折叠时依然不构建。
+- [x] 校验过渡全程头像不与 back button（`canPop` 为真/假两种起点）、
       restrict selector、edit / share 按钮重叠。
-- [ ] 为 `ReplicaProfileHeaderGeometry` 的新插值补单测（该类是纯几何快照，已被测试引用）。
-- [ ] `test/user_profile_test.dart` 现有 header 用例仍然通过。spec
+      做法不是靠肉眼：把「头像停位」与「折叠层淡入起点」绑成同一个常量
+      （`_avatarSettleProgress == _collapsedFadeStart == 0.9`），折叠层一出现，
+      头像必定已停在 `[collapsedLeftInset, +40]`，而标题的 96px 内缩正是为这个位置
+      留的。单测按 400 步细采样断言该不变式 —— 粗采样会直接跨过窄重叠窗口。
+- [x] 为 `ReplicaProfileHeaderGeometry` 的新插值补单测（该类是纯几何快照，已被测试引用）。
+      另加一条 widget test：任意滚动位置上有且只有一个 `CircleAvatar`，且它到 header
+      之间不存在 opacity < 1 的祖先（有头像与无头像两种用户各跑一遍）。
+- [x] `test/user_profile_test.dart` 现有 header 用例仍然通过（`avatarRadius`
+      的期望值按新档位更新）。spec
       （`component-guidelines.md` 第 6 节）要求展开与折叠两态都断言
       `Icons.settings_outlined` 不存在 —— 重排头像层时不得引入设置入口。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [x] `flutter analyze` 与 `flutter test` 通过。
 
 **Review gate**：不停下。过渡观感（展开态 / 中间态 / 折叠态，以及无头像用户的同样三态）
 无法由 widget test 判定，列入交付时的用户真机验证清单。几何插值本身由单测覆盖。
