@@ -27,17 +27,17 @@ flutter test
 > 是否为环境噪声，不要误判成本 child 改坏了共享代码 —— 阶段 4 尤其容易撞上，因为它
 > 要求跑全量。
 
-真机 / 模拟器验证（每阶段一次，产出截图）：
+真机验证（2026-09-01 用户决定）：**本 child 不做逐阶段模拟器装机截图留证**，
+四个阶段全部实现完成后，由用户在自己的手机上一次性验证。理由：模拟器缺少可用的
+Pixiv 网络与真实账号数据，逐阶段截图既拍不到关键状态，也不如用户真机使用直观。
+
+因此每阶段的验收证据 = `flutter analyze` + `flutter test` + 可复现的行为断言；
+需要人眼判定的部分（过渡观感、手势跟手）留到用户真机验证时一并确认。
+构建命令保留备用：
 
 ```bash
 flutter build apk --debug --flavor github
-adb install -r build/app/outputs/flutter-apk/app-github-debug.apk
-adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screenshots/<名称>.png
 ```
-
-截图命名沿用既有惯例：描述性 kebab-case，可带设备或时间后缀
-（参考 `archive/2026-09/08-29-replica-v1-completion/research/screenshots/`）。
-执行前先 `adb devices` 确认设备已连接。
 
 ## 阶段 1：低耦合垂直修复（U9 + C11 + C20）
 
@@ -55,10 +55,8 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] 为 U9 补一条 widget test：点击作者区域触发用户页导航。
 - [ ] 为 C11 补一条 widget test：settings 出错时渲染错误态且重试可用。
 - [ ] `flutter analyze` 与 `flutter test` 通过。
-- [ ] 装机截图：详情页作者区域点击前后、登录页错误态、详情页日语与英语各一张。
 
-**Review gate**：截图留证即可，**不停下等确认**，直接进入阶段 2。
-本阶段三项都由 widget test 覆盖，视觉风险低。
+**Review gate**：无需停下等确认，直接进入阶段 2。本阶段三项都由 widget test 覆盖。
 **Rollback point**：阶段 1 单独成一个提交。
 
 ## 阶段 2：热门标签代表图（U2）
@@ -72,10 +70,8 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
       **不加日期判定，不加持久化缓存**（理由见 `design.md` 三）。
 - [ ] 补测试：二次进入搜索页不触发第二次 trending-tags 请求。
 - [ ] `flutter analyze` 与 `flutter test` 通过。
-- [ ] 装机截图：搜索页热门标签（有代表图）、点击后的搜索结果页。
 
-**Review gate**：截图留证即可，**不停下等确认**，直接进入阶段 3。
-本阶段正确性由 widget test 覆盖，视觉风险低。
+**Review gate**：无需停下等确认，直接进入阶段 3。本阶段正确性由 widget test 覆盖。
 **Rollback point**：阶段 2 单独成一个提交。
 
 ## 阶段 3：Profile Header 连续过渡（D7 / U8）
@@ -95,10 +91,9 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
       （`component-guidelines.md` 第 6 节）要求展开与折叠两态都断言
       `Icons.settings_outlined` 不存在 —— 重排头像层时不得引入设置入口。
 - [ ] `flutter analyze` 与 `flutter test` 通过。
-- [ ] 装机截图：展开态、过渡中间态、折叠态各一张；另拍一组无头像用户的同样三态。
 
-**Review gate**：**停下来交用户真机确认**。过渡动画无法由 widget test 判定观感，
-中间态与无头像用户这两组是 U8 的核心证据，不能省。确认通过后再进入阶段 4。
+**Review gate**：不停下。过渡观感（展开态 / 中间态 / 折叠态，以及无头像用户的同样三态）
+无法由 widget test 判定，列入交付时的用户真机验证清单。几何插值本身由单测覆盖。
 **Rollback point**：阶段 3 单独成一个提交。
 
 ## 阶段 4：下拉刷新收敛（U1，P0）
@@ -147,15 +142,17 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] 新增：指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
 - [ ] 全量回归：`flutter test`（下拉刷新是共享基建，必须跑全量而非单文件）。
 - [ ] `flutter analyze` 通过。
-- [ ] 装机验证并录证五个手势场景（U1 的真实复现路径，逐个确认）：
+- [ ] 把五个手势场景写进交付说明，交用户真机验证（U1 的真实复现路径）：
       1. 慢拉引出指示器；
       2. 拉出后反向回滑 —— 指示器跟随回落，**且回滑期间页面内容不上滚**，
          指示器完全消失后剩余手势才滚动列表；
       3. 快速甩动；
       4. 松手后惯性 —— 不得重新唤出指示器；
       5. 连续第二次刷新 —— 指示器不残留。
+      场景 2、4、5 有 widget test 覆盖，但手感只能由真机判定。
 
-**Review gate**：本阶段必须由用户在真机上亲自确认全部五个手势场景，通过后本 child 才算完成。
+**Review gate**：不停下。四个阶段全部完成后，把上述五个场景连同阶段 3 的过渡观感
+一起交用户在手机上验证。
 **Rollback point**：阶段 4 单独成一个提交（代码与 spec 修订同一个提交，不拆开）。
 
 ## 收尾
@@ -164,6 +161,7 @@ adb exec-out screencap -p > .trellis/tasks/09-01-ux-correctness/research/screens
 - [ ] 走 Phase 3.3：判断本轮是否产生值得写进 `.trellis/spec/frontend/` 的约定
       （候选：删除错误 guard 时同步删掉固化该错误行为的测试）。
 - [ ] Phase 3.4 提交，Phase 3.5 提示 `/finish-work`。
+- [ ] 交付时给出用户真机验证清单：阶段 3 的过渡三态（含无头像用户）+ 阶段 4 的五个手势场景。
 
 ## 边界
 

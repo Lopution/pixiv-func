@@ -123,8 +123,10 @@ parent 只负责提供可安装的 APK 与验收清单；下列结论以用户�
 - [ ] kill process → restart → download recovery 状态可见可恢复。
 - [ ] GitHub updater 在 API 29 与高版本 Android 上各完成一次真实安装。
 
-> child 级的功能与界面改动仍按既有规则各自安装 APK 并截图留证到该 child 的
-> `research/screenshots/`。本节是 parent 层的最终集成验收，不替代 child 级留证。
+> **2026-09-01 决定**：child 级不再逐阶段安装 APK 并截图留证。模拟器缺少可用的
+> Pixiv 网络与真实账号数据，截不到关键状态；改为各 child 在实现完成后交出「需人眼
+> 判定项」清单，与本节的最终集成验收一起由用户在自己手机上验证。child 内可自动判定
+> 的部分仍必须由 `flutter analyze` + `flutter test` 覆盖，不得以「留给真机」为由省略。
 
 ## Notes
 
