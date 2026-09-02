@@ -294,3 +294,24 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Status
 
 [OK] **Completed**
+
+
+## Session 13: 修复刷新与用户页 UX 正确性
+
+**Date**: 2026-09-02
+**Task**: 修复刷新与用户页 UX 正确性
+**Branch**: `main`
+
+### Summary
+
+按 PixEz 参考方案将共享下拉刷新收敛到 easy_refresh；NestedScrollView tab 使用 locator Header；个人主页头像、身份区与 pinned toolbar 分层并修复滚动冲突；同步 spec 与回归测试。flutter analyze 无问题，flutter test +541 全部通过；保留用户真机观感验证项。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `10ea29d` | (see git log) |
+
+### Status
+
+[OK] **Completed**
