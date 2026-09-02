@@ -101,33 +101,19 @@ settings。错误态文案不能依赖 `settingsProvider`，需退回系统语�
 
 ## 四、阶段 3：D7/U8 Profile Header
 
-**现状**（`lib/features/profile/profile_header_delegate.dart`）：
+**现状**（`lib/features/profile/profile_header_delegate.dart`）：头像和用户名分别由展开态
+与折叠态子树渲染，滚动临界点会突然替换；展开态整块还跟随背景透明度一起消失，导致
+无头像占位过大，并在滚动过程中与 toolbar 标题争抢空间。
 
-- line 35 `avatarRadius => lerp(72, 20)` —— **计算了但全文件无人使用**。
-- line 173 `_ExpandedProfile` 内 `_Avatar(radius: 72)`（直径 144dp），硬编码。
-- line 308 `_CollapsedProfile` 内 `_Avatar(radius: 20)`，硬编码。
-- line 91-112 由 `isFullyCollapsed` 在两个子树之间二选一。
-- line 37 / 92-93 `backgroundOpacity => 1 - progress` 包裹**整个** `_ExpandedProfile`。
+**方案**：按 PixEz 的 `NestedScrollView` + `SliverAppBar` 分层方式，把背景、展开身份区和
+pinned toolbar 分成独立层。
 
-三者叠加的实际观感 = 一个 144dp 大头像保持原尺寸整体淡出，到临界点突然被 20 半径小头像
-替换。默认「无头像」占位（`Icon(Icons.person_outline, size: radius)`）因此呈现为一个
-巨大的、正在淡出的灰色图标，看起来像背景水印。这与 U8 的用户描述完全吻合。
-
-**方案**：把头像从两个互斥子树里提出来，作为 delegate `Stack` 中一个独立的、由 geometry
-驱动的层。
-
-- 头像层不被 `backgroundOpacity` 包裹 —— 背景图淡出，头像不淡出。
-- 半径改用已有的 `geometry.avatarRadius`，并把展开端从 72 调到 **48–56**
-  （直径 96–112dp，取值在实现时按真机观感定档）。折叠端保持 20。
-- 位置在展开锚点（当前 `top: backgroundHeight - 120` 居中）与折叠锚点
-  （`_CollapsedProfile` 中 back button 右侧）之间按 `geometry.progress` 连续插值。
-- `_ExpandedProfile` / `_CollapsedProfile` 各自去掉内部的 `_Avatar`，其余布局不动。
-- 用户名：折叠端出现在 toolbar 居中位置。展开端名字与 toolbar 标题之间做交叉淡入淡出，
-  不要求两者共用同一个 widget。
-
-**必须注意的重叠**：`_CollapsedProfile` 折叠态左侧有 back button、右侧有
-restrict selector / edit / share。头像提为独立层后要保证在过渡的任意 progress 上都不与
-它们重叠 —— 特别是 `canPop` 为真与为假时左侧起点不同（line 298）。
+- 背景带独立按 `progress` 淡出。
+- 展开身份区包含一个固定 52dp 半径头像、名字、账号、统计和操作按钮，整体向上移出
+  header；头像不再缩进 toolbar，也不与背景共用透明度。
+- 头像与名字之间使用固定间距，身份区在 toolbar 淡入前完全离场，避免任何中间帧重叠。
+- pinned toolbar 只渲染返回、居中用户名和操作控件，不再放第二个头像。
+- `topInset` 计入最小 header 高度，toolbar 控件放在状态栏安全区下方。
 
 **回归面**：`test/user_profile_test.dart` 已有 header 相关 widget test
 （如 `current profile header has no settings entry`），改动后必须仍然通过。
@@ -135,28 +121,28 @@ restrict selector / edit / share。头像提为独立层后要保证在过渡的
 
 ## 五、阶段 4：U1 下拉刷新
 
-### 5.1 先决问题：现行 spec 契约固化了当前行为
+### 5.1 先决问题：旧 spec 契约曾固化当前行为
 
 `.trellis/spec/frontend/component-guidelines.md` 的 *Artwork Detail Transition Contract*
-第 3 节，对 `PullToRefresh` 有一条**现行契约**：
+第 3 节，曾经对 `PullToRefresh` 写过一条**已废弃的契约**：
 
 > `PullToRefresh` tracks the leading-edge drag distance separately from Flutter's armed
 > lifecycle. […] Once edge tracking has started, apply every vertical `scrollDelta` until
 > the matching `ScrollEndNotification`; **a reverse update may have a null `dragDetails`
 > while the scrollable bounces back.**
 
-同文件结尾还有一条：
+同文件结尾还曾有一条：
 
 > Do not let the framework's armed visual state pin the indicator after the user has
 > reversed the drag; **keep that correction in the shared wrapper** rather than creating a
 > second per-page refresh implementation.
 
-也就是说：当前的自建状态机**不是意外产物，是 spec 明确要求的**。「与框架 armed 生命周期
+也就是说：当时的自建状态机**不是意外产物，是旧 spec 明确要求的**。「与框架 armed 生命周期
 分开跟踪拖拽距离」正是 `_dragOffset` 那一套；「reverse update 的 `dragDetails` 可能为 null」
 这一句，直接排除了用指针状态过滤 overscroll 的做法 —— 而那恰恰是「手指离开后惯性仍唤出
 指示器」的成因。
 
-第 6 节还规定了必需测试：
+旧第 6 节还规定了必需测试：
 > Pull-to-refresh tests arm, reverse, and release a real scrollable, asserting linear
 > indicator movement before release, dismissal below the threshold, and exactly one refresh
 > after a valid release.
@@ -179,81 +165,12 @@ restrict selector / edit / share。头像提为独立层后要保证在过渡的
 这正是 parent PRD R1 写的：错误 guard 阻塞正常行为时删除或放松它，并同步删掉固化该错误
 行为的测试与规范，而不是叠加下一层补丁。
 
-#### 5.1.1 spec 具体改法（阶段 4 的执行依据）
+#### 5.1.1 规范同步
 
-这条 spec 的根本问题不是「写错了」，而是把行为契约（what）与实现指令（how）绑在同一段里，
-导致实现方无法只丢弃被证伪的那一半。下面是定稿的改法，阶段 4 照此执行。
-
-**(1) 第 3 节 —— 拆成纯行为契约 + 一条硬约束**
-
-删除原有的 `PullToRefresh` 整条（含 "tracks the leading-edge drag distance separately
-from Flutter's armed lifecycle"、"apply every vertical `scrollDelta` until the matching
-`ScrollEndNotification`"、"a reverse update may have a null `dragDetails`" 三处 how），
-替换为：
-
-```markdown
-- `PullToRefresh` is the single shared refresh wrapper. Feeds must not add a
-  second per-page refresh implementation.
-- Indicator behavior, stated as observable outcomes:
-  - A pull that reverses before release moves the indicator back with the
-    finger; releasing below the threshold cancels without calling `onRefresh`.
-  - Motion produced after the pointer has lifted (ballistic settle, bounce,
-    overscroll) never starts or resumes a pull.
-  - Every pull ends with the indicator hidden — whether it refreshed or cancelled.
-  - Once `onRefresh` starts, no scroll activity resets the refreshing state
-    until that Future completes. Exactly one `onRefresh` per qualifying pull.
-- The refresh threshold is decided in exactly one place. The wrapper must not
-  maintain a drag-distance judgement in parallel with the framework's, and must
-  not veto a refresh the framework has already triggered.
-```
-
-三处实质变化：
-- 全部 how 移除 —— 它们是实现路径，不属于 spec，且正是它们把 bug 锁死。
-- **补两条原本缺失的契约**：「指针抬起后的运动不得开始下拉」与「每次下拉结束指示器必须
-  隐藏」。用户报告的两个缺陷恰好落在旧 spec 的空白区 —— 旧条款只规定了下拉过程，
-  从未规定终态。
-- **新增「阈值判定只有一处」** —— 这是本次事故的真正教训，比修某一行更值得沉淀。
-
-**(2) 第 4 节错误矩阵 —— 一行扩为三行**
-
-原有的 `Armed pull reverses before release` 覆盖不到用户实际遇到的两种情况，替换为：
-
-```markdown
-| Armed pull reverses before release | Indicator follows the finger back; releasing below threshold cancels without calling `onRefresh`. |
-| Scroll motion continues after the pointer lifts | No pull starts or resumes; indicator stays hidden. |
-| Refresh completes or cancels | Indicator returns to hidden; nothing residual on screen. |
-```
-
-**(3) 第 6 节测试要求 —— 必须断言终态**
-
-原文只要求断言 "linear indicator movement **before release**"。「指示器卡在屏幕上」这个
-缺陷之所以能通过既有测试，正是因为**没有任何用例断言下拉结束后的可见性**。替换为：
-
-```markdown
-- Pull-to-refresh tests drive a real scrollable and cover: reverse-then-release
-  below threshold, a valid release, and pointer-up ballistic overscroll.
-  Assert the indicator's **final** visibility in every case, not only its
-  motion before release.
-```
-
-**(4) 文件结尾 —— 保留意图，去掉已证伪的实现指向**
-
-```markdown
-Do not let the framework's armed visual state pin the indicator after the user
-has reversed the drag. Correct that in the shared wrapper — but not by running
-a second scroll-notification state machine alongside the framework's. If the
-framework cannot express the visual, drop the visual, not the correctness.
-```
-
-**(5) 结构调整 —— 把这些条款移出详情页契约**
-
-`PullToRefresh` 与「作品详情页过渡」没有任何关系，它是历史上某个 task 顺手并入的。
-后果很实际：以后改下拉刷新的人不会想到去 *Artwork Detail Transition Contract* 里找规则
-（本次规划也是靠通读整个 spec 文件才发现）。
-
-把上述 (1)(2)(3)(4) 的条款，连同第 2 节 Signatures 中的 `PullToRefresh` 构造签名，
-一并拆出为独立小节 `## Shared Pull-to-Refresh Contract`。详情页契约中只保留与 Hero /
-预览 / 头像相关的内容。
+本次实现同步更新了 `component-guidelines.md`：`PullToRefresh` 的构造签名增加可选的
+`isNested`，刷新规则独立为 `Shared Pull-to-Refresh Contract`，并只保留可观察行为与
+终态断言要求。实现采用 `easy_refresh` 的具体配置记录在 5.3，规范不再锁定某套自建
+滚动状态机。
 
 ### 5.2 根因
 
@@ -285,149 +202,46 @@ trigger semantics，这个 wrapper 只负责渲染指示器。**实现与该声�
 结论：问题不在某一行判断写错，而在于这个 wrapper 事实上重新实现了一遍 scroll lifecycle，
 并与框架的那一套并行运行。修法是收敛到一套，而不是给 line 93 再加一个条件。
 
-### 5.3 方案
+### 5.3 最终方案
 
-**先决核查（2026-09-01，已在 Flutter 3.47 源码确认）**：
-`packages/flutter/lib/src/material/refresh_indicator.dart` 的公开成员里，与状态有关的
-只有 `onStatusChange`（`ValueChanged<RefreshIndicatorStatus?>`），而
-`RefreshIndicatorStatus` 是**离散**枚举：`drag / armed / snap / refresh / done / canceled`。
-全文件不存在任何暴露连续进度（0..1）的公开 getter 或 `Animation<double>`，
-内部 `_positionController` 是私有的。
+实现采用 PixEz 当前使用的 `easy_refresh` 体系（版本 `3.5.1`），把刷新生命周期、
+阈值和回弹都交给共享组件管理：
 
-因此「用框架暴露的刷新进度驱动一个自定义指示器」这条路**在 API 层面就不成立**，
-不能作为方案写下去。
+- `PullToRefresh` 是无状态共享 wrapper，使用 `EasyRefresh` + `MaterialHeader`。
+- 普通列表的 `MaterialHeader` 固定为 `position: IndicatorPosition.above`、
+  `safeArea: true`、`clamping: true`；嵌套 tab 使用 `position: locator`、
+  `safeArea: false`，并由首项 `HeaderLocator` 提供定位。两条路径都取当前主题色；
+  组件不另建 scroll-notification 状态机，不累加拖拽距离，也不否决组件已经触发的刷新。
+- `clamping` header 会把指示器位移和内容位移分开保存。反向拖动时先收回 header，
+  指示器完全离屏后剩余手势才交给列表，因此不会出现“指示器与内容一起上移”。
+- 普通列表使用 `EasyRefresh` 的 child 构造；用户页保留外层
+  `NestedScrollView`，每个实际展示的 tab body 使用一个 `isNested: true` 的
+  `EasyRefresh` locator wrapper，并在列表首项放置 `HeaderLocator`（sliver 列表使用
+  `HeaderLocator.sliver()`）。不再给整个 `NestedScrollView` 额外包一层，避免重复刷新
+  生命周期。该嵌套路径有独立 widget test 覆盖。
+- 业务页面已有的 `AlwaysScrollableScrollPhysics` 保留，由 `EasyRefresh` 的滚动作用域
+  组合出组件 physics；其它刷新调用点不需要复制或改写。
 
-**方案：标准 `RefreshIndicator` + 在 wrapper 内把 ambient physics 换成带回弹的 physics。**
-两部分缺一不可：前者收敛状态机，后者实现 R6「回滑期间页面内容不上滚」。
-
-**第一部分：换回标准 `RefreshIndicator`，放弃自定义指示器外观。**
-
-- 用标准构造（非 `noSpinner`），采用框架自带的 Material 指示器，通过 `color` /
-  `backgroundColor` / `strokeWidth` 做主题化。
-- 删除全部自建状态机与自绘指示器：`_onScroll`、`_tracking`、`_dragOffset`、
-  `_indicatorOffset`、`_viewportDimension`、`_progress`、`_dismissController`、
-  `_buildIndicator` 以及外层 `Stack`。
-- `_handleRefresh` 直接透传 `widget.onRefresh`，不再用 `_dragOffset` 否决框架的刷新决定。
-- 结果：阈值判定、指针状态、惯性处理、指示器进退全部交还框架，这些正是 5.2 四条根因的
-  所在地。
-
-**第二部分：把 ambient physics 换成 `BouncingScrollPhysics`。**
-
-只做第一部分不足以满足 R6 第三条 —— 这一点由 2026-09-02 的实测确认，不是推断：
-在 `ClampingScrollPhysics` 下，下拉期间 `pixels` **恒为 0**，指示器占用的那段下拉距离
-**根本不存在于滚动坐标系里**。因此反向手势的位移直接进入 `applyUserOffset`，
-列表立刻上滚（实测反向 20px → `pixels=20`），与指示器回落同时发生。
-
-关键判断：这不是「框架表达不了这个视觉」，而是**选错了 physics** ——
-clamping 下压根没有可供反向手势抵消的余量。换成 `BouncingScrollPhysics` 后，
-下拉把这段距离存成负 `pixels`，反向手势必须先把它抵消回 0 才能推动列表。
-需求于是变成框架的**自然行为**，一行状态机都不用写。
-
-实测（`BouncingScrollPhysics` + 标准 `RefreshIndicator`，先下拉 160px 再反向）：
-
-| 反向累计 | `pixels` | 指示器 dy |
-|---|---|---|
-| -30 | -78.4 | 45.3 |
-| -120 | -36.9 | 8.3 |
-| -150 | -21.7 | -5.2（已收出可视区） |
-| -180 | -5.6 | -19.5 |
-| -210 | **+20.0**（列表此时才开始上滚） | -24.5 |
-
-`pixels` 全程为负直到指示器收完才转正，即「图标完全消失后，剩余手势才开始滚动列表」。
-同一组探针还确认：达到阈值释放仍 `refresh=1`；松手后的惯性回弹实际产生了 -82.2 的
-overscroll，却**没有**唤出指示器（`summoned=false`）—— 回弹不会重新触发下拉。
-
-实现要点：
-
-- `PullToRefresh` 内用 `ScrollConfiguration` 把 ambient physics 覆盖为
-  `BouncingScrollPhysics`，同时 `overscroll: false` 关掉 Android 的边缘辉光 ——
-  回弹与辉光是同一诉求的两种表达，同时开启会重复。
-- 各页面自己写的 `AlwaysScrollableScrollPhysics()` 会 `applyTo` 新的 ambient，
-  结果是 `AlwaysScrollable(parent: Bouncing)`，**13 个调用点一个都不用改**。
-- 作用域仅限 `PullToRefresh` 子树。已逐个核对 13 个调用点，每个 wrapper 内只有一个
-  scrollable，不存在被误伤的嵌套滚动区。
-
-**取舍（需知悉）**：下拉期间列表内容会随手指下移（iOS 风格回弹），不再是 Material
-那种「内容不动、指示器悬浮」。这是 R6 第三条的必要代价 —— 那段距离必须真实存在于
-滚动坐标系里，才可能在反向时被先消耗掉。两者不可兼得。
-
-**第三部分：指示器改由 overscroll 驱动（`RefreshIndicator.noSpinner`）。**
-
-第二部分单独仍不够 —— 这一点同样由实测确认，不是推断。框架自带指示器在
-`_checkDragOffset` 里有一条 armed 地板（`refresh_indicator.dart:521`
-`newValue = math.max(newValue, 1.0 / _kDragSizeFactorLimit)`）：一旦越过阈值进入
-armed，指示器位置最低只能收到满程的 2/3，**不会**随反向手势归零。
-
-实测（分步下拉 6/8/10/14 × 40px，全部 armed，`refresh=1`）：反向回滑全程
-`goneAt=-1` —— 指示器从未离开屏幕；而 `pixels` 照常转正（如 6×40 那组在反向 270px
-处 `pixels=5.1`），列表开始上滚时指示器仍挂在 2/3 位置。**这正是「图标与列表一起
-上移」**，也就是说只做前两部分等于没解决用户报告的现象。
-
-注意 armed 的触发比想象的容易：`_mode` 在 `alpha == 0xFF` 时就置 armed，
-对应 value ≈ 0.667，即 `viewportDimension / 6` 的 overscroll —— 240px 的分步下拉
-就已经 armed。**armed 是真机上的常态路径，不是边缘情况**，因此不能用未 armed 的
-下拉去写测试（初版测试正是用 160px 下拉才「通过」的，属于假绿）。
-
-改法：用 `RefreshIndicator.noSpinner`（框架仍然完整持有阈值、指针状态、惯性处理与
-`onRefresh` 触发，只是不画自己的 spinner），指示器由本 wrapper 渲染，且：
-
-- **连续量**（位置 / 可见性）取自 `notification.metrics.pixels` 的 leading-edge
-  overscroll。它是**镜像**而非累加 —— 每次通知直接重算，不可能与滚动位置失步。
-  overscroll 归零与列表开始滚动是同一时刻，需求因此成立。
-- **离散状态**（是否处于下拉、是否刷新中）取自 `onStatusChange` 的
-  `RefreshIndicatorStatus`。**只有** `drag` / `armed` 才画指示器 ——
-  这一条是必须的：手指抬起后的惯性回弹同样产生 overscroll，只看 overscroll 会把
-  指示器重新唤出来，即用户报告的另一个缺陷（实测复现过）。框架已经回答了
-  「现在是不是在下拉」，直接取答案，不要重新推导。
-
-**这为什么不是第二套状态机**：本 wrapper 不累加任何距离、不做任何阈值判定、
-不否决框架的刷新决定。阈值判定仍然只有框架一处。老代码的问题从来不是
-「监听了 `ScrollNotification`」，而是「用监听结果做了第二次阈值判定并据此否决框架」。
-这两件事必须区分开，否则会误伤唯一可行的解法。
-
-**三个决策各自必要，已用测试反证**（把实现临时退回中间版本跑核心用例）：
-
-| 版本 | 核心用例结果 |
-|---|---|
-| 标准 `RefreshIndicator` + clamping | 失败：`pixels` 恒为 0，下拉没被存成 overscroll |
-| 标准 `RefreshIndicator` + bouncing | 失败：`pixels=7.47` 时指示器仍在屏上（armed 地板） |
-| `noSpinner` + overscroll 驱动 + bouncing | 通过 |
-
-**硬约束**：阈值判定只有一处且必须是框架的；不得累加自己的拖拽距离，不得否决
-框架已经做出的刷新决定。读取 `metrics.pixels` 用于**渲染**是允许的 ——
-它是框架的权威值，镜像它不产生第二个真相源。
-
-**教训修正**：本节初稿曾写「如果某个视觉诉求只能靠自建状态机实现，放弃该视觉诉求」，
-并据此两次判定 R6 第三条无法实现（先是怪框架，后是怪 armed 地板）。两次都是错的：
-第一次真正的原因是选错了 physics，第二次是把「不得重建状态机」错读成了
-「不得读取框架状态」。正确的次序是：**先确认在框架的全部原语（physics / 手势 /
-布局 / 状态回调）里都无路可走，才谈放弃需求**。PRD 是需求，design 是设计，
-设计做不到时改的是设计。
+这是一个依赖边界的选择：下拉时内容会随 header 产生组件定义的回弹位移，视觉上接近
+PixEz，而不是以前自绘实现的悬浮图标。这个位移属于 `easy_refresh` 的滚动语义，业务层
+不再对它做二次解释。
 
 ### 5.4 测试处置
 
-`test/pull_to_refresh_test.dart` 现有两条：
+刷新回归测试直接驱动真实 scrollable，覆盖：
 
-- `reverse pull follows the finger before dismissing` —— 它固化的是当前自建实现的具体
-  行为路径。**意图**（反向回滑要收起指示器）保留，实现细节按新方案重写；若 5.3 末尾的
-  取舍被触发，该用例按新的真实行为改写，不允许为了让它变绿而保留旧状态机。
-- `a released armed pull still refreshes once` —— 意图正确，保留。
+- 未达阈值的下拉、反向回滑并释放；
+- 已 armed 的反向回滑，断言 indicator 收完前列表 offset 不变，收完后剩余手势才滚动；
+- 达到阈值释放，断言恰好一次刷新且最终 indicator 隐藏；
+- 指针抬起后的 ballistic overscroll 不重新出现 indicator；
+- `NestedScrollView` tab body 的 locator wrapper 刷新恰好一次且最终 indicator 隐藏。
 
-新增三条（审计明确要求两条，R6 第三条追加一条）：
-
-- 反向回滑至阈值以下并释放 → 不触发刷新，且指示器归零。
-- 指针抬起后的 ballistic overscroll → 不得重新唤出指示器。
-- **反向回滑期间 `pixels` 不得转正，直到指示器收出可视区** —— 即 R6
-  「回滑期间页面内容不上滚」。这条必须断言滚动坐标而不只是断言观感，
-  否则换回 clamping physics 时不会有任何用例变红。
-
-**全部用例的共同要求**：每一条都必须断言指示器的**终态可见性**，而不只是 release 之前的
-运动轨迹。旧用例只断言了 release 前的位移，这正是「指示器卡在屏幕上」能通过既有测试的
-原因。该要求与 5.1.1 (3) 修订后的 spec 第 6 节一致。
+所有用例都断言交互终态，不只断言中途轨迹；反向回滑用例必须越过组件 arm 阈值，避免
+测试走到另一条未 armed 的框架分支。
 
 ## 六、不做的事
 
-- 不引入新的滚动/刷新第三方库。
+- 不再引入除已批准 `easy_refresh` 以外的滚动/刷新库。
 - 不新建共享 feed grid 组件（那属于 `settings-productization` 的 C9 在 design 阶段
   自行判断的范围，本 child 不预先替它决定）。
 - 不改路由架构、不碰网络/下载/账号代码。
