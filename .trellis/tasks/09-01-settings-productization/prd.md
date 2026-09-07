@@ -125,31 +125,40 @@
 
 ### C9 内容过滤
 
-- [ ] 开启 R18 屏蔽后，Recommended / Ranking / Search / 用户作品列表中不再出现 R18 作品。
-- [ ] 开启 AI 屏蔽后，同上四处不再出现 AI 生成作品。
-- [ ] 加入屏蔽标签后，同上四处不再出现含该标签的作品。
-- [ ] 桌面小组件遵循同一套过滤规则。
-- [ ] 收藏列表、历史记录、作品详情页**不受**过滤影响。
+- [x] 开启 R18 屏蔽后，Recommended / Ranking / Search / 用户作品列表中不再出现 R18 作品。（`local_block_filter.dart` 谓词 + 四个发现类 controller 的 `localFilterEnabled`；`local_block_filter_test`、`feed_generation_commit_test`）
+- [x] 开启 AI 屏蔽后，同上四处不再出现 AI 生成作品。（同上）
+- [x] 加入屏蔽标签后，同上四处不再出现含该标签的作品。（同上）
+- [x] 桌面小组件遵循同一套过滤规则。（`widget_feed_loader.dart` 同一谓词 + R18 基线 + 3 页续拉上限；`widget_feed_loader_test`）
+- [x] 收藏列表、历史记录、作品详情页**不受**过滤影响。（`profile_feed_controller.dart` 仅 `ProfileFeedKind.work`；历史不走 `PagedFeedController`；详情页只用 `blockedTags` 做 chip 状态）
 - [ ] 高屏蔽率场景下列表仍可持续滚动加载，不出现「短到滚不动」的死局；续拉次数有上限，
       不出现无上限循环请求。
-- [ ] 在设置页改变过滤项后返回列表，结果立即反映新设置，无需重启或手动刷新。
+- [x] 在设置页改变过滤项后返回列表，结果立即反映新设置，无需重启或手动刷新。（`paged_feed_controller.dart` watch R18/AI/`blockedTagsProvider`）
 - [ ] 真机截图留证到 `research/screenshots/`。
 
 ### 其余设置项
 
-- [ ] 网络设置页只剩三项，无实现名词；`networkMode` 重启后保持用户选择。
-- [ ] native login intercept 与全局 insecureNoSni 开关在代码与 UI 中均已删除。
-- [ ] 预览质量默认中图、查看质量默认原图，旧设置按 R3 规则完成迁移。
-- [ ] 下载默认落到 PixivFunc 相册；自定义相册与 SAF 目录均真实生效。
-- [ ] 命名预设与自定义模板真实生效，多 P 不覆盖，预览与实际落盘文件名一致。
-- [ ] UI 语言切到日语后，抓包确认 API 请求 `Accept-Language` 随之改变。
-- [ ] 图片源设置在只有单一可选项时不可见。
-- [ ] 每一项普通设置都能指出它改变了哪个真实产品行为；没有消费者的设置一律不留。
+- [x] 网络设置页只剩三项，无实现名词；`networkMode` 重启后保持用户选择。（`network_settings_page.dart`；`networkModeCode` 落盘 + 往返测试 `settings_test`。真机重启保持见下方待用户项）
+- [x] native login intercept 与全局 insecureNoSni 开关在代码与 UI 中均已删除。（`login_page.dart` 只走普通 WebView；`ba6e637` 删除死控制器与四语言遗留 key，`i18n_network_keys_test` 钉住缺席。内部 `NetworkRouteKind.insecureNoSni` 是 Automatic 的 PixEz 快速层，不是用户开关）
+- [x] 预览质量默认中图、查看质量默认原图，旧设置按 R3 规则完成迁移。（`app_settings.dart` 默认值 + `fromLegacyBool`；`settings_test` 覆盖 true/false 两半。分组数量与 R3 的偏差见 Open Questions）
+- [x] 下载默认落到 PixivFunc 相册；自定义相册与 SAF 目录均真实生效。（代码侧：`DownloadDestination`、`SafTreeChannel.kt`、`download_manager_test` / `download_sink_test`；真机 MediaStore/SAF 见待用户项）
+- [x] 命名预设与自定义模板真实生效，多 P 不覆盖，预览与实际落盘文件名一致。（`naming_rule.dart` 唯一 owner，`download_request.dart` 消费；`download_manager_test` / `download_recovery_test`；真机多 P 见待用户项）
+- [x] UI 语言切到日语后，抓包确认 API 请求 `Accept-Language` 随之改变。（代码侧：`pixivHttpClientProvider` watch `languageTag`，`pixiv_http_client_test` 覆盖 header 与 provider 重建；真机抓包见待用户项）
+- [x] 图片源设置在只有单一可选项时不可见。（`settings_page.dart` 以 `sources.length > 1` 门控；`e6ec619` 删除无消费者的 `imageSourceProvider`）
+- [x] 每一项普通设置都能指出它改变了哪个真实产品行为；没有消费者的设置一律不留。（2026-09-07 check 逐项列出消费者；隐藏的 `imageSource` 字段按 R7 保留待第二图片源）
 
 ## Open Questions
 
 用户已确认：R4 通过单一“保存位置”入口并列选择相册/文件夹；R2 高级页只保留 DoH endpoint、
 ECH front host 和恢复默认值。实现阶段不再重新讨论这两项。
+
+**R3 分组数（2026-09-07 check 发现，待用户拍板）**：R3 写的是两组（预览 / 查看）三档；实现是三组：
+预览（中 / 大，feed payload 没有原图 URL，故意不提供假的「原图」）、详情质量（详情页主图，默认大图，
+540px 主图不可读而每次打开详情就拉原图流量过大）、查看质量（放大查看器，默认原图）。默认值与迁移
+规则均符合 R3；偏差只在多出「详情质量」一组。归档时按「保留三组」处理；若用户要求合并详情与查看，
+后续 child（behavior-correctness-cleanup）以一个提交收敛。
+
+**待用户真机（agent 不能代做）**：截图留证 `research/screenshots/`；`networkMode` 重启保持；
+自定义相册与 SAF 真实落盘；多 P 命名不覆盖；日语 `Accept-Language` 抓包；阶段 5 的耗时口径。
 
 ## Notes
 
