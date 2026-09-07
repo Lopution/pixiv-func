@@ -26,7 +26,9 @@
 - [x] 实现有上限的续拉：cursor 去重、服务端耗尽、无过滤不续拉均有处理
       （`paged_feed_controller.dart`，`filterMaxRefillPages == 3`）。
       谓词单测在 `local_block_filter_test.dart`；一页过滤在
-      `feed_generation_commit_test.dart`。续拉循环本身尚无单测。
+      `feed_generation_commit_test.dart`；续拉循环在
+      `paged_feed_refill_test.dart`；小组件空页续拉在
+      `widget_feed_loader_test.dart`。
 - [x] 设置变更后失效/重新计算发现类 feed（基类 watch 过滤设置）。
 - [x] 阶段门：feed/widget 单测与 widget test 通过。
 
