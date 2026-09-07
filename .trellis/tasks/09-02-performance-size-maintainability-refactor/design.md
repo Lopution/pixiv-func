@@ -38,7 +38,9 @@ lib/core/<domain>/  entity / repository / controller(Notifier) / store /   可 i
 ```
 
 允许的例外只有一个：`lib/app/navigation/routes.dart`（路由门面）import 各 feature 的页面入口，
-页面 import 门面——这是唯一被批准的环，并在 layering_test 中白名单化。
+页面 import 门面——这是唯一被批准的环，并在 layering_test 中白名单化。门面 API 以 id/参数为形参
+（`openIllust(context, id)`、`openUser(context, id)`、`openSearch(context, query)`），不以 widget 实例为形参，
+以便 F 用 go_router 路径重实现而调用点不变。
 
 具体修正项：
 
@@ -198,10 +200,10 @@ lib/core/<domain>/  entity / repository / controller(Notifier) / store /   可 i
 
 ## 6. 依赖与工具链（child A）
 
-按 `dependency-upgrade-audit.md` 的分层执行，顺序：删依赖 → Flutter 3.47.2 → lock 刷新
+按 `dependency-upgrade-audit.md` 的分层执行（D-12 后 `go_router` 不删除，随 F 升到 18），顺序：删 `cupertino_icons` → Flutter 3.47.2 → lock 刷新
 （`flutter pub upgrade`、`cargo update`）→ Android 工件 → CI actions → 耦合升级（archive+image）→
 `flutter_secure_storage` 11 + AGP 9.1.1 → 工具链固化。每步一个提交，每步跑全量检查。
-`material_ui` 系（`cached_network_image` 4、`go_router` 18）不升级，记录原因。
+`material_ui` 系（`cached_network_image` 4、`go_router` 18）在 F 内随 app 迁移一起升级，A 不动。
 
 CI 目标形态：
 
@@ -309,58 +311,48 @@ lib/app/
   可聚焦可键盘激活；14 处 `GestureDetector` 逐个评估改 `InkWell`/`IconButton` 或补 `Semantics`；
   收藏、关注、下载、导航四类动作必须有语义标签。E 增加共享组件的 semantics 测试。
 
-### 13.3 明确延后（记入后续 task 候选，不在 09-02）
+### 13.3 交付给 child F 的交互与视觉现代化（D-10～D-13，2026-09-07 用户决定不延后）
 
-| 项 | 原因 | 09-02 内的 enabler |
+原则变更：README "第一阶段冻结用户可感知体验" 在 F 阶段终止；F 是唯一允许改变用户可见交互与视觉的 child，
+排在 C 之后（依赖 C 的组件层、`motion_tokens`、`routes.dart` 门面）、E 之前。
+
+| 项 | 方案 | 依赖 / 影响 |
 |---|---|---|
-| Predictive Back（`enableOnBackInvokedCallback`）、Hero 手势返回 | 改变用户可见交互 | `motion/` 单一来源；`PopScope` 用法保持现代 API |
-| 按 tab 嵌套 Navigator / `StatefulShellRoute` | 改变返回栈语义，且 parent 明确不引入 `go_router` | `routes.dart` 门面：所有跳转经门面，日后只改门面内部 |
-| 进程被杀后的状态恢复（tab/滚动/搜索词/viewer 页码） | 产品能力，需单独验收 | feed 状态在 `PagedFeedController` 中集中；`PageStorageKey` 用法保留 |
-| Material 3 / M3 Expressive / `NavigationBar` / `SearchBar` / `SegmentedButton` | 打破 beta56 视觉冻结与 golden | 组件层收敛后切换范围只在 `lib/app/` |
+| **material_ui / cupertino_ui 迁移（D-11）** | `flutter add material_ui cupertino_ui` → `dart fix --apply --code=migrate_design_widgets` 改 56 个 import → `localizationsDelegates: GlobalMaterialLocalizations.delegates`（material_ui 版）→ 仍 import `flutter/material.dart` 的第三方 widget（`easy_refresh`、`flutter_staggered_grid_view` 等）用 `MaterialUiCompatibilityBridge` 包住（`MaterialApp.builder`）→ `useMaterial3` 取默认（M3） | 顺带升 `go_router` 18、`cached_network_image` 4；**快照体积可能增加**（app 用 material_ui、legacy 插件仍用 SDK material → 两份被使用部分同时编入），F 结束时重测 per-ABI 大小并更新 B 的门禁阈值；若增量 > 1 MB 评估替换 legacy 插件 |
+| **M3 主题重建** | `ColorScheme.fromSeed` 以 `FuncTokens` 品牌色为 seed；组件主题（AppBar/NavigationBar/TabBar/Card/Chip）在 `lib/app/theme/` 单点定义；`ReplicaSwitchTile` 的 `CupertinoSwitch` 换 M3 `Switch`（或保留并记录）；`test/goldens/home_bar.png` 等 golden 重新生成 | 视觉改变是预期结果；README 项目原则同步改写 |
+| **导航架构（D-12）** | `go_router` 18：`MaterialApp.router` + `StatefulShellRoute.indexedStack`，分支 = 首页各 tab（推荐/排行/最新/搜索/我），每个分支独立 Navigator；详情/用户/小说/设置等页面为各分支下的子路由；转场用 `CustomTransitionPage` 消费 `motion_tokens`；`intent_router.dart` 的 `pixiv://`/`https://www.pixiv.net` 深链映射为 go_router 路径；C 的 `routes.dart` 门面改为 `context.go/push` 实现，调用点不变 | 替换 `Navigator.of(context).push(ReplicaPageRoute(...))` 28 处（经门面）；`replicaRouteObserver` 改为 go_router `observers`；返回栈语义改变（切 tab 保留各自栈） |
+| **状态恢复** | `MaterialApp.router(restorationScopeId: 'app')` + go_router 的 `restorationScopeId`；tab 与各分支栈由 go_router 恢复；滚动位置用分支内 `PageStorageKey`（已有用法扩展到全部 feed）；搜索词、viewer 页码进路由参数；`PagedFeedController` 状态在 `keepAlive` 分支内保留 | 验证：开发者选项"不保留活动" + `adb shell am kill`，回到同 tab/同页/同滚动区间 |
+| **Predictive Back** | `AndroidManifest` `android:enableOnBackInvokedCallback="true"`；全部 `WillPopScope`（已为 0）/`PopScope` 使用 `onPopInvokedWithResult`；go_router 与系统预测性返回联动；Android 14+ 真机验证 | API 29 上自动降级为普通返回 |
+| **Hero 手势返回** | viewer 支持下拉/拖拽关闭并驱动 Hero 反向转场（`motion/` 提供 `DragToDismiss` 原语）；`HeroRectClip` 复用 | 只在图片 viewer/详情 |
+| **M3 组件** | `BottomNavigationBar` → `NavigationBar`；搜索入口 → `SearchBar`/`SearchAnchor`；设置中的三档枚举（预览/查看质量等）→ `SegmentedButton`；`ButtonBar`/旧 Dialog 样式按 M3 | 与 settings 原语（C8）配合 |
 
-顺序：beta56 replica → Func 组件层（本 task）→ 现代交互模型 → M3 视觉。
+顺序（F 内）：material_ui 迁移与体积复测 → M3 主题与 golden → go_router 架构与深链 → 状态恢复 →
+Predictive Back → Hero 手势 → M3 组件 → README/spec 更新。每步一个提交，行为变化写进 `component-guidelines.md`。
 
-## 14. 设计轴二：性能约束（2026-09-07 GPT 评审后补入）
+## 14. 设计轴二：性能约束（2026-09-07 GPT 评审后补入；D-9：不做运行时基线）
 
-性能不作为独立目标或 child，而是 C/B/D/E 的验收维度，并以一次真机基线（P0）为前提。事实依据：
-`PixivImage` 无任何 decode 尺寸限制（全仓库仅反查页 `cacheWidth: 1024`），瀑布流按原始像素 decode；
-`illustStoreProvider` 是普通 `Provider`，卡片重建不由它驱动，rebuild 是否有问题需实测；`main.dart`/`app.dart`
-已把 `Rhttp.init`、网络 warmUp、widget coordinator 置为不阻塞首帧，首帧前只等 settings 与账号读取；
-下载恢复记录以 `setStringList` 整表重写；应用自有 SQLite 仅 `history.db`（3 个索引）。
+用户决定不做真机基线（D-9）。因此性能只作为**静态可验证的设计约束**，不做数值化验收，也不声称
+"更快/更省"；实现者可在 C/F 过程中临时用 DevTools 自查，但不作为 gate。事实依据：`PixivImage` 无 decode
+尺寸限制（全仓库仅反查页 `cacheWidth: 1024`）；`illustStoreProvider` 是普通 `Provider`，卡片重建不由它驱动；
+`main.dart`/`app.dart` 已把 `Rhttp.init`、网络 warmUp、widget coordinator 置为不阻塞首帧；下载恢复记录
+`setStringList` 整表重写；应用自有 SQLite 仅 `history.db`（3 个索引）。
 
-### 14.1 约束
-
-| 维度 | 约束 | 落点 |
+| 维度 | 约束（可由代码/测试验证） | 落点 |
 |---|---|---|
-| 图片内存 | feed/avatar 按布局尺寸 decode；detail 按屏宽；viewer 原尺寸。刷 N 张图后的 PSS 不高于基线，目标显著下降（待测量） | C（`PixivImage.decodePolicy`），B 记录 `CacheManager` 磁盘配置 |
-| 重建范围 | 先用 DevTools rebuild 统计与 `Performance Overlay` 实测 feed 滚动；只有证据显示整卡重建时才引入 `select`/拆分边界；不预设 | C |
-| 启动 | 保持"首帧前只等 settings + 账号"；任何新初始化必须 `unawaited` 或后置；冷启动到首帧不高于基线 | C、D（原生 init 不进主线程同步路径） |
-| 持久化增长 | 下载恢复表在 500 条记录时的写入耗时可接受；history 三条查询 `EXPLAIN QUERY PLAN` 命中索引 | C（若需改写为增量写入则单独提交） |
-| 请求复用 | 只统计（一次脚本会话内相同 URL 的重复请求数），有证据再决定是否在 repository 层共享 in-flight Future；不建全局缓存层 | P0 基线 → C 决策 |
-| 通道开销 | MediaStore/SAF 写入按块经 MethodChannel（`media_store_channel.dart:123`）：测块大小与调用次数，必要时调块大小；不改协议 | D |
-| 回归门禁 | C 之后重跑 P0 协议，任一指标劣化超过阈值（首帧 +10%、内存 +10%、jank 帧率 +2 个百分点）即回滚该项 | E |
+| 图片内存 | feed/avatar 变体必须传 `memCacheWidth`（布局宽 × dpr，上限 1.5× 逻辑像素），detail 按屏宽，viewer 不限；widget 测试断言变体产出的 `ImageProvider` 带尺寸 | C |
+| 重建范围 | 共享组件只 `watch` 自己需要的 provider 切片（`select`）；`IllustCard` 不 `watch` 整个 feed state；由 code review 与 `layering_test` 的 import/`watch` 模式检查 | C |
+| 启动 | 首帧前的等待项固定为 settings + 账号两项；新增初始化必须 `unawaited`/后置；`startup_gate_test` 断言首帧前不等待网络/widget/rhttp | C、F（go_router 初始化不得阻塞首帧） |
+| 持久化增长 | `DownloadRecoveryStore` 记录数设上限（如 200，超出淘汰已完成项）或改增量写入，由 code review 决定；history 三条查询走已有索引（`EXPLAIN QUERY PLAN` 在单测中断言不出现 `SCAN TABLE`） | C |
+| 请求复用 | 不建缓存层；`IllustDetailController` 打开详情时先渲染 store 中的实体再刷新（已是如此），不额外去重 | — |
+| 通道开销 | MediaStore/SAF 写块 ≥ 256 KiB（Dart 侧分块），协议不变 | D |
+| 体积 | B 的 CI 体积门禁是唯一数值门禁；F 迁 material_ui 后重测并更新阈值 | B、F |
 
-### 14.2 基线协议（`research/runtime-baseline.md`，真机、用户执行，C 之前与之后各一次）
-
-- 构建：`flutter build apk --profile --flavor fdroid --split-per-abi --target-platform android-arm64`（B3 之前用 `--target-platform`
-  单 ABI 即可）。
-- 冷启动/首帧：`adb shell am start -W -n io.github.lopution.pixivfunc/.MainActivity` 取 `TotalTime`；`flutter run --profile --trace-startup`
-  取 `timeToFirstFrameMicros`；各 5 次取中位数。
-- 滚动 jank：DevTools Performance 录制推荐页匀速滚动 60 秒，记录 build/raster 超 16ms 的帧占比。
-- 内存：`adb shell dumpsys meminfo io.github.lopution.pixivfunc` 在冷启动、浏览 50 张、200 张后各取 `TOTAL PSS`
-  与 `Graphics`。
-- 详情打开延迟：从点击卡片到详情首图完成的时间（DevTools timeline 事件或屏幕录制帧数），10 次中位数。
-- 请求重复：`NetworkAccessPolicy` 诊断日志开启，统计一次脚本会话（推荐 → 详情 → 用户页 → 返回 ×5）中相同 URL 的重复请求。
-- 图片缓存：`flutter_cache_manager` 目录大小与对象数。
-
-### 14.3 明确不做
-
-Impeller 参数调优、大规模 isolate 改造、自研图片缓存、自定义渲染管线、自适应布局之外的平板专用 UI。
+不做：Impeller 调优、大规模 isolate、自研图片缓存、自定义渲染管线、任何基于未测量数字的结论。
 
 ## 15. 明确不采用
 
-- 不迁 Material 3 / `material_ui`；不引入 `go_router`/声明式路由/嵌套 Navigator；不引入 json 代码生成、freezed、
-  Result/Either；不新建全局 revision/epoch/journal/registry/请求缓存层；不用无界缓存/预取/并发换观感。
+- 不引入 json 代码生成、freezed、Result/Either；不新建全局 revision/epoch/journal/registry/请求缓存层；
+  不用无界缓存/预取/并发换观感；除 `material_ui`/`cupertino_ui`/`go_router` 外不引入其它 UI 或路由库。
 - 不为体积替换 aws-lc-rs（ECH 依赖 HPKE）、不删压缩支持、不删 API 29、不删 flavor、不删测试。
 - 不把 `--target-platform` 当作单 ABI 打包手段。
-- 不在本 task 启用 Predictive Back、状态恢复、M3 视觉（见 §13.3）。
+- Predictive Back、状态恢复、M3 视觉、go_router 架构只在 child F 内做，C 及其它 child 保持行为中性。

@@ -24,8 +24,8 @@ gate：用户批准。与 09-01 仅在 `pubspec.yaml` 行级可能冲突。
 
 - [ ] A0 基线：`flutter pub outdated`、`cargo update --dry-run`、`unzip -l` 三 ABI 汇总，写入
       `research/dependency-upgrade-audit.md` / `apk-size-breakdown.md` 的"实施时复核"小节。
-- [ ] A1 删除 `go_router`、`cupertino_icons`（`pubspec.yaml`）；`flutter pub get`；确认 APK 中
-      `packages/cupertino_icons` 消失。提交 `deps: drop unused go_router and cupertino_icons`。
+- [ ] A1 删除 `cupertino_icons`（`pubspec.yaml`；`go_router` 保留，D-12 后由 F 升级并接线）；`flutter pub get`；确认 APK 中
+      `packages/cupertino_icons` 消失。提交 `deps: drop unused cupertino_icons`。
 - [ ] A2 Flutter 3.47.0 → 3.47.2：本地 SDK（新目录或 `flutter upgrade`，更新 `android/local.properties`
       由工具自动重写）；`ci.yml` 两处、`release.yml` 一处 `flutter-version`。提交 `build: flutter 3.47.2`。
 - [ ] A3 `flutter pub upgrade`（不改约束）；`cd plugins/rhttp/rhttp/rust && cargo update`；核对新 crate
@@ -47,7 +47,7 @@ gate：用户批准。与 09-01 仅在 `pubspec.yaml` 行级可能冲突。
       --output=none --set-exit-if-changed` 暂不加入（E 负责一次性格式化后再加，避免 09-01 未提交文件冲突）。
       提交 `ci: run kotlin, plugin and rust tests`。
 - [ ] 退出条件：`flutter analyze`/`flutter test`/插件测试/`cargo test`/Kotlin 测试/双 flavor release
-      构建全部通过；`pub outdated` 直接依赖只剩 `cached_network_image`（已记录原因）。
+      构建全部通过；`pub outdated` 直接依赖只剩 `go_router`/`cached_network_image` 的 material_ui 系大版本（留给 F）。
 
 回滚点：A2（SDK 版本）、A6、A7 各自独立；A3 的两个 lock 与其触发的 `.so` 重编同提交。
 
@@ -83,30 +83,17 @@ B 承担 schema 1→2 迁移）；A 完成。
       否则回退并记录。
 - [ ] B7 阈值：按 B1–B6 后的实测设定 CI 门禁（建议 arm64 APK 上限 = 实测 + 1 MB）。
       提交 `ci: enforce per-ABI APK size budget`。
-- [ ] B8 更新 `research/apk-size-breakdown.md` §6 的实测值；记录图片 `CacheManager` 的 `Config`（对象数/stalePeriod）与
-      真机缓存目录大小（供 R9 基线引用），不改配置除非有证据。
+- [ ] B8 更新 `research/apk-size-breakdown.md` §6 的实测值；记录图片 `CacheManager` 的 `Config`（对象数/stalePeriod），不改配置。
+      阈值注明"F 迁 material_ui 后需重测更新"。
 - [ ] 退出条件：release 产物为 2 个 split APK；arm64 ≤ 32 MB（B3 后）并记录 B1–B6 后的实际值；
       updater 跨 ABI 真机通过；双 flavor 构建通过。
 
 停止条件：任一 feature 裁剪导致 TLS 握手/解压/ECH 回归立即回退该提交；`--obfuscate` 导致 widget
 后台入口失效（`@pragma('vm:entry-point')`）则去掉 obfuscate 并记录。
 
-## Phase P0：运行时基线（parent 级，用户在真机执行；C 之前一次，C 之后一次）
-
-gate：用户有可用的 Android 真机（API 29 与高版本各一台更好）；A 完成后用 A 的工具链构建 profile 包。
-
-- [ ] P0-1 构建：`flutter build apk --profile --flavor fdroid --target-platform android-arm64`（B3 之前）或
-      `--split-per-abi`（B3 之后）；安装到真机，登录同一账号，关闭其它后台。
-- [ ] P0-2 按 design §14.2 采集：冷启动 `am start -W` ×5、`--trace-startup` 首帧 ×5、推荐页匀速滚动 60 秒的
-      jank 帧占比、冷启动/50 张/200 张后的 `dumpsys meminfo` PSS 与 Graphics、详情打开延迟 ×10、脚本会话
-      重复请求数、`flutter_cache_manager` 目录大小。
-- [ ] P0-3 结果写入 `research/runtime-baseline.md` 的"基线（C 前）"表；异常值注明环境（网络路线、机型）。
-- [ ] P0-4（C 之后）同一机型同一脚本复测，写入"复测（C 后）"表；对照 R9 阈值给出结论。
-- [ ] 退出条件：两张表齐全；任何"更省/更快"的结论都引用表中数字。
-
 ## Child C：`dart-architecture-convergence`
 
-gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记录；对当时 HEAD 重跑 `dart-architecture-audit.md` 与
+gate：触及 `lib/` 的 09-01 child 全部归档；对当时 HEAD 重跑 `dart-architecture-audit.md` 与
 `modernization-gaps.md` 的计数脚本。
 
 - [ ] C0 规则先行：`test/architecture/layering_test.dart`（import 图：`core→features` = 0；
@@ -118,7 +105,8 @@ gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记�
       13 个声明、8 个未用 `AppIcons` 常量（放宽 `icon_font_test`）；`unreachable_from_main` 开启。
       提交 `refactor: remove unreferenced files and declarations`。
 - [ ] C2 路由与导航目录合并：`ReplicaPageRoute` 唯一；`lib/app/navigation/` 收拢；`routes.dart` 门面
-      （`openIllust/openUser/openNovel/...`）；`HomeShellMetrics` 静态量改 provider。提交
+      （`openIllust(context, id)`/`openUser(context, id)`/`openNovel`/`openSearch(query)`…，以 id/参数为形参，F 用 go_router 重实现）；
+      `HomeShellMetrics` 静态量改 provider。提交
       `refactor(nav): single route builder and navigation facade`。
 - [ ] C3 组件层（design §13）：`lib/app/widgets/feed/`：`IllustCard`、`IllustFeedGrid`（8 处瀑布流统一，列数由
       `illustColumnsFor(crossAxisExtent)` 计算，手机恒 2 列）、`FeedTail/FeedEmpty/FeedError`（替换 32 个私有类，
@@ -128,10 +116,10 @@ gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记�
       `refactor(ui): motion tokens and hero clip under app/motion`。
 - [ ] C3b `PixivImage` 变体与 decode 策略：`PixivImageSize.feed/detail/viewer/avatar` + 命名构造器（含 `.hero(tag:)`），
       feed/avatar 传 `memCacheWidth`（布局宽 × dpr，上限 1.5× 逻辑像素），detail 按屏宽，viewer 不限；13 个调用点
-      切换；`PersonAvatar` 复用 avatar 变体。真机对照 P0：浏览 200 张后 PSS。提交 `perf(image): size-aware decode
-      policy for PixivImage variants`。
-- [ ] C3c 重建边界：DevTools rebuild 统计推荐页滚动与一次收藏操作；只有整卡重建被证实时才引入 `select`/拆分；
-      结论（含"无需改动"）写入 `research/runtime-baseline.md`。
+      切换；`PersonAvatar` 复用 avatar 变体；widget 测试断言 feed/avatar 变体的 `ImageProvider` 带 `memCacheWidth`。
+      提交 `perf(image): size-aware decode policy for PixivImage variants`。
+- [ ] C3c 重建边界（静态规则）：共享组件只 `watch` 所需切片（`select`），`IllustCard` 不 `watch` 整个 feed state；
+      code review 检查，可临时用 DevTools 自查但不作 gate。
 - [ ] C4 repository/controller 归位：5 个 repository、6 个 controller 迁入 `core/<domain>/`，
       controller 与 repository 分文件；`startup_gate.dart` 上移到 `lib/app/`。白名单清零。
       提交 `refactor(core): move repositories and controllers under core`。
@@ -142,8 +130,8 @@ gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记�
       key 校验进 CI。提交 `i18n: migrate to gen-l10n` 或 `i18n: typed keys and single accessor`。
 - [ ] C7 状态范式：3 个 `ChangeNotifier` → Riverpod；`history_page` → `HistoryFeedController`；
       页面不再 `new` 平台适配器。每项一个提交，测试改 provider override。
-- [ ] C7b 持久化增长：`DownloadRecoveryStore` 在 500 条记录时的写入耗时（`setStringList` 整表重写）；history 三条
-      查询 `EXPLAIN QUERY PLAN`；超出可接受范围才改为增量写入，单独提交。
+- [ ] C7b 持久化增长：`DownloadRecoveryStore` 设记录上限（淘汰已完成项）或改增量写入，code review 决定并单独提交；
+      history 三条查询在单测中 `EXPLAIN QUERY PLAN` 断言不出现 `SCAN TABLE`。
 - [ ] C8 文件拆分：`settings_page.dart`（含 `MePage` 去重；抽出 `SettingsSection`/`SettingsTile`/`SettingsControl`
       原语，子页只做组合）→ `illust_detail_page.dart`
       （`_GlobalRectClip` 公开化，`hero_transition_test` 改 `find.byType`）→ `user_page.dart` →
@@ -151,7 +139,7 @@ gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记�
 - [ ] C9 颜色收敛到 `FuncTokens`/主题；142 个仅本文件使用的公共声明按需私有化（随 C8 顺带）。
 - [ ] 退出条件：layering_test 白名单为空（含私有 widget 名称检查）；`flutter analyze`/`flutter test` 全绿且测试数
       不减少；i18n key 校验通过；四个大文件单文件 ≤ 600 行；`rg "ChangeNotifier" lib` 为 0；`rg "crossAxisCount: 2" lib/features`
-      为 0；P0 复测无 R9 阈值内的回归。
+      为 0。
 
 停止条件：任何拆分改变了 Hero 转场、Tab 动画、下拉刷新契约（`component-guidelines.md`）或
 `PagedFeedController` 三相语义 → 回滚该提交。
@@ -169,16 +157,46 @@ gate：`09-01-settings-productization`（`android/` 改动）与 `09-01-release-
 - [ ] D4 死分支与残留：12 处 `SDK_INT` 恒真分支；`drawable-v21`；debug/profile 冗余 `INTERNET`。
       提交 `android: remove pre-API29 branches and template residue`。
 - [ ] D5 updater 去重：`UpdaterPlatformInfo.kt` 进 main source set。提交 `android(updater): share platform info helpers`。
-- [ ] D5b 通道开销：统计一次 50 MB 下载经 `pixivfunc/mediastore` 的 `write` 调用次数与块大小，SAF 同理；块过小则在 Dart 侧
-      调整分块（协议不变），记录前后耗时。
+- [ ] D5b 通道分块：核对 `pixivfunc/mediastore`/SAF 的 Dart 侧写块大小，低于 256 KiB 则调整（协议不变）。
 - [ ] D6 `UPSTREAM.md` 补全（构建配置差异、cargokit 清理、toolchain、tests/examples、同步七步）；
       `backend/rust-plugin.md`；`login_webview_intercept` 单侧残留清理（若 09-01 已删原生端）。
 - [ ] 退出条件：Kotlin 测试与 channel 单测通过；API 29 真机下载/SAF/反查/updater 各一次；
       `rg "SDK_INT" android/app/src` 只剩 `TIRAMISU`。
 
+## Child F：`interaction-visual-modernization`
+
+gate：C 归档（组件层、`motion_tokens`、以 id 为形参的门面）；B 归档（体积门禁存在）。开工第一步：记录当时
+`lib/` 中 `package:flutter/material.dart` import 数、`Navigator.of(context).push(` 数、golden 清单、per-ABI 体积。
+
+- [ ] F1 `material_ui`/`cupertino_ui` 迁移：`flutter add material_ui cupertino_ui`；`dart fix --apply --code=migrate_design_widgets`；
+      `localizationsDelegates` 改用 material_ui 的 `GlobalMaterialLocalizations.delegates`；`MaterialApp.builder` 包
+      `MaterialUiCompatibilityBridge`（覆盖仍 import SDK material 的 `easy_refresh` 等）；`cached_network_image: ^4.0.0`、
+      `go_router: ^18.0.0`；`flutter analyze`/`flutter test`；重测 per-ABI 体积，增量 > 1 MB 时列出 legacy 插件替代评估。
+      提交 `ui: migrate to material_ui/cupertino_ui`。
+- [ ] F2 M3 主题：`useMaterial3` 默认；`ColorScheme.fromSeed(FuncTokens.brand)`；组件主题集中 `lib/app/theme/`；
+      `CupertinoSwitch` → M3 `Switch`（或记录保留）；重生成 golden。提交 `ui: Material 3 theme`。
+- [ ] F3 go_router 架构：`MaterialApp.router`；`StatefulShellRoute.indexedStack` 分支 = 首页 tab；页面为子路由；
+      `CustomTransitionPage` 消费 `motion_tokens`；`intent_router.dart` 深链 → go_router 路径；`routes.dart` 门面改
+      `context.go/push`；`replicaRouteObserver` → `observers`；删除 `ReplicaPageRoute` 的直接调用（28 处经门面已归零）。
+      提交 `nav: go_router StatefulShellRoute with per-tab stacks`。
+- [ ] F4 状态恢复：`restorationScopeId`；搜索词/viewer 页码进路由参数；全部 feed 加 `PageStorageKey`；
+      验证：开发者选项"不保留活动" + `adb shell am kill io.github.lopution.pixivfunc` 后回到同 tab/同页/同滚动区间。
+      提交 `nav: state restoration`。
+- [ ] F5 Predictive Back：manifest `enableOnBackInvokedCallback="true"`；`PopScope` 审计；Android 14+ 真机验证；API 29 回归。
+      提交 `nav: predictive back`。
+- [ ] F6 Hero 手势返回：`motion/drag_to_dismiss.dart`；viewer 拖拽关闭驱动 Hero 反向转场。提交 `ui: drag-to-dismiss viewer`。
+- [ ] F7 M3 组件：`NavigationBar`、`SearchBar`/`SearchAnchor`、`SegmentedButton`（三档枚举）。每项一个提交。
+- [ ] F8 文档：README 原则改写（视觉冻结终止、Func 组件层）；`component-guidelines.md` 记录新交互契约；
+      `backend/release-pipeline.md` 更新体积阈值。提交 `docs: retire replica visual freeze`。
+- [ ] 退出条件：`rg "package:flutter/material.dart" lib` 为 0；`rg "ReplicaPageRoute\(" lib/features` 为 0；深链、恢复、
+      预测性返回真机通过；golden 全绿；per-ABI 体积已更新到 B 的门禁；`flutter analyze`/`flutter test` 全绿。
+
+停止条件：`material_ui` 与 legacy 插件的主题互不可见导致可见错乱且桥无法覆盖 → 停在 F1，评估替换插件或回退；
+go_router 恢复与 `PagedFeedController` 生命周期冲突 → 停在 F4，先修契约再继续。
+
 ## Child E：`spec-test-lint-hardening`
 
-gate：E0 随 A 开始；E1–E3 在 C、D 之后。
+gate：E0 随 A 开始；E1–E3 在 C、D、F 之后。
 
 - [ ] E0 文档（可提前）：两份 `index.md` 状态列修正；`backend/release-pipeline.md`（随 B 更新）；
       `backend/rust-plugin.md`、`backend/android-channels.md` 骨架（随 D 填实）。
@@ -190,8 +208,6 @@ gate：E0 随 A 开始；E1–E3 在 C、D 之后。
 - [ ] E2b 无障碍与组件层校验：共享组件（`IllustCard`、`FeedTail/Empty/Error`、`showAppSnackBar`、settings 原语、
       收藏/关注按钮）的 semantics 测试（`SemanticsTester`/`find.bySemanticsLabel`）；layering_test 增加"`features/`
       不得定义 `_*Tail/_*Error/_*Empty/_*Card`"检查。
-- [ ] E2c 性能回归门禁：确认 P0 复测表已填并对照 R9 阈值；把 `research/runtime-baseline.md` 的协议链接进
-      `backend/release-pipeline.md`，作为每次大版本前的手动检查项。
 - [ ] E3 格式与 lint：`dart format lib test` 一次性提交；CI 加 format 检查；第一批 lint
       （`sort_pub_dependencies`、`prefer_single_quotes`、`unreachable_from_main`、`prefer_final_locals`）
       → 0 issues 提交；第二批（`strict-casts/raw-types/inference`、`unawaited_futures`、
@@ -203,8 +219,8 @@ gate：E0 随 A 开始；E1–E3 在 C、D 之后。
 1. A1–A10 各一提交（依赖/工具链）。
 2. B1、B2 独立提交；B3+B4 联动（流水线与 manifest 同期，若 D-3 由 release-blockers 落地则 B4 只做
    消费端）；B5 每 feature 一提交；B6、B7 各一提交。
-3. C0 先于 C1–C9；C 内每项一提交；删除旧路径（旧 repository 位置、`replicaRoute()`、`ReplicaStrings`、
-   桌面 SQLite 分支）为显式回滚点。
+3. C0 先于 C1–C9；C 内每项一提交；删除旧路径（旧 repository 位置、`replicaRoute()`、`ReplicaStrings`）为显式回滚点。
+3b. F1 → F2 → F3 → F4 → F5 → F6 → F7 → F8；F1 与 F3 各自是显式回滚点（依赖与导航形态）。
 4. D1 文档先于 D2–D5 代码。
 5. E3 的格式化提交单独且不含任何逻辑改动。
 
@@ -234,10 +250,9 @@ for apk in glob.glob('build/app/outputs/flutter-apk/app-*-release.apk'):
     print(apk, f"{sum(agg.values())/1e6:.1f} MB", {k:f"{v/1e6:.1f}" for k,v in sorted(agg.items(),key=lambda kv:-kv[1])[:6]})
 EOF
 git diff --check
-# P0 基线（真机）
-flutter build apk --profile --flavor fdroid --target-platform android-arm64
-adb shell am start -W -n io.github.lopution.pixivfunc/.MainActivity
-adb shell dumpsys meminfo io.github.lopution.pixivfunc | grep -E "TOTAL PSS|Graphics"
+# F：状态恢复与深链验证（真机）
+adb shell am kill io.github.lopution.pixivfunc          # 配合开发者选项"不保留活动"
+adb shell am start -a android.intent.action.VIEW -d "pixiv://illusts/123456"
 ```
 
 ## 高风险文件与停止条件
@@ -254,6 +269,6 @@ adb shell dumpsys meminfo io.github.lopution.pixivfunc | grep -E "TOTAL PSS|Grap
 
 ## 完成门槛
 
-- [ ] 五个 child 全部 check/archive；parent 验收清单（`prd.md` Acceptance Criteria）逐项勾选。
-- [ ] 体积、依赖、分层、i18n、channel 五类结论都有可复现的命令与记录文件。
+- [ ] 六个 child（A–F）全部 check/archive；parent 验收清单（`prd.md` Acceptance Criteria）逐项勾选。
+- [ ] 体积、依赖、分层、i18n、channel、导航/恢复六类结论都有可复现的命令与记录文件。
 - [ ] 用户完成 parent 真机矩阵（含跨 ABI 自更新）后，本 task 归档。

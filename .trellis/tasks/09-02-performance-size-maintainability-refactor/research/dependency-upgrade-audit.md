@@ -7,6 +7,10 @@ Releases API、Flutter releases feed、AndroidX/AGP/Kotlin/Gradle 发布页。
 本文件是 09-02 "可迭代性"目标的输入：哪些组件现在就该动、哪些必须一起动、哪些不该动。
 所有版本号为审计日当天的事实，实现时以当时的 `pub outdated` 为准重新核对。
 
+> 2026-09-07 晚更新（D-11/D-12）：用户决定整个 app 迁到 `material_ui`/`cupertino_ui` 并采用 `go_router` 架构。
+> 因此 §1 的 `go_router` **不再删除**（child F 升到 18 并接线），§5 的 `cached_network_image` 4 与 `go_router` 18
+> 在 child F 内随 app 迁移一起升级；child A 只删 `cupertino_icons`。§1/§5 的事实描述保留不改。
+
 ## 1. 声明了但未使用的直接依赖（直接删除）
 
 | 依赖 | 证据 |

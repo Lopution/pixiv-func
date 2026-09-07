@@ -51,14 +51,17 @@
 | D-7 | lint 严格度 | **分两批开启** `strict-casts/strict-raw-types/strict-inference`、`unreachable_from_main`、`prefer_final_locals`、`unawaited_futures`、`avoid_dynamic_calls`、`sort_pub_dependencies`；不开 `public_member_api_docs`、`lines_longer_than_80_chars` | child E |
 | D-8 | 任务结构 | **转为 parent，创建 5 个 child** | 已按任务地图创建（见 Notes） |
 
-2026-09-07 GPT 两轮评审后新增（推荐默认，待用户确认）：
+2026-09-07 GPT 两轮评审后新增，用户已答复：
 
-| # | 决策 | 推荐 | 后果 |
+| # | 决策 | 答复 | 后果 |
 |---|---|---|---|
-| D-9 | 运行时性能基线 | **C 开工前由用户在真机按 `research/runtime-baseline.md` 协议测一次，C 之后再测一次**；模拟器无 Pixiv 网络，agent 不能代测 | 没有基线则 C 的图片 decode/重建改动不得声称"更快/更省"，只能声称"不劣化" |
-| D-10 | 现代交互与视觉项的归属 | **Predictive Back、按 tab 嵌套 Navigator、进程被杀后的状态恢复、Hero 手势返回、M3/M3 Expressive 视觉 全部延后为 09-02 之后的独立 task**；09-02 只交付 enabler（`motion/` 单一来源、`routes.dart` 门面、组件层收敛） | 这些都改变用户可见行为或打破 beta56 视觉冻结，需单独验收 |
+| D-9 | 运行时性能基线 | **不测** | 性能只作为静态可验证的设计约束（design §14），不做数值验收，不声称"更快/更省"；唯一数值门禁是 B 的 APK 体积 |
+| D-10 | 现代交互与视觉项 | **不延后，在本 task 内推进** | 新建 child F 承接（D-13）；README "第一阶段冻结用户可感知体验" 原则在 F 阶段终止 |
+| D-11 | Material 3 落地路径 | **整个 app 迁到 `material_ui` + `cupertino_ui`，`useMaterial3` 取默认** | `go_router` 18、`cached_network_image` 4 随之在 F 升级；legacy 插件经 `MaterialUiCompatibilityBridge`；F 结束重测体积并更新 B 阈值 |
+| D-12 | 导航架构 | **`go_router` `StatefulShellRoute` + `restorationScopeId`** | A 不再删除 `go_router`（当前零引用，F 升到 18 并接线）；C 的 `routes.dart` 门面以 id 为形参，F 用 go_router 重实现 |
+| D-13 | 交互/视觉现代化归属 | **新建 child F，排在 C 之后、E 之前** | C 保持行为中性；F 是唯一改变可见行为的 child |
 
-明确不在本轮决策、留待后续独立 task：D-10 所列各项；网络路线/ECH/SNI/证书策略。
+明确不在本轮决策、留待后续独立 task：网络路线/ECH/SNI/证书策略。
 
 ## 两条横跨 child 的设计轴（2026-09-07 补入）
 
@@ -68,8 +71,8 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
    图片 / 反馈 / settings 原语），`features/` 只做组合。事实：8 处瀑布流写死 2 列；Hero+`PixivImage`
    组合 3 处；`Semantics` 0 处、14 处 `GestureDetector` 无语义；两份路由实现；32 个私有 feed 状态 widget。
    详见 design §13。
-2. **性能约束**：不作为独立目标；以真机基线为前提，对图片 decode 尺寸、重建范围、启动、持久化增长、
-   请求复用、通道开销设约束与回归门禁。事实：`PixivImage` 无 decode 尺寸限制；启动已是"首帧前只等
+2. **性能约束**：不作为独立目标，也不做基线（D-9）；对图片 decode 尺寸、重建范围、启动、持久化增长、
+   通道开销设**静态可验证**的约束。事实：`PixivImage` 无 decode 尺寸限制；启动已是"首帧前只等
    settings + 账号"；下载恢复表整表重写。详见 design §14。
 
 ## Requirements
@@ -86,7 +89,7 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 
 ### R2. 可迭代性：依赖与工具链健康
 
-- 删除零引用依赖：`go_router`、`cupertino_icons`。
+- 删除零引用依赖 `cupertino_icons`；`go_router`（当前零引用）保留，F 升到 18 并接线（D-12）。
 - 按 `research/dependency-upgrade-audit.md` 执行：Flutter 3.47.2（本地 + CI 三处）、
   `androidx.core` 1.19.0、`work-runtime-ktx` → `work-runtime`、`flutter pub upgrade`、
   `cargo update`、`actions/checkout@v6`、`actions/setup-java@v5`、Kotlin 2.4.10（可选）；
@@ -98,7 +101,8 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 - CI 常规检查：`flutter pub outdated`、`cargo update --dry-run` 输出归档（不阻塞）；Kotlin JVM
   测试、`plugins/rhttp/rhttp` 的 `flutter test`、`cargo test` 纳入 CI。
 - 升级策略写入 spec：跟随 Flutter stable 的官方 Android 验证矩阵（当前 JDK 17 / KGP 2.4.0 /
-  AGP 9.1.x / Gradle 9.3.1），不单独追 AGP/Gradle 新版；`material_ui` 系依赖与 app 整体迁移绑定。
+  AGP 9.1.x / Gradle 9.3.1），不单独追 AGP/Gradle 新版；`material_ui` 系依赖（`go_router` 18、`cached_network_image` 4）
+  在 F 内随 app 迁移一起升级。
 
 ### R3. 简洁性：发布体积与最小实现
 
@@ -152,7 +156,8 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 - 日志出口统一（极小 `log()` 或集中 `debugPrint`），补 `logging-guidelines.md`。
 - 硬编码颜色收敛到 `FuncTokens`/主题（保留 replica 视觉决定的 `Colors.*`）。
 - 图标：删除未用 glyph 常量；`icon.ttf` 子集化为可选项（需更新 `beta56-icon-font.md` 记录）。
-- 显式不做：Material 3、`material_ui`、`go_router`/声明式路由、json 代码生成、Result/Either 类型。
+- Material 3、`material_ui`/`cupertino_ui`、`go_router` 架构、Predictive Back、状态恢复、Hero 手势、M3 组件由 F 交付（R10）。
+- 显式不做：json 代码生成、Result/Either 类型、`material_ui`/`go_router` 之外的 UI/路由库。
 
 ### R6. 兼容性、安全与许可
 
@@ -185,28 +190,42 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 - 共享组件与收藏/关注/下载/导航四类动作满足无障碍基线：语义标签或 tooltip、≥ 48dp 触达、可聚焦可键盘激活；
   14 处 `GestureDetector` 逐个评估。
 - 新组件必须有 ≥ 3 处现存重复作为证据（`NovelCard`/`UserCard` 先盘点）。
-- D-10 所列交互/视觉项不在本 task 实现，只保证 enabler 到位。
+- C 只交付 enabler（`motion/` 单一来源、以 id 为形参的 `routes.dart` 门面、组件层收敛）；交互与视觉变化在 F（R10）。
 
-### R9. 性能约束（设计轴二，P0 基线 + C/B/D/E 验收）
+### R9. 性能约束（设计轴二，静态约束，D-9 不做基线）
 
-- C 开工前完成一次真机基线（D-9，协议见 design §14.2 与 `research/runtime-baseline.md`）：冷启动/首帧、
-  滚动 jank、浏览 50/200 张后的 PSS、详情打开延迟、重复请求数、图片缓存大小。
-- feed/avatar 图片按布局尺寸 decode，detail 按屏宽，viewer 不限制；效果以基线前后 PSS 对比记录。
-- 重建边界、请求复用只在实测证据下改动；不建全局缓存层。
-- 首帧前的等待项不得增加；任何新初始化 `unawaited` 或后置。
-- 下载恢复表 500 条记录时的写入耗时与 history 三条查询的 `EXPLAIN QUERY PLAN` 有记录。
-- C 之后重跑基线：首帧 +10%、PSS +10%、jank 帧占比 +2 个百分点以上视为回归，回滚对应提交。
+- feed/avatar 图片变体必须带按布局尺寸计算的 `memCacheWidth`，detail 按屏宽，viewer 不限；widget 测试断言。
+- 共享组件只 `watch` 所需 provider 切片；`IllustCard` 不 `watch` 整个 feed state。
+- 首帧前等待项固定为 settings + 账号；新增初始化 `unawaited`/后置；`startup_gate_test` 断言。
+- `DownloadRecoveryStore` 记录数设上限或改增量写入（code review 决定）；history 查询计划在单测中断言不 `SCAN TABLE`。
+- MediaStore/SAF 写块 ≥ 256 KiB。
+- 不建请求缓存层；不做数值化性能结论；B 的 APK 体积门禁是唯一数值门禁，F 迁 material_ui 后重测更新。
+
+### R10. 交互与视觉现代化（child F，D-10～D-13）
+
+- `material_ui` + `cupertino_ui` 迁移（`dart fix --code=migrate_design_widgets`、localizations delegates、
+  `MaterialUiCompatibilityBridge` 包 legacy 插件）；`go_router` 18、`cached_network_image` 4 随之升级；迁移后重测 per-ABI 体积。
+- M3 主题：`ColorScheme.fromSeed` 以 `FuncTokens` 品牌色为 seed，组件主题单点定义；golden 重新生成。
+- `go_router` `StatefulShellRoute.indexedStack`：首页各 tab 独立栈；页面为子路由；转场经 `motion_tokens`；`pixiv://`/web 深链映射；
+  C 的门面改为 go_router 实现，调用点不变。
+- 状态恢复：`restorationScopeId`；tab/栈/搜索词/viewer 页码可恢复；feed 滚动位置经 `PageStorageKey`；
+  用"不保留活动" + `adb shell am kill` 验证。
+- Predictive Back：manifest 开启，`PopScope` 用现代 API，Android 14+ 真机验证；API 29 自然降级。
+- Hero 手势返回：viewer 拖拽关闭驱动 Hero 反向转场（`motion/` 原语）。
+- M3 组件：`NavigationBar`、`SearchBar`/`SearchAnchor`、`SegmentedButton`（三档枚举）。
+- README 项目原则改写（视觉冻结终止）；`component-guidelines.md` 记录新交互契约。
+- 不做：`material_ui`/`go_router` 之外的 UI 库；平板专用布局（自适应列数由 C 的 `IllustFeedGrid` 提供即可）。
 
 ## 任务地图（child 已于 2026-09-07 创建，均 `planning`）
 
 | Child | 交付物 | 开工 gate | 阻塞谁 |
 |---|---|---|---|
-| P0 `runtime-baseline`（parent 级步骤，非 child） | 真机运行时基线（design §14.2 协议），结果写入 `research/runtime-baseline.md` | 用户可执行时；需一个 profile 构建 | C（C 之前必须有基线；C 之后复测） |
-| A `dependency-toolchain-health` | R2 全部；`cupertino_icons`/`go_router` 删除；FRB 校验脚本；CI 覆盖 Kotlin/插件/Rust 测试 | 用户批准即可（与 09-01 仅 `pubspec.yaml` 级微冲突） | B（`cupertino_icons`、lock 刷新是 B 的基线） |
+| A `dependency-toolchain-health` | R2 全部；`cupertino_icons` 删除（`go_router` 保留给 F）；FRB 校验脚本；CI 覆盖 Kotlin/插件/Rust 测试 | 用户批准即可（与 09-01 仅 `pubspec.yaml` 级微冲突） | B（`cupertino_icons`、lock 刷新是 B 的基线） |
 | B `release-size-per-abi` | per-ABI 发布流水线 + updater 多资产消费端 + Android 侧排除 `libsqlite3.so`（待验证）+ rhttp 裁剪/profile + obfuscate + cargokit 清理 + CI 体积门禁；记录图片 `CacheManager` 磁盘配置与缓存目录大小（R9） | D-1～D-5 已确认；`09-01-release-blockers` 的 R5（多资产 manifest）落地或与其并行协作；A 完成 | parent 真机 updater 验收 |
-| C `dart-architecture-convergence` | R4 的分层修正与单一 owner、R3 的合并/删除、R5 的 i18n/状态范式/history 分页/颜色；**R8 组件层**（`lib/app/` 结构、`IllustFeedGrid`、`PixivImage` 变体与 decode 策略、`motion/`、settings 原语、共享组件无障碍基线）；**R9** 的图片 decode、重建边界（实测后）、持久化增长检查 | 所有触及 `lib/` 的 09-01 child 归档（settings-productization、behavior-correctness-cleanup、network-perf-ab、reverse-image-saucenao、comment-translation） | E |
+| C `dart-architecture-convergence` | R4 的分层修正与单一 owner、R3 的合并/删除、R5 的 i18n/状态范式/history 分页/颜色；**R8 组件层**（`lib/app/` 结构、`IllustFeedGrid`、`PixivImage` 变体与 decode 策略、`motion/`、settings 原语、共享组件无障碍基线）；**R9** 的图片 decode、`watch` 切片、持久化增长上限 | 所有触及 `lib/` 的 09-01 child 归档（settings-productization、behavior-correctness-cleanup、network-perf-ab、reverse-image-saucenao、comment-translation） | E |
 | D `native-rust-hygiene` | channel 错误风格与线程约定、死分支、updater 去重、manifest/模板残留、`UPSTREAM.md` 补全、FRB 再生成流程文档；R9 的通道开销测量（MediaStore/SAF 分块）与原生 init 不阻塞首帧 | `09-01-settings-productization`（`android/` 改动）与 `09-01-release-blockers` 归档 | E |
-| E `spec-test-lint-hardening` | spec 填写与索引修正、模块级文档、共享测试假实现、断言整理、`dart format` + lint 两批启用；R8 共享组件 semantics 测试与 layering_test 的私有 widget 名称检查；R9 回归门禁（C 之后复测基线并记录） | 文档部分可随 A 开始；测试/lint 部分在 C、D 之后 | parent 归档 |
+| F `interaction-visual-modernization` | R10 全部：`material_ui`/`cupertino_ui` 迁移与 M3 主题、`go_router` 18 架构与深链、状态恢复、Predictive Back、Hero 手势、M3 组件、golden 与 README 更新、体积复测 | C 归档（组件层、`motion_tokens`、门面）；B 归档（体积门禁存在才能量化 material_ui 的影响） | E |
+| E `spec-test-lint-hardening` | spec 填写与索引修正、模块级文档、共享测试假实现、断言整理、`dart format` + lint 两批启用；R8 共享组件 semantics 测试与 layering_test 的私有 widget 名称检查 | 文档部分可随 A 开始；测试/lint 部分在 C、D、F 之后 | parent 归档 |
 
 ## 跨 child 约束
 
@@ -218,24 +237,24 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 5. **B 的 rhttp feature 裁剪不得删除 Dart 侧仍导出的 API 对应能力**（如 `HttpBody.multipart` 生成代码
    仍存在）；每去一个 feature 先跑插件 `flutter test` 与 `cargo test`。
 6. 任何 child 不得以"重构"为名改变 `NetworkAccessPolicy` 的路由阶梯、ECH/SNI、证书校验或 fallback 顺序。
+7. **`material_ui` 系依赖只在 F 升级**（A 不动 `go_router`/`cached_network_image` 的大版本）；F 迁移后重测 per-ABI 体积并更新 B 的门禁阈值。
+8. **C 的 `routes.dart` 门面以 id/参数为形参**，F 用 go_router 重实现时调用点不变；C 不引入 go_router。
+9. **只有 F 允许改变用户可见交互与视觉**；F 的每项变化写进 `component-guidelines.md`，golden 只在 F 重生成。
 
 ## Out Of Scope
 
 - 在对应 09-01 child 归档前改写其代码或未定契约。
 - 重新设计网络绕过路线、认证协议、下载产品行为、翻译/搜图产品决策、发布密钥策略。
-- Material 3 / M3 Expressive / `material_ui` 迁移、声明式路由与嵌套 Navigator、Predictive Back、Hero 手势返回、
-  进程被杀后的状态恢复（D-10：均为 09-02 之后的独立 task；本 task 只交付 enabler）、json 代码生成、Result 类型、
-  全局缓存/预取/并发/请求缓存层。
+- json 代码生成、Result 类型、全局缓存/预取/并发/请求缓存层；`material_ui`/`go_router` 之外的 UI/路由库；平板专用布局。
 - 直接手改生成文件（`frb_generated.*`）、构建缓存或 vendored 第三方源码逻辑。
 - F-Droid 上架元数据与其构建服务器配置（本 task 只保证产物形态与工具链声明满足要求）。
-- 以性能为名的架构改造：Impeller 调优、大规模 isolate、自研图片缓存、自定义渲染管线（R9 只做约束、基线与有证据的局部改动）。
+- 以性能为名的架构改造：Impeller 调优、大规模 isolate、自研图片缓存、自定义渲染管线；任何运行时性能基线或数值化性能结论（D-9）。
 
 ## Acceptance Criteria
 
-- [ ] D-1～D-10 均有用户明确答复并记录在本文件。
-- [ ] P0：C 开工前 `research/runtime-baseline.md` 有一组真机基线数据；C 完成后有复测数据。
+- [ ] D-1～D-13 均有用户明确答复并记录在本文件。
 - [ ] 每个 child 的 `prd.md`（复杂 child 另有 `design.md`/`implement.md`）通过 review 后才 `task.py start`。
-- [ ] A：`flutter pub outdated` 直接依赖无可解析的落后项（`cached_network_image` 除外并有记录）；
+- [ ] A：`flutter pub outdated` 直接依赖无可解析的落后项（`go_router`/`cached_network_image` 的 material_ui 系大版本除外，留给 F）；
       FRB 三元组校验通过；CI 跑 Kotlin/插件/Rust 测试与格式检查。
 - [ ] B：release 产物为 per-ABI APK，arm64 ≤ 32 MB 且不含 x86_64；updater 在 API 29 与高版本 Android
       上各完成一次跨 ABI 选择的真实自更新；`libsqlite3.so` 不再出现在 APK；CI 体积门禁生效；
@@ -247,8 +266,12 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 - [ ] C（R8）：`lib/app/` 按 design §13.1 组织；8 处瀑布流统一为 `IllustFeedGrid` 且手机仍为 2 列；`PixivImage`
       变体覆盖全部 13 个调用点并带 decode 策略；`motion_tokens.dart` 是唯一时长/曲线来源；共享组件与四类高频动作
       有语义标签；`features/` 无与组件层同职责的私有 widget。
-- [ ] C（R9）：feed 图片 decode 尺寸生效且基线复测 PSS 不高于基线；首帧前等待项未增加；重复请求数与查询计划有记录；
-      任一指标劣化超过 R9 阈值的提交已回滚。
+- [ ] C（R9）：feed/avatar 变体带 `memCacheWidth`（测试断言）；首帧前等待项未增加（`startup_gate_test`）；下载恢复表有上限或增量写入；
+      history 查询计划单测不出现 `SCAN TABLE`；MediaStore/SAF 写块 ≥ 256 KiB。
+- [ ] F（R10）：`lib/` 无 `package:flutter/material.dart` import；`useMaterial3` 为默认；`MaterialApp.router` + `StatefulShellRoute`
+      承载全部页面，`Navigator.of(context).push(ReplicaPageRoute` 为 0；`pixiv://`/web 深链经 go_router；"不保留活动" 下回到同
+      tab/同页/同滚动区间；Android 14+ 预测性返回可用；viewer 拖拽关闭；`NavigationBar`/`SearchBar`/`SegmentedButton` 落地；
+      golden 重生成；README 原则改写；per-ABI 体积复测并更新 B 阈值；`flutter analyze`/`flutter test` 全绿。
 - [ ] D：channel 错误风格与线程约定有 spec 并被代码遵守；12 处死分支清除；updater 重复函数合并；
       `UPSTREAM.md` 覆盖全部 fork 差异与再生成步骤。
 - [ ] E：spec 索引状态列与实际一致，6 份模板已填；`lib/core/<domain>/` 均有 library 文档；测试假实现
@@ -260,8 +283,8 @@ GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计�
 
 - 本 task 是复杂 task，已于 2026-09-07 转为 parent。child 已创建（`task.py create --parent`，均 `planning`）：
   A `09-07-dependency-toolchain-health`、B `09-07-release-size-per-abi`、C `09-07-dart-architecture-convergence`、
-  D `09-07-native-rust-hygiene`、E `09-07-spec-test-lint-hardening`。各 child 的 `prd.md` 已从本文件派生；
-  B、C 在 `task.py start` 前需补 `design.md`/`implement.md`，D 需补 `implement.md`。
-- parent 自身没有直接实现工作；先启动 A。
+  D `09-07-native-rust-hygiene`、E `09-07-spec-test-lint-hardening`、F `09-07-interaction-visual-modernization`（2026-09-07 晚创建）。
+  各 child 的 `prd.md` 已从本文件派生；B、C、F 在 `task.py start` 前需补 `design.md`/`implement.md`，D 需补 `implement.md`。
+- parent 自身没有直接实现工作；顺序 A → B → C → D → F → E（D 与 C 可并行）；先启动 A。
 - 研究文件目录：`.trellis/tasks/09-02-performance-size-maintainability-refactor/research/`。
 - 工作树在 2026-09-07 含大量 09-01 的未提交改动，所有研究计数以当天工作树为准，实现前须重算。

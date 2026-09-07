@@ -5,7 +5,7 @@
   "description": "对整个项目做有边界、可回滚、可量化的工程重构：架构便于人与 LLM 维护；组件可低成本升级/替换（含 2026-09-07 依赖审计的升级项）；发布包从 88.6 MB fat APK 收敛到 per-ABI ≤ 32 MB 并向 ≤ 28 MB 收敛，代码用最小实现；完成从 beta56 移植后不彻底的现代化。计划于 2026-09-07 重写，建议拆为 parent + 5 个 child。",
   "status": "planning",
   "dev_type": null,
-  "scope": "whole-project refactor (parent; children: dependency-toolchain-health, release-size-per-abi, dart-architecture-convergence, native-rust-hygiene, spec-test-lint-hardening)",
+  "scope": "whole-project refactor (parent; children: dependency-toolchain-health, release-size-per-abi, dart-architecture-convergence, native-rust-hygiene, interaction-visual-modernization, spec-test-lint-hardening)",
   "package": null,
   "priority": "P2",
   "creator": "Lopution",
@@ -23,10 +23,11 @@
     "09-07-release-size-per-abi",
     "09-07-dart-architecture-convergence",
     "09-07-native-rust-hygiene",
-    "09-07-spec-test-lint-hardening"
+    "09-07-spec-test-lint-hardening",
+    "09-07-interaction-visual-modernization"
   ],
   "parent": null,
   "relatedFiles": [],
-  "notes": "2026-09-07：prd/design/implement 重写；research/ 新增 5 份审计；用户答复 D-1～D-8（D-4 保留桌面分支）；已创建 5 个 child（09-07-*），先启动 A。",
+  "notes": "2026-09-07：prd/design/implement 重写；research/ 5 份审计；D-1～D-13 已答复（D-9 不做基线；D-10～D-13 交互/视觉在 child F，material_ui + go_router 路线）；6 个 child（09-07-*），顺序 A→B→C→D→F→E。",
   "meta": {}
 }
