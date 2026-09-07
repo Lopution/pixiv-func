@@ -135,6 +135,72 @@ panic=abort`。
 "≤ 28 MB"是 §3–§5 全部落地后的推算值，不是承诺；实现阶段每完成一项就重新测量一次并
 更新本文件。
 
+### B0 干净 ABI 基线（child B，2026-09-07）
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi` @ `4c7742e`。
+Flutter 3.47.2 / Dart 3.13.2 / cargo 1.98.0 / AGP 9.1.1 / Gradle 9.3.1。
+先 `rm -rf build/rhttp/jniLibs`（目录本就不存在），再测。
+
+命令与墙钟：
+
+| 步 | 命令 | 开始 (UTC) | 墙钟 | Gradle |
+|---|---|---|---|---|
+| fat（三 ABI） | `flutter build apk --release --flavor fdroid` | 2026-09-07T15:50:06Z | 421.75 s | 383.6 s |
+| split（仅拆 ABI，无 obfuscate） | `flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm` | 2026-09-07T15:57:16Z | 109.87 s | 98.4 s |
+| analyze-size（见下） | `flutter build apk --release --flavor fdroid --target-platform android-arm64 --analyze-size --code-size-directory=/tmp/pixiv-size-b0-fat` | 2026-09-07T15:59:12Z | 91.58 s | 77.5 s |
+
+`implement.md` 写的 fat 命令带 `--analyze-size`。Flutter 3.47.2 拒绝在多 ABI
+上做 code-size analysis（`Cannot perform code size analysis when building for
+multiple ABIs`），所以 fat 本身不带该旗标。`--analyze-size` 目录在 fat + split
+测完之后用单独的 `--target-platform android-arm64` 补齐，不作为单 ABI 基线。
+该补齐命令把 `app-fdroid-release.apk` 覆写成带 §0.2 陈旧 ABI 泄漏的 41.8 MB
+包；下表 fat 数字全部取自覆写前的 `88,181,654` B 文件。
+
+产物路径：Flutter 3.47.2 的 split 命名是 `app-<abi>-<flavor>-release.apk`，
+不是 design 初稿的 `app-<flavor>-<abi>-release.apk`。
+
+| 产物 | 文件字节 | vs child A 收尾 `88,181,654` |
+|---|---|---|
+| `app-fdroid-release.apk`（fat，三 ABI） | 88,181,654 | 0 |
+| `app-arm64-v8a-fdroid-release.apk` | 31,187,258 | —（≤ 32,000,000） |
+| `app-armeabi-v7a-fdroid-release.apk` | 27,203,718 | — |
+
+Python `zipfile` 按 `compress_size` 汇总（native `.so` 均为 stored，compress = raw）：
+
+| 桶 | fat | split arm64-v8a | split armeabi-v7a |
+|---|---|---|---|
+| zip 条目合计 | 87,955,713 | 31,062,844 | 27,116,041 |
+| `lib/x86_64` | 31,846,664 | — | — |
+| `lib/arm64-v8a` | 28,993,008 | 28,993,008 | — |
+| `lib/armeabi-v7a` | 25,046,204 | — | 25,046,204 |
+| `classes.dex` | 1,309,768 | 1,309,768 | 1,309,768 |
+| `assets` | 513,725 | 513,720 | 513,720 |
+
+每个 split APK 的 `lib/` 只有一个 ABI 目录。fat 与两份 split 的对应 `lib/<abi>`
+桶逐字节相同。
+
+split APK 内 `.so` raw 字节（stored = raw）：
+
+| 文件 | arm64-v8a | armeabi-v7a |
+|---|---|---|
+| `librhttp.so` | 5,412,048 | 3,636,460 |
+| `libapp.so` | 9,962,376 | 10,994,248 |
+| `libsqlite3.so` | 1,732,360 | 1,713,736 |
+| `libflutter.so` | 11,747,528 | 8,615,900 |
+| `libdartjni.so` | 131,248 | 81,444 |
+
+fat 另含 x86_64：`librhttp.so` 6,738,312 / `libapp.so` 10,224,520 /
+`libsqlite3.so` 1,709,544。`librhttp.so` 与 `libapp.so` 三 ABI 与 child A
+收尾逐字节一致。
+
+`unzip -l … \| grep cupertino_icons`：fat 与两份 split 均为空。
+
+`--analyze-size` 目录：`/tmp/pixiv-size-b0-fat/`
+（`snapshot.arm64-v8a.json` 22,859,365 B，`trace.arm64-v8a.json` 2,281,577 B）。
+该次单 ABI 分析打印的 APK 仍带 `lib/armeabi-v7a` 4 MB + `lib/x86_64` 7 MB
+（cargokit / 插件 jniLibs 陈旧 ABI，§0.2），再次确认 `--target-platform`
+不能当发布手段。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
