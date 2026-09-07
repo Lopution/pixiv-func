@@ -100,3 +100,146 @@ Releases API、Flutter releases feed、AndroidX/AGP/Kotlin/Gradle 发布页。
   `sqflite`/`sqflite_common_ffi` 双栈见 `apk-size-breakdown.md` §5。
 - 升级项目：Flutter hotfix、`material_ui` 路线、FRB 版本对齐流程。
 - 可维护性：FRB 三方版本必须有一处可执行的核对脚本，否则每次升级都会重新踩坑。
+
+## 实施时复核（child A，f24c9a1，2026-09-07）
+
+测量环境：工作树 `/root/Pixiv-func-A`，`task/09-07-dependency-toolchain-health` @ `f24c9a1`。
+Flutter 3.47.0 / Dart 3.13.0 / cargo 1.98.0。命令：`flutter pub get --enforce-lockfile` 后
+`flutter pub outdated`；`cd plugins/rhttp/rhttp/rust && cargo update --dry-run`（未写 lock）。
+
+### `flutter pub outdated` 直接依赖
+
+| Package | Current | Upgradable | Resolvable | Latest |
+|---|---|---|---|---|
+| `archive` | 3.6.1 | 3.6.1 | 4.2.0 | 4.2.0 |
+| `cached_network_image` | 3.4.1 | 3.4.1 | 4.0.0 | 4.0.0 |
+| `flutter_riverpod` | 3.4.2 | 3.4.3 | 3.4.3 | 3.4.3 |
+| `flutter_secure_storage` | 10.3.1 | 10.3.1 | 11.0.0 | 11.0.0 |
+| `go_router` | 17.5.0 | 17.5.0 | 18.0.1 | 18.0.1 |
+| `image` | 4.3.0 | 4.3.0 | 4.9.2 | 4.9.2 |
+
+dev_dependencies 全部 up-to-date。工具提示 22 个 lock 内可 `flutter pub upgrade` 的传递依赖、
+8 个受约束挡住的 resolvable 大版本（含上表的 `archive` / `image` / `flutter_secure_storage` /
+`go_router` / `cached_network_image`）。与审计日 §2/§3/§5 的直接依赖表一致，无新增落后项。
+
+### `cargo update --dry-run`
+
+`Locking 122 packages to latest compatible versions`（审计日 §2 写的是 116）。lock 未写入。
+相对 §2 的差异：`rustls` 目标从审计日的 0.23.43 变为 **0.23.44**；`getrandom` 0.3.4→0.4.3、
+`rand` 0.9.4→0.10.2 是比 §2 列举的 TLS/HTTP patch 更大的兼容线跳跃。新增 crate 包括
+`chacha20`、`core_detect`、`cpufeatures`、`miniz_oxide`、`multiversion`/`multiversion-macros`/
+`multiversion_no_op`、`rand_pcg`、`syn 3.0.5`、`target-features`、`zlib-rs`。
+
+会改动的 crate：
+
+```
+aho-corasick 1.1.4 → 1.1.5
+alloc-stdlib 0.2.2 → 0.2.4
+android_system_properties 0.1.5 → 0.1.6
+anyhow 1.0.102 → 1.0.104
+async-compression 0.4.42 → 0.4.44
+aws-lc-rs 1.17.0 → 1.18.1
+aws-lc-sys 0.41.0 → 0.45.0
+bitflags 2.13.0 → 2.13.1
+brotli 8.0.3 → 8.0.4
+brotli-decompressor 5.0.1 → 5.0.3
+bytemuck 1.25.0 → 1.25.2
+bytes 1.11.1 → 1.12.1
+cc 1.2.63 → 1.4.5
+cfg_aliases 0.2.1 → 0.2.2
++ chacha20 0.10.2
+combine 4.6.7 → 4.6.8
+compression-codecs 0.4.38 → 0.4.39
+compression-core 0.4.32 → 0.4.33
+cookie 0.18.1 → 0.18.2
++ core_detect 1.0.0
++ cpufeatures 0.3.1
+crc32fast 1.5.0 → 1.5.1
+delegate-attr 0.3.0 → 0.3.1
+displaydoc 0.2.6 → 0.2.7
+encoding_rs 0.8.35 → 0.8.40
+find-msvc-tools 0.1.9 → 0.1.12
+flate2 1.1.9 → 1.1.10
+futures{,-channel,-core,-executor,-io,-macro,-sink,-task,-util} 0.3.32 → 0.3.34
+getrandom 0.3.4 → 0.4.3
+h2 0.4.14 → 0.4.19
+hermit-abi 0.5.2 → 0.5.3
+http 1.4.1 → 1.5.0
+http-body 1.0.1 → 1.1.0
+http-body-util 0.1.3 → 0.1.5
+hyper 1.10.1 → 1.11.1
+icu_{collections,locale_core,normalizer,normalizer_data,properties,properties_data} 2.2.0 → 2.3.0
+icu_provider 2.2.0 → 2.3.1
+indexmap 2.14.0 → 2.14.2
+ipnet 2.12.0 → 2.12.2
+jobserver 0.1.34 → 0.1.35
+js-sys 0.3.99 → 0.3.105
+libc 0.2.186 → 0.2.189
+litemap 0.8.2 → 0.8.3
+log 0.4.32 → 0.4.34
+memchr 2.8.1 → 2.8.3
++ miniz_oxide 0.9.1
+mio 1.2.1 → 1.2.3
++ multiversion 0.8.0 / multiversion-macros 0.8.0 / multiversion_no_op 1.0.0
+pkg-config 0.3.33 → 0.3.34
+portable-atomic 1.13.1 → 1.15.0
+potential_utf 0.1.5 → 0.1.6
+− ppv-lite86 0.2.21
+proc-macro2 1.0.106 → 1.0.107
+quinn 0.11.9 → 0.11.11
+quinn-proto 0.11.14 → 0.11.17
+quinn-udp 0.5.14 → 0.5.15
+quote 1.0.45 → 1.0.47
+r-efi 5.3.0 → 6.0.0
+rand 0.9.4 → 0.10.2
+− rand_chacha 0.9.0
+rand_core 0.9.5 → 0.10.1
++ rand_pcg 0.10.2
+regex 1.12.3 → 1.13.1
+regex-automata 0.4.14 → 0.4.18
+regex-syntax 0.8.10 → 0.8.11
+rustc-demangle 0.1.27 → 0.1.28
+rustc-hash 2.1.2 → 2.1.3
+rustls 0.23.40 → 0.23.44
+rustls-pki-types 1.14.1 → 1.15.1
+rustls-webpki 0.103.13 → 0.103.15
+rustversion 1.0.22 → 1.0.23
+serde / serde_core / serde_derive 1.0.228 → 1.0.229
+serde_json 1.0.150 → 1.0.151
+simd-adler32 0.3.9 → 0.3.10
+simd_cesu8 1.1.1 → 1.2.0
+smallvec 1.15.1 → 1.16.0
+socket2 0.6.4 → 0.6.5
+syn 2.0.117 → 2.0.119；+ syn 3.0.5
++ target-features 0.1.6
+thiserror / thiserror-impl 2.0.18 → 2.0.20
+time 0.3.47 → 0.3.55
+time-core 0.1.8 → 0.1.9
+time-macros 0.2.27 → 0.2.32
+tinystr 0.8.3 → 0.8.4
+tinyvec 1.11.0 → 1.13.2
+tokio 1.52.3 → 1.53.1
+tokio-macros 2.7.0 → 2.7.2
+tokio-rustls 0.26.4 → 0.26.5
+tokio-util 0.7.18 → 0.7.19
+− wasip2 1.0.3+wasi-0.2.9
+wasm-bindgen{,-macro,-macro-support,-shared} 0.2.122 → 0.2.128
+wasm-bindgen-futures 0.4.72 → 0.4.78
+web-sys 0.3.99 → 0.3.105
+webpki-root-certs 1.0.7 → 1.0.9
+− windows-sys 0.60.2 及 windows-targets / windows_* 0.53.x 一组
+− wit-bindgen 0.57.1
+writeable 0.6.3 → 0.6.4
+− zerocopy / zerocopy-derive 0.8.50
+zeroize 1.8.2 → 1.9.0
+zerotrie 0.2.4 → 0.2.5
+zerovec 0.11.6 → 0.11.8
+zerovec-derive 0.11.3 → 0.11.6
++ zlib-rs 0.6.7
+zmij 1.0.21 → 1.0.23
+zstd-safe 7.2.4 → 7.3.0
+zstd-sys 2.0.16+zstd.1.5.7 → 2.1.0+zstd.1.5.7
+```
+
+`flutter_rust_bridge` 仍为 Cargo `=2.12.0` pin，dry-run 未改。verbose 提示另有 3 个 unchanged
+dependencies behind latest（未展开）。

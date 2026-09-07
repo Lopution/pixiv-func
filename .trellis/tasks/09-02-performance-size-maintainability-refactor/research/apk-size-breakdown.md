@@ -149,3 +149,44 @@ panic=abort`。
    只负责让构建输出满足要求，不负责 F-Droid 上架流程。
 4. **CI**：`ci.yml` 的 android-release 检查与 `release.yml` 都以单一 `app-github-release.apk`
    路径为前提，需要改为遍历 split 产物、逐个验签。
+
+## 实施时复核（child A，f24c9a1，2026-09-07）
+
+测量环境：工作树 `/root/Pixiv-func-A`，`task/09-07-dependency-toolchain-health` @ `f24c9a1`。
+Flutter 3.47.0 / Dart 3.13.0 / cargo 1.98.0 / AGP 9.1.0 / Gradle 9.3.1。新鲜树（无
+`.dart_tool/`、`build/`、cargo `target/`、`android/local.properties`）。命令：
+`flutter build apk --release --flavor fdroid`（fat，三 ABI，未 `--split-per-abi` /
+`--obfuscate`）。开始 `2026-09-07T11:56:26Z`，Gradle `assembleFdroidRelease` 306.4 s，
+墙钟约 5 min 8 s（crate 源已在 `~/.cargo/registry`，首编比预计的 20–40 min 短）。
+产物 `build/app/outputs/flutter-apk/app-fdroid-release.apk`，文件 88,582,315 B
+（Flutter 打印 88.6MB）。
+
+### A0 基线（删 `cupertino_icons` 前）
+
+Python `zipfile` 按 `compress_size` 汇总（native `.so` 均为 stored，compress = raw）：
+
+| 类别 | compress_size | MB (1e6) |
+|---|---|---|
+| APK 文件 | 88,582,315 | 88.582 |
+| zip 条目合计 | 88,334,227 | 88.334 |
+| `lib/x86_64` | 31,810,096 | 31.810 |
+| `lib/arm64-v8a` | 29,020,544 | 29.021 |
+| `lib/armeabi-v7a` | 25,060,556 | 25.061 |
+| `classes.dex` | 1,561,052 | 1.561 |
+| `assets` | 635,806 | 0.636 |
+
+`unzip -l … \| grep cupertino_icons`：
+
+```
+   257628  1981-01-01 01:01   assets/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+```
+
+该条目 raw 257,628 B（0.258 MB）、compress 115,944 B（0.116 MB）。
+
+与 §1 的 `app-github-release.apk`（88.6 MB / 31.81 / 29.02 / 25.06 / 1.56 / ~0.62，
+`cupertino_icons` 0.26 MB / 压缩 0.12 MB）在 0.01 MB 内一致。本次数的是 **fdroid**
+fat APK，不是 github；flavor 差异未体现在这些桶上。`lib/arm64-v8a` 内
+`librhttp.so` 5,439,920 B、`libsqlite3.so` 1,732,360 B、`libflutter.so` 11,747,528 B、
+`libapp.so` 9,962,376 B，与 §1 单 ABI 表（5.44 / 1.73 / 11.75 / 9.96 MB）一致。
+新鲜树，无 §0.2 陈旧 ABI 污染。
+
