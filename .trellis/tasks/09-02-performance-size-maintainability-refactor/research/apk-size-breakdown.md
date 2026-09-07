@@ -331,6 +331,44 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 
 `python3 tool/update_release.py self-test` 通过：schema 2、两笔 assets、顶层 `versionCode` 为基数、sign→verify→tamper、拒绝覆盖。
 
+### B5 rhttp feature 裁剪
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi`。对照 B0/B3 `librhttp.so` 5,412,048 / 3,636,460。
+每步 fdroid split，无 `--obfuscate`（与 B1 同旗标，避免和 B3 符号段纠缠）。
+`jniLibs/release/*/librhttp.so` 在每步构建前删除，构建后 mtime 新于删除时刻。
+
+| 步 | 去掉 | `librhttp.so` arm64 | `librhttp.so` armeabi-v7a | fdroid arm64 APK | `lib/arm64-v8a` 桶 | 编译修补 | 双侧测试 | 真机 |
+|---|---|---|---|---|---|---|---|---|
+| B5a | reqwest `multipart` | 5,376,968 | 3,612,364 | 29,408,689 | 27,225,568 | 有：`http.rs:414-418` | 通过 | 待用户 |
+
+#### B5a drop reqwest `multipart`
+
+`Cargo.toml` 去掉 `multipart`；`cargo update -w` 从 lock 去掉 `mime_guess` 2.0.5、`unicase` 2.9.0。
+host `cargo build --release --locked` 先在 `http.rs:414-443` 的 `reqwest::multipart::{Form,Part}` / `request.multipart` 失败（E0433/E0599）。
+`HttpBody::Multipart(_)` 改为 `return Err(RhttpError::RhttpUnknownError("multipart body is not supported"))`（`:414-418`）。未跑 FRB codegen，Dart API 未改。
+
+构建：`flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm`
+开始 2026-09-07T16:54:23Z，墙钟 111 s（Gradle 97.8 s）。
+`jniLibs` mtime 2026-09-08 00:55:57 +0800，APK mtime 00:56:14。
+
+| | B0/B3 | B5a | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,412,048 | 5,376,968 | −35,080 |
+| `librhttp.so` armeabi-v7a | 3,636,460 | 3,612,364 | −24,096 |
+| fdroid arm64 APK（无 obfuscate；对照 B1 29,443,769） | 29,443,769 | 29,408,689 | −35,080 |
+| `lib/arm64-v8a` 桶（对照 B1 27,260,648） | 27,260,648 | 27,225,568 | −35,080 |
+
+APK 文件与 `lib/arm64-v8a` 下降值与 arm64 `.so` 下降逐字节相等。
+
+测试：
+- `(cd plugins/rhttp/rhttp && flutter test)`：32 passed
+- `(cd plugins/rhttp/rhttp/rust && cargo test --locked)`：2 passed, 1 ignored (`ech_live_handshake`)
+- `flutter test -j 4 test/rhttp_client_factory_test.dart test/restricted_compat_network_test.dart`：41 passed
+- clippy：CI `plugin` job 不跑 clippy（只 `cargo fmt --check` + `cargo test --locked`），未跑
+
+features 之后：`charset, cookies, form, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`；`tokio` 仍 `full`。
+真机登录/图片/下载待用户。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
