@@ -42,7 +42,7 @@ gate：用户批准。与 09-01 仅在 `pubspec.yaml` 行级可能冲突。
 - [ ] A8 FRB 三元组：`tool/frb_check.sh`；插件 `pubspec.yaml` 的 `flutter_rust_bridge` 收紧为与
       `Cargo.toml` 相同的精确版本；`flutter pub get` 后 lock 回到 2.12.0；脚本进 CI。提交
       `build(rhttp): pin flutter_rust_bridge triplet and add check`。
-- [ ] A9 工具链固化：`plugins/rhttp/rhttp/rust/rust-toolchain.toml`（当前 stable 1.98）；CI
+- [ ] A9 工具链固化：仓库根 `rust-toolchain.toml`（1.98.0；cargokit 只读 app 根目录，rustup 向上查找同一文件）；CI
       `flutter pub get --enforce-lockfile`、`cargo test --locked`；`UPSTREAM.md` 记录。提交
       `build: pin rust toolchain and enforce lockfiles`。
 - [ ] A10 CI 覆盖：新增 `plugin`、`android-unit`、`deps-report` job（见 design §6）；`dart format

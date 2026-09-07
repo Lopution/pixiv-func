@@ -46,7 +46,9 @@
   的 `codegenVersion`、`rust/Cargo.toml` pin、`flutter_rust_bridge_codegen --version`；不一致即失败；进 CI。
 - 插件 `pubspec.yaml` 的 `flutter_rust_bridge: ^2.12.0` 收紧为与 Cargo 相同的精确版本，`flutter pub get` 后
   lock 回到 2.12.0，消除当前 Dart 2.13.0 / 生成代码 2.12.0 的漂移。`rhttp.dart:19` 的 `forceSameCodegenVersion: false` 保留（上游行为）。
-- `plugins/rhttp/rhttp/rust/rust-toolchain.toml`（当前 stable 1.98）；CI `flutter pub get --enforce-lockfile`、`cargo test --locked`。
+- 仓库根 `rust-toolchain.toml`（当前 stable 1.98）：cargokit 只读 `<app root>/rust-toolchain.toml`，否则回退 `stable`；
+  rustup 从 `rust/` 向上查找也命中同一文件，放在根目录才能让 APK 构建与 `cargo test` 共用一个 pin。
+  CI `flutter pub get --enforce-lockfile`、`cargo test --locked`。
 - 以上差异记入 `plugins/rhttp/UPSTREAM.md`（parent D-5 已允许构建配置类差异）。
 
 ### R5. CI 覆盖
