@@ -1,0 +1,10 @@
+{"file": ".trellis/tasks/09-07-release-size-per-abi/design.md", "reason": "Child B contracts: schema 2 fields, ABI selection, Gradle/CI flags, cargokit delete site, sqlite exclude, rhttp trim order, obfuscate fallback"}
+{"file": ".trellis/tasks/09-07-release-size-per-abi/implement.md", "reason": "B0-B8 checklist with per-step commands, commit messages, measurements, device items, rollback and stop conditions"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/design.md", "reason": "§4.1 per-ABI, §4.2 updater multi-asset, §4.3 trims, §5.2 rhttp fork / UPSTREAM conventions"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/implement.md", "reason": "Parent Child B list B0-B8, 验证命令, 推荐提交顺序, 高风险文件与停止条件"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/apk-size-breakdown.md", "reason": "Fat/split baselines, §2 --target-platform caveat, §5 libsqlite3, §6 targets, child A close-out bytes"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/native-and-build-audit.md", "reason": "§0.2 stale ABI leak, B.2 reqwest features actually used, cargokit output dir behaviour"}
+{"file": ".trellis/tasks/09-01-release-blockers/prd.md", "reason": "R5 is the schema-2 field owner; B implements those names and must not invent or rename"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Build Toolchain (Flutter 3.47.2 / ANDROID_HOME) and dependency upgrade policy B must not violate"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend quality rules for updater/Kotlin/CI changes in this child"}
+{"file": "plugins/rhttp/UPSTREAM.md", "reason": "D-5 build-configuration diff list; B appends cargokit clean, reqwest feature drops, optional opt-level"}

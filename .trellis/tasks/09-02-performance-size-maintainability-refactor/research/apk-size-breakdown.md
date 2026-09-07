@@ -128,12 +128,448 @@ panic=abort`。
 |---|---|---|---|
 | 用户下载的 release 包（arm64-v8a） | 88.6 MB（fat） | ≤ 32 MB 先落地（仅 per-ABI），再向 ≤ 28 MB 收敛 | `--split-per-abi`；随后 §4/§5 裁剪与 `--obfuscate` |
 | release 产物是否含 x86_64 | 含 | 不含（模拟器用 debug 包） | split 输出中不发布 x86_64 |
-| `libsqlite3.so` | 每 ABI 1.73 MB | 0（待验证）| Android 侧 `packaging.jniLibs.excludes`；桌面分支与主依赖按 D-4 保留 |
+| `libsqlite3.so` | 每 ABI 1.73 MB | 0（B1 已验证：split APK 内无 `libsqlite3.so`）| Android 侧 `packaging.jniLibs.excludes`；桌面分支与主依赖按 D-4 保留 |
 | 未使用依赖带入的 assets | `cupertino_icons` 0.26 MB | 0 | 删除依赖 |
-| CI 体积门禁 | 无 | 每次 release 构建输出 per-ABI 大小并对比上次 | workflow 步骤 |
+| CI 体积门禁 | 无 | 每次 release 构建输出 per-ABI 大小并对比上次（B3 输出、B7 门禁已落地） | `tool/apk_size_report.py` + `android-size` job |
 
 "≤ 28 MB"是 §3–§5 全部落地后的推算值，不是承诺；实现阶段每完成一项就重新测量一次并
 更新本文件。
+
+### B0 干净 ABI 基线（child B，2026-09-07）
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi` @ `4c7742e`。
+Flutter 3.47.2 / Dart 3.13.2 / cargo 1.98.0 / AGP 9.1.1 / Gradle 9.3.1。
+先 `rm -rf build/rhttp/jniLibs`（目录本就不存在），再测。
+
+命令与墙钟：
+
+| 步 | 命令 | 开始 (UTC) | 墙钟 | Gradle |
+|---|---|---|---|---|
+| fat（三 ABI） | `flutter build apk --release --flavor fdroid` | 2026-09-07T15:50:06Z | 421.75 s | 383.6 s |
+| split（仅拆 ABI，无 obfuscate） | `flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm` | 2026-09-07T15:57:16Z | 109.87 s | 98.4 s |
+| analyze-size（见下） | `flutter build apk --release --flavor fdroid --target-platform android-arm64 --analyze-size --code-size-directory=/tmp/pixiv-size-b0-fat` | 2026-09-07T15:59:12Z | 91.58 s | 77.5 s |
+
+`implement.md` 写的 fat 命令带 `--analyze-size`。Flutter 3.47.2 拒绝在多 ABI
+上做 code-size analysis（`Cannot perform code size analysis when building for
+multiple ABIs`），所以 fat 本身不带该旗标。`--analyze-size` 目录在 fat + split
+测完之后用单独的 `--target-platform android-arm64` 补齐，不作为单 ABI 基线。
+该补齐命令把 `app-fdroid-release.apk` 覆写成带 §0.2 陈旧 ABI 泄漏的 41.8 MB
+包；下表 fat 数字全部取自覆写前的 `88,181,654` B 文件。
+
+产物路径：Flutter 3.47.2 的 split 命名是 `app-<abi>-<flavor>-release.apk`，
+不是 design 初稿的 `app-<flavor>-<abi>-release.apk`。
+
+| 产物 | 文件字节 | vs child A 收尾 `88,181,654` |
+|---|---|---|
+| `app-fdroid-release.apk`（fat，三 ABI） | 88,181,654 | 0 |
+| `app-arm64-v8a-fdroid-release.apk` | 31,187,258 | —（≤ 32,000,000） |
+| `app-armeabi-v7a-fdroid-release.apk` | 27,203,718 | — |
+
+Python `zipfile` 按 `compress_size` 汇总（native `.so` 均为 stored，compress = raw）：
+
+| 桶 | fat | split arm64-v8a | split armeabi-v7a |
+|---|---|---|---|
+| zip 条目合计 | 87,955,713 | 31,062,844 | 27,116,041 |
+| `lib/x86_64` | 31,846,664 | — | — |
+| `lib/arm64-v8a` | 28,993,008 | 28,993,008 | — |
+| `lib/armeabi-v7a` | 25,046,204 | — | 25,046,204 |
+| `classes.dex` | 1,309,768 | 1,309,768 | 1,309,768 |
+| `assets` | 513,725 | 513,720 | 513,720 |
+
+每个 split APK 的 `lib/` 只有一个 ABI 目录。fat 与两份 split 的对应 `lib/<abi>`
+桶逐字节相同。
+
+split APK 内 `.so` raw 字节（stored = raw）：
+
+| 文件 | arm64-v8a | armeabi-v7a |
+|---|---|---|
+| `librhttp.so` | 5,412,048 | 3,636,460 |
+| `libapp.so` | 9,962,376 | 10,994,248 |
+| `libsqlite3.so` | 1,732,360 | 1,713,736 |
+| `libflutter.so` | 11,747,528 | 8,615,900 |
+| `libdartjni.so` | 131,248 | 81,444 |
+
+fat 另含 x86_64：`librhttp.so` 6,738,312 / `libapp.so` 10,224,520 /
+`libsqlite3.so` 1,709,544。`librhttp.so` 与 `libapp.so` 三 ABI 与 child A
+收尾逐字节一致。
+
+`unzip -l … \| grep cupertino_icons`：fat 与两份 split 均为空。
+
+`--analyze-size` 目录：`/tmp/pixiv-size-b0-fat/`
+（`snapshot.arm64-v8a.json` 22,859,365 B，`trace.arm64-v8a.json` 2,281,577 B）。
+该次单 ABI 分析打印的 APK 仍带 `lib/armeabi-v7a` 4 MB + `lib/x86_64` 7 MB
+（cargokit / 插件 jniLibs 陈旧 ABI，§0.2），再次确认 `--target-platform`
+不能当发布手段。
+
+### B1 `libsqlite3.so` 排除（child B，2026-09-07）
+
+`android/app/build.gradle.kts` 在 `buildTypes` 后加入
+`packaging { jniLibs { excludes += "**/libsqlite3.so" } }`。未删除
+`sqflite_common_ffi`。`historyDatabaseFactory({required bool useMobileSqflite})`
+抽出为 `@visibleForTesting` 纯函数；生产 `_platformDatabaseFactory` 仍是
+`Platform.isAndroid || Platform.isIOS` → `sqflite.databaseFactory`。
+`test/history_database_factory_test.dart`：mobile 分支 `identical` 于
+`sqflite.databaseFactory` / `databaseFactorySqflitePlugin`，且不是
+`databaseFactoryFfi`（Linux VM 需先注册 plugin factory，否则 getter 抛
+uninitialized）。`test/history_persistence_test.dart` 未改，与新测试合计
+9 passed。
+
+验证（`unzip -l … | grep libsqlite3.so` 均为空）：
+
+| APK | 文件字节 | `libsqlite3.so` |
+|---|---|---|
+| `app-arm64-v8a-fdroid-release.apk` | 29,443,769 | 无 |
+| `app-armeabi-v7a-fdroid-release.apk` | 25,489,119 | 无 |
+| `app-fdroid-debug.apk` | 202,265,375 | 无 |
+
+`assets/flutter_assets/NativeAssetsManifest.json` 仍列出
+`package:sqlite3/src/ffi/libsqlite3.g.dart` → `["absolute","libsqlite3.so"]`
+（release 224 B，debug 313 B），但 `lib/<abi>/` 没有对应 `.so`。按
+`design.md`「清单仍列、库不在包内」视为排除成功，运行时不加载。**可行。**
+
+墙钟：split release 111.77 s（Gradle 100.0 s，2026-09-07T16:03:12Z）；
+debug 353.18 s（Gradle 320.2 s，2026-09-07T16:05:11Z）。
+
+前后桶（fdroid split，无 obfuscate；compress = raw）：
+
+| | B0 arm64 | B1 arm64 | Δ | B0 armeabi-v7a | B1 armeabi-v7a | Δ |
+|---|---|---|---|---|---|---|
+| APK 文件 | 31,187,258 | 29,443,769 | −1,743,489 | 27,203,718 | 25,489,119 | −1,714,599 |
+| `lib/<abi>` | 28,993,008 | 27,260,648 | −1,732,360 | 25,046,204 | 23,332,468 | −1,713,736 |
+| `classes.dex` | 1,309,768 | 1,309,768 | 0 | 1,309,768 | 1,309,768 | 0 |
+| `assets` | 513,720 | 513,720 | 0 | 513,720 | 513,720 | 0 |
+
+`lib/<abi>` 桶减少值与 B0 的 `libsqlite3.so` raw 字节逐字节相等
+（arm64 1,732,360 / armeabi-v7a 1,713,736）。`librhttp.so` / `libapp.so`
+未变。真机历史读写待用户。
+
+### B2 cargokit 清理（child B，2026-09-07）
+
+`CargoKitBuildTask.build()` 在 `execOperations.exec` 之前
+`project.delete(outputDir)`（`jniLibs/<buildType>`）。
+`plugins/rhttp/UPSTREAM.md` D-5 增加对应一条。
+
+**清理前（B0 的 analyze-size 补齐，无 delete）**：先有三 ABI `jniLibs`，再
+`--target-platform android-arm64`（无 `--split-per-abi`）。Flutter 打印
+`app-fdroid-release.apk (41.8MB)`，分析表含 `lib/armeabi-v7a` 4 MB +
+`lib/x86_64` 7 MB。泄漏的是陈旧 `librhttp.so`（加上插件 AAR 的
+`libdartjni.so` / `libdatastore_shared_counter.so`）。§0.2 当时测得
+`librhttp.so` 跨 ABI 泄漏 10,353,372 B。
+
+**复现污染（本步 fat，delete 已在仓）**：
+`flutter build apk --release --flavor fdroid`（2026-09-07T16:11:34Z，
+墙钟 94.04 s，Gradle 83.9 s）后磁盘：
+
+```
+build/rhttp/jniLibs/release/arm64-v8a/librhttp.so     5,412,064
+build/rhttp/jniLibs/release/armeabi-v7a/librhttp.so   3,636,464
+build/rhttp/jniLibs/release/x86_64/librhttp.so        6,738,328
+```
+
+非目标 ABI 合计 10,374,792 B（若不被 delete，会原样打进下一包）。
+
+**清理后**：
+`flutter build apk --release --flavor fdroid --target-platform android-arm64`
+（2026-09-07T16:13:08Z，墙钟 130.01 s，Gradle 116.4 s）。磁盘
+`jniLibs/release/` 只剩 `arm64-v8a/librhttp.so`。
+
+```
+rhttp ['lib/arm64-v8a/librhttp.so']
+ASSERTION_OK
+```
+
+`app-fdroid-release.apk` 文件 29,690,737 B。相对 B0 同命令的 41.8 MB，
+少掉的主体是那两份陈旧 `librhttp.so`。
+
+`libdartjni.so`（及 `libdatastore_shared_counter.so`）在非 split 的
+`--target-platform` 下仍三 ABI 全出：
+
+```
+libdartjni ['lib/arm64-v8a/libdartjni.so', 'lib/armeabi-v7a/libdartjni.so', 'lib/x86_64/libdartjni.so']
+```
+
+与 `design.md` 一致：B2 只主张 `librhttp.so`；B3 的 `--split-per-abi`
+会设 `abiFilters`，jni / datastore 随过滤器走。
+
+### B3 per-ABI 流水线
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi` 在 B0–B2 之后。
+Flutter 3.47.2 / `tool/apk_size_report.py` 口径（文件字节 + `zipfile` `compress_size`）。
+构建旗标：`--split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/<f>`。
+本机 github 加 `-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`（debug 签名，预期）。
+
+| 步 | 命令 | 开始 (UTC) | 墙钟 |
+|---|---|---|---|
+| fdroid split + obfuscate | `flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/fdroid` | 2026-09-07T16:39:25Z | 17.65 s（增量；B1/B2 已暖机） |
+| github split + obfuscate | 同上，`--flavor github` + debug-signing 旗标 | 2026-09-07T16:40:10Z | 100.49 s |
+
+产物恰好两份 / flavor：`app-arm64-v8a-<f>-release.apk`、`app-armeabi-v7a-<f>-release.apk`。
+无 `x86_64`、无 universal。每个 split 的 `lib/` 只有一个 ABI 目录。
+符号：`build/symbols/fdroid/` 与 `build/symbols/github/`（`app.android-arm.symbols` 4,217,792 B，`app.android-arm64.symbols` 4,901,824 B）。
+
+| 产物 | 文件字节 | `lib/<abi>` | `classes.dex` | `assets` |
+|---|---|---|---|---|
+| fdroid arm64-v8a | 27,805,369 | 25,622,248 | 1,309,820 | 513,721 |
+| fdroid armeabi-v7a | 23,523,039 | 21,366,388 | 1,309,820 | 513,721 |
+| github arm64-v8a（debug 签） | 27,829,969 | 25,622,248 | 1,313,584 | 513,707 |
+| github armeabi-v7a（debug 签） | 23,547,639 | 21,366,388 | 1,313,584 | 513,707 |
+
+arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐字节一致；github 多出的 ~24.6 KB 在 dex/资源（与 child A 收尾的 flavor 差同量级）。
+
+`libapp.so` vs B1（无 obfuscate；B0/B1 raw 9,962,376 / 10,994,248）：
+
+| ABI | B1 `libapp.so` | B3 `libapp.so` | Δ |
+|---|---|---|---|
+| arm64-v8a | 9,962,376 | 8,323,976 | −1,638,400 |
+| armeabi-v7a | 10,994,248 | 9,028,168 | −1,966,080 |
+
+`librhttp.so` 未变：5,412,048 / 3,636,460。fdroid arm64 APK 相对 B1 的 29,443,769 为 −1,638,400，与 `libapp.so` 下降一致。
+
+`tool/apk_size_report.py --self-test` 通过（单 ABI zip 通过；双 `lib/` 与 env 更严阈值失败并打 `::error::`）。
+
+### B4 schema 2 生成器
+
+`python3 tool/update_release.py self-test` 通过：schema 2、两笔 assets、顶层 `versionCode` 为基数、sign→verify→tamper、拒绝覆盖。
+
+### B5 rhttp feature 裁剪
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi`。对照 B0/B3 `librhttp.so` 5,412,048 / 3,636,460。
+每步 fdroid split，无 `--obfuscate`（与 B1 同旗标，避免和 B3 符号段纠缠）。
+`jniLibs/release/*/librhttp.so` 在每步构建前删除，构建后 mtime 新于删除时刻。
+
+| 步 | 去掉 | `librhttp.so` arm64 | `librhttp.so` armeabi-v7a | fdroid arm64 APK | `lib/arm64-v8a` 桶 | 编译修补 | 双侧测试 | 真机 |
+|---|---|---|---|---|---|---|---|---|
+| B5a | reqwest `multipart` | 5,376,968 | 3,612,364 | 29,408,689 | 27,225,568 | 有：`http.rs:414-418` | 通过 | 待用户 |
+| B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
+| B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
+| B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
+| B5e | reqwest `query`（**已回退**，见下） | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | — |
+| B5f | reqwest `charset` | 5,052,080 | 3,349,084 | 29,083,801 | 26,900,680 | 无 | 通过 | 待用户 |
+| B5g | tokio `full` → listed | 5,027,744 | 3,335,776 | 29,059,465 | 26,876,344 | 无 | 通过 | 待用户 |
+| B5e 回退 | 恢复 reqwest `query` | 5,042,000 | 3,340,216 | 29,073,721 | 26,890,600 | 恢复 `request.query(&query)` | 通过 | 待用户 |
+
+#### B5a drop reqwest `multipart`
+
+`Cargo.toml` 去掉 `multipart`；`cargo update -w` 从 lock 去掉 `mime_guess` 2.0.5、`unicase` 2.9.0。
+host `cargo build --release --locked` 先在 `http.rs:414-443` 的 `reqwest::multipart::{Form,Part}` / `request.multipart` 失败（E0433/E0599）。
+`HttpBody::Multipart(_)` 改为 `return Err(RhttpError::RhttpUnknownError("multipart body is not supported"))`（`:414-418`）。未跑 FRB codegen，Dart API 未改。
+
+构建：`flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm`
+开始 2026-09-07T16:54:23Z，墙钟 111 s（Gradle 97.8 s）。
+`jniLibs` mtime 2026-09-08 00:55:57 +0800，APK mtime 00:56:14。
+
+| | B0/B3 | B5a | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,412,048 | 5,376,968 | −35,080 |
+| `librhttp.so` armeabi-v7a | 3,636,460 | 3,612,364 | −24,096 |
+| fdroid arm64 APK（无 obfuscate；对照 B1 29,443,769） | 29,443,769 | 29,408,689 | −35,080 |
+| `lib/arm64-v8a` 桶（对照 B1 27,260,648） | 27,260,648 | 27,225,568 | −35,080 |
+
+APK 文件与 `lib/arm64-v8a` 下降值与 arm64 `.so` 下降逐字节相等。
+
+测试：
+- `(cd plugins/rhttp/rhttp && flutter test)`：32 passed
+- `(cd plugins/rhttp/rhttp/rust && cargo test --locked)`：2 passed, 1 ignored (`ech_live_handshake`)
+- `flutter test -j 4 test/rhttp_client_factory_test.dart test/restricted_compat_network_test.dart`：41 passed
+- clippy：CI `plugin` job 不跑 clippy（只 `cargo fmt --check` + `cargo test --locked`），未跑
+
+features 之后：`charset, cookies, form, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`；`tokio` 仍 `full`。
+真机登录/图片/下载待用户。
+
+#### B5b drop reqwest `form`
+
+`Cargo.toml` 去掉 `form`；`cargo update -w` 未改 lock（`serde_urlencoded` 仍由 `query` 拉入）。
+host `cargo build --release --locked` 在 `http.rs:413` `request.form(&form)` 失败（E0599）。
+`HttpBody::Form(_)` 改为 `return Err(RhttpError::RhttpUnknownError("form body is not supported"))`（`:413-417`）。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:00:20Z，墙钟 74 s（Gradle 65.3 s）。
+`jniLibs` mtime 2026-09-08 01:01:20 +0800，APK mtime 01:01:34。
+
+| | B5a | B5b | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,376,968 | 5,375,112 | −1,856 |
+| `librhttp.so` armeabi-v7a | 3,612,364 | 3,611,044 | −1,320 |
+| fdroid arm64 APK | 29,408,689 | 29,406,833 | −1,856 |
+| `lib/arm64-v8a` 桶 | 27,225,568 | 27,223,712 | −1,856 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, cookies, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5c drop reqwest `socks`
+
+`Cargo.toml` 去掉 `socks`；`cargo update -w` 未改 lock（reqwest 0.13 的 `socks` 不再拉 `tokio-socks`）。
+host `cargo build --release --locked` 直接通过：`client.rs:146-160` 的 `reqwest::Proxy::{http,https,all}` 对 http/https 代理不需要该 feature。未改 `http.rs` / `client.rs`。`socks://` 代理若传入，走现有 `Error creating proxy` → `RhttpUnknownError`。app 零 `ProxySettings`。
+
+构建：同上 fdroid split。开始 2026-09-07T17:03:50Z，墙钟 40 s（Gradle 34.0 s）。
+`jniLibs` mtime 2026-09-08 01:04:11 +0800。
+
+| | B5b | B5c | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,375,112 | 5,330,032 | −45,080 |
+| `librhttp.so` armeabi-v7a | 3,611,044 | 3,583,788 | −27,256 |
+| fdroid arm64 APK | 29,406,833 | 29,361,753 | −45,080 |
+| `lib/arm64-v8a` 桶 | 27,223,712 | 27,178,632 | −45,080 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, cookies, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5d drop reqwest `cookies`
+
+`Cargo.toml` 去掉 `cookies`；`cargo update -w` 从 lock 去掉 `cookie` 0.18.2、`cookie_store` 0.22.1、`publicsuffix` 2.3.0、`psl-types`、`time`/`time-core`/`time-macros`、`serde_json`、`deranged`、`num-conv`、`powerfmt`、`document-features`、`litrs`、`zmij`。`icu_*` 仍在（`url` 需要）。
+host `cargo build --release --locked` 在 `client.rs:166` `cookie_store(...)` 失败（E0599）。
+`settings.cookie_settings.is_some()` 改为 `return Err(RhttpError::RhttpUnknownError("cookie store is not supported"))`（`:165-169`）。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:06:11Z，墙钟 76 s（Gradle 62.8 s）。
+`jniLibs` mtime 2026-09-08 01:07:12 +0800。
+
+| | B5c | B5d | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,330,032 | 5,243,360 | −86,672 |
+| `librhttp.so` armeabi-v7a | 3,583,788 | 3,519,188 | −64,600 |
+| fdroid arm64 APK | 29,361,753 | 29,275,081 | −86,672 |
+| `lib/arm64-v8a` 桶 | 27,178,632 | 27,091,960 | −86,672 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5e drop reqwest `query`
+
+`Cargo.toml` 去掉 `query`；`cargo update -w` 从 lock 去掉 `serde_urlencoded` 0.7.1、`ryu` 1.0.23。`form_urlencoded` 仍由 `url` 拉入。
+host `cargo build --release --locked` 在 `http.rs:376` `request.query(&query)` 失败（E0599）。
+`query.is_some()` 改为 `return Err(RhttpError::RhttpUnknownError("query parameters are not supported"))`（`:375-379`）。app 自行拼 URL。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:09:09Z，墙钟 68 s（Gradle 60.0 s）。
+`jniLibs` mtime 2026-09-08 01:10:02 +0800。
+
+| | B5d | B5e | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,243,360 | 5,237,280 | −6,080 |
+| `librhttp.so` armeabi-v7a | 3,519,188 | 3,514,492 | −4,696 |
+| fdroid arm64 APK | 29,275,081 | 29,269,001 | −6,080 |
+| `lib/arm64-v8a` 桶 | 27,091,960 | 27,085,880 | −6,080 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, http2, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5f drop reqwest `charset`
+
+`Cargo.toml` 去掉 `charset`；`cargo update -w` 从 lock 去掉 `encoding_rs` 0.8.40、`mime` 0.3.17、`multiversion`/`multiversion-macros`/`multiversion_no_op`、`core_detect`、`target-features`。
+host `cargo build --release --locked` 直接通过（源码无 charset API）。插件 `.text()` 仍编过，无 charset 时按 UTF-8；app 兼容层只取字节、Dart `http.Response.fromStream` 解码。未改 `http.rs` / `client.rs`。
+
+构建：同上 fdroid split。开始 2026-09-07T17:11:52Z，墙钟 69 s（Gradle 60.4 s）。
+`jniLibs` mtime 2026-09-08 01:12:49 +0800。
+
+| | B5e | B5f | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,237,280 | 5,052,080 | −185,200 |
+| `librhttp.so` armeabi-v7a | 3,514,492 | 3,349,084 | −165,408 |
+| fdroid arm64 APK | 29,269,001 | 29,083,801 | −185,200 |
+| `lib/arm64-v8a` 桶 | 27,085,880 | 26,900,680 | −185,200 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5g narrow tokio features
+
+`tokio = { version = "1.52", features = ["full"] }` 改为
+`["rt-multi-thread", "net", "time", "sync", "io-util", "macros"]`。
+host `cargo build --release --locked` 直接通过，未再补 feature（B5a 已去掉 `tokio::fs`；未要 `fs`/`process`/`signal`）。
+`cargo update -w` 从 lock 去掉 `parking_lot`、`signal-hook-registry`、`errno`。未改 `http.rs` / `client.rs`。`[profile.release]` 未动。
+
+构建：同上 fdroid split。开始 2026-09-07T17:14:41Z，墙钟 76 s（Gradle 67.3 s）。
+`jniLibs` mtime 2026-09-08 01:15:45 +0800。
+
+| | B5f | B5g | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,052,080 | 5,027,744 | −24,336 |
+| `librhttp.so` armeabi-v7a | 3,349,084 | 3,335,776 | −13,308 |
+| fdroid arm64 APK | 29,083,801 | 29,059,465 | −24,336 |
+| `lib/arm64-v8a` 桶 | 26,900,680 | 26,876,344 | −24,336 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+reqwest features 仍是：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
+tokio features：`rt-multi-thread, net, time, sync, io-util, macros`。
+
+B5a–B5g 合计（回退前）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,027,744（−384,304）；armeabi-v7a 3,636,460 → 3,335,776（−300,684）。
+真机待用户。
+
+#### B5e 回退（`git revert c463431`）
+
+主会话复核发现 B5e 的前提「app 自行拼 URL」不成立：`plugins/rhttp/rhttp/lib/src/client/io/io_request.dart:46-53` 把 URL 重建为 `scheme://host:port/path`，查询串一律经 `query: uri.queryParameters` 传给 Rust（空 map 也是 `Some`）。app 全部请求走 `RhttpCompatibleClient`（`lib/core/network/compat/rhttp_client_factory.dart:68`），B5e 之后 `http.rs:375` 对每个请求返回 `RhttpUnknownError("query parameters are not supported")`——app 41 个测试在 mock 层通过，没有覆盖真实 Rust 路径。按 B5 停止条件（行为回归 → revert 该提交）回退：`Cargo.toml` 恢复 `query`，`cargo update -w` 后 lock 恢复 `serde_urlencoded` 0.7.1、`ryu` 1.0.23（无其他变化），`http.rs` 恢复 `request.query(&query)`。`UPSTREAM.md` 改记为「保留」。
+
+构建：fdroid split，无 `--obfuscate`，删 `build/rhttp/jniLibs/release/*/librhttp.so` 后重建。开始 2026-09-07T17:20:30Z，墙钟 70 s（Gradle 60.4 s）。`jniLibs` mtime 2026-09-08 01:21:24 +0800。
+
+| | B5g | B5e 回退 | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,027,744 | 5,042,000 | +14,256 |
+| `librhttp.so` armeabi-v7a | 3,335,776 | 3,340,216 | +4,440 |
+| fdroid arm64 APK | 29,059,465 | 29,073,721 | +14,256 |
+| `lib/arm64-v8a` 桶 | 26,876,344 | 26,890,600 | +14,256 |
+
+（回加 `query` 后多出的字节大于 B5e 当时省下的 6,080：`serde_urlencoded` 回来时 `charset`/`cookies` 已不在，链接布局不同。）
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。
+
+**B5 最终**（B5a–d、B5f–g 生效，B5e 回退）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,042,000（−370,048）；armeabi-v7a 3,636,460 → 3,340,216（−296,244）。
+reqwest features 最终：`http2, query, rustls, stream, brotli, deflate, gzip, zstd`；tokio：`rt-multi-thread, net, time, sync, io-util, macros`。
+真机待用户（登录 + 图片列表 + 大图下载，一次覆盖 B5 全部）。
+
+### B6 `opt-level = "s"` 实验（已测量，未采用，待用户真机）
+
+按 `design.md` 协议：对照为 B5 最终（B5e 回退后，opt-level 3）的 fdroid split（无 `--obfuscate`）；只改 `plugins/rhttp/rhttp/rust/Cargo.toml` `[profile.release]` `opt-level = 3` → `"s"`，其余 profile 键不动；删 `build/rhttp/jniLibs/release/*/librhttp.so` 后重建。开始 2026-09-07T17:24:16Z，墙钟 97 s。对照组随后用同旗标重建，字节与「B5e 回退」逐字节一致（29,073,721 / 5,042,000），说明测量可复现。
+
+| | opt-level 3（B5 最终） | opt-level "s" | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,042,000 | 3,503,000 | −1,539,000（−30.5%） |
+| `librhttp.so` armeabi-v7a | 3,340,216 | 2,455,272 | −884,944（−26.5%） |
+| fdroid arm64 APK | 29,073,721 | 27,534,721 | −1,539,000 |
+| fdroid armeabi-v7a APK | 25,192,875 | 24,307,931 | −884,944 |
+| `lib/arm64-v8a` 桶 | 26,890,600 | 25,351,600 | −1,539,000 |
+
+`.so` 下降条件满足，且幅度是 B5 全部裁剪的 4.2 倍。采用门的另一半——列表 + 大图下载墙钟无可感知回退——只能由用户真机判定（`cc` crate 会把 `OPT_LEVEL=s` 映射为 `-Os`，brotli/zstd 的 C 解压也会随之改编译等级；rustls 的密码学在 aws-lc-rs 汇编里，不受影响）。**因此本轮不提交 profile 改动**（`Cargo.toml` 已 `git restore`），`UPSTREAM.md` 不记。两组 APK 已留在（gitignore 的）`build/b6-compare/opt-3/` 与 `build/b6-compare/opt-s/`（fdroid 两 ABI 各一），供用户装同一台机对比：同一账号、同一作品、同一网络档，先开推荐/关注图片列表，再下一张大图，记墙钟秒数。用户判定可采用时，单独一个提交 `size(rhttp): set release opt-level to s`（一行改动 + UPSTREAM.md 一笔）即可。
+
+### B7 阈值
+
+以 B1–B6（B6 未采用）之后、带 `--obfuscate` 的 fdroid split 实测为基线（2026-09-07，与 B3 口径相同；B3 值减去 B5 的 `.so` 节省恰好等于实测）：
+
+| ABI | 实测文件字节 | 阈值（实测 + 1,000,000） | 余量 |
+|---|---|---|---|
+| arm64-v8a | 27,435,321 | 28,435,321 | 1,000,000 |
+| armeabi-v7a | 23,226,795 | 24,226,795 | 1,000,000 |
+
+写入 `ci.yml`（`android-release`、`android-size` 两处）与 `release.yml`：`${{ vars.PIXIV_APK_MAX_BYTES_ARM64_V8A || '28435321' }}` / `${{ vars.PIXIV_APK_MAX_BYTES_ARMEABI_V7A || '24226795' }}`，仓库 vars 可覆盖；arm64 另受 B3 的硬顶 32,000,000（脚本取更严者）。注释含「F 迁 material_ui 后需重测」。本机验证：同一脚本对上表产物通过（exit 0）；把 armeabi-v7a 阈值临时设为 23,000,000 时报 `::error::armeabi-v7a APK exceeds size cap: 23226795 > 23000000` 并 exit 1。github flavor 比 fdroid 大 24,600 B（B3 表），在余量之内。
+
+### CI 复核（PR #4 `android-size`，干净 runner）
+
+`https://github.com/Lopution/pixiv-func/actions/runs/34144929182`，job 12 m 36 s：`rustup toolchain install`（`rust-toolchain.toml`）+ `Swatinem/rust-cache` + fdroid split/obfuscate + 体积报告 + `--analyze-size` + 两份 artifact 全部成功。runner 产物 arm64 27,809,465 / armeabi-v7a 23,525,215（B3 阶段，B5 之前），与本机 27,805,369 / 23,523,039 相差 4,096 / 2,176 字节（zip 对齐页），`lib/<abi>` 桶 25,626,344 / 21,368,564。`android-release` 在 `Decode release keystore` 处失败（secrets 未配置，现状，B 不绕过）；`android-unit` 6 m 9 s 通过。
+
+### 图片 CacheManager 配置（抄录，不改）
+
+`lib/core/network/compat/network_policy.dart:1162-1170`：`CacheManager(Config('pixiv_func_images', fileService: HttpFileService(httpClient: client(PixivDestinationPurpose.image))))`，未传 `stalePeriod` / `maxNrOfCacheObjects`。flutter_cache_manager 3.4.2 `lib/src/config/_config_io.dart:14-15` 默认：`stalePeriod = Duration(days: 30)`、`maxNrOfCacheObjects = 200`。本 child 不改配置；仅记录以便 parent 讨论磁盘占用时有据可查。
+
+### `rustls-platform-verifier` 评估：保留
+
+`plugins/rhttp/rhttp/rust/Cargo.toml:25,30`（`rustls-platform-verifier = "0.7"`，android 目标同版）。`init.rs` 每进程 `init_with_env`；app 的 TLS 路径走 webpki（`rhttp_client_factory.dart` + Dart 默认 `RootCertSource.webpki`），但 `RootCertSource.platform` 是插件公开能力，去掉它会增大 fork diff、砍掉平台信任库这条路，且 `android/build.gradle.kts` 为它解 AAR 的逻辑要跟着改。B5 未触碰；保留。
+
+### child B 收束（B0–B7）
+
+| 项 | 结果 | 依据 |
+|---|---|---|
+| release 产物 | 恰好 2 个 split APK（arm64-v8a、armeabi-v7a），无 universal、无 x86_64 | B3 / CI `android-size` |
+| arm64-v8a release APK | 27,435,321 B（≤ 32,000,000 硬顶；也低于 §6 表「≤ 28 MB」推算值） | B7 实测 |
+| armeabi-v7a release APK | 23,226,795 B | B7 实测 |
+| 相对 fat 88.6 MB | −69% | B0 → B7 |
+| `libsqlite3.so` | 可行，已排除（每 ABI −1.7 MB） | B1 |
+| cargokit 陈旧 ABI | 单 ABI 构建只含目标 ABI 的 `librhttp.so` | B2 |
+| `--obfuscate` | 保留（`libapp.so` −1,638,400 / −1,966,080）；`widgetBackgroundMain` 待用户真机 | B3 |
+| updater | schema 2 多资产，按 `supportedAbis` 选择 | B4 |
+| rhttp features | multipart / form / socks / cookies / charset 去掉，tokio 收窄；`query` 保留（B5e 回退）；`librhttp.so` −370,048 / −296,244 | B5 |
+| `opt-level = "s"` | 测得 −1,539,000 / −884,944，未采用，待用户真机墙钟 | B6 |
+| CI 门禁 | 28,435,321 / 24,226,795，vars 可覆盖，arm64 硬顶 32,000,000 | B7 |
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
 

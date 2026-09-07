@@ -391,6 +391,23 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 - Widget feed loader refills up to 3 extra pages (same cap as feeds) before transient failure; R-18 baseline kept
 - Tests: networkModeCode round-trip, legacy quality migration both halves, Accept-Language header + provider rebuild on languageTag, bounded refill loop semantics (refill ApiError is swallowed, first-page error surfaces)
 - Spec: on-disk SQLite shared by parallel test files (database is locked) documented; sweep goes to spec-test-lint-hardening
+## Session 16: child B release-size-per-abi：per-ABI 拆分、sqlite 排除、rhttp 裁剪、schema 2 updater、体积门禁
+<!-- trellis-session: v=2 fp=56b602b3d727adff -->
+
+**Date**: 2026-09-08
+**Task**: child B release-size-per-abi：per-ABI 拆分、sqlite 排除、rhttp 裁剪、schema 2 updater、体积门禁
+**Branch**: `task/09-07-release-size-per-abi`
+
+### Summary
+
+09-02 child B 完成：release 产物改为 arm64-v8a / armeabi-v7a 两个 split APK（obfuscate），arm64 27,435,321 B（fat 88.6 MB → −69%）；libsqlite3.so 排除；cargokit 陈旧 ABI 清理；rhttp 去掉 multipart/form/socks/cookies/charset 并收窄 tokio（query 保留，B5e 已回退）；updater manifest schema 2 多资产按 supportedAbis 选择；CI android-size 无 secrets 门禁 + B7 阈值；opt-level s 已测量未采用（待真机墙钟）。
+
+### Main Changes
+
+- B0 干净 ABI 基线（三 ABI fat 88.6 MB 中 85.9 MB 为 native）；B1 packaging.jniLibs.excludes 排除 libsqlite3.so（每 ABI −1.7 MB，historyDatabaseFactory 抽出可测）；B2 cargokit 构建前删陈旧 ABI 输出
+- B3 ci.yml/release.yml 改 --split-per-abi + --obfuscate，双 APK 验签且证书一致，tool/apk_size_report.py（32 MB arm64 硬顶），新增无 secrets 的 android-size job（干净 runner 12m36s 通过）；B4 updater schema 2：顶层 packageName/cert，assets[] abi/url/size/sha256/versionCode，Kotlin supportedAbis，abi_unsupported 不得报已最新，versionCode % 1000
+- B5 rhttp features：multipart/form/socks/cookies/charset 去掉、tokio 收窄，librhttp.so 5,412,048→5,042,000 / 3,636,460→3,340,216；B5e（query）回退——compat 适配层 io_request.dart 对每个请求传 query，app 测试在 Rust 边界之上 mock 未能发现；UPSTREAM.md 记「query 保留」
+- B6 opt-level s 测得 −1,539,000 / −884,944，未采用未提交（采用门需用户真机墙钟；对照 APK 在 build/b6-compare/）；B7 阈值 28,435,321 / 24,226,795（vars 可覆盖）；B8 §6 收束；check 后补 android-release analyze-size 归档、release 重跑总是 upload --clobber、6 个 manifest 解析拒绝测试；spec backend/release-artifacts.md
 
 ### Git Commits
 
@@ -409,6 +426,28 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 ### Testing
 
 - [OK] flutter analyze clean; full suite 641 tests, 4 loopback timeouts pass alone; fdroid/github release APKs 88.2 MB each (before child B)
+| `fa9220c` | docs(size): record B0 clean ABI baseline |
+| `4365c8a` | size(android): exclude unused sqlite3 native asset |
+| `00f1df8` | build(rhttp): clean stale ABI outputs before cargo build |
+| `8184471` | release: ship per-ABI APKs |
+| `1967416` | updater: multi-asset manifest (schema 2) |
+| `42bcc4b` | size(rhttp): drop reqwest multipart feature |
+| `f78c278` | size(rhttp): drop reqwest form feature |
+| `da669b0` | size(rhttp): drop reqwest socks feature |
+| `6da1cec` | size(rhttp): drop reqwest cookies feature |
+| `c463431` | size(rhttp): drop reqwest query feature |
+| `280122d` | size(rhttp): drop reqwest charset feature |
+| `c117953` | size(rhttp): narrow tokio features |
+| `719b008` | Revert "size(rhttp): drop reqwest query feature" |
+| `c737cb9` | ci: enforce per-ABI APK size budget |
+| `e53d039` | docs(size): record per-ABI trim results and cache config |
+| `29a4f44` | ci: archive analyze-size in android-release, always upload release assets |
+| `7e740f6` | test(updater): cover manifest key, ABI, size and hex rejections |
+| `61936d4` | spec(backend): record release artifact, size gate, updater and rhttp feature contracts |
+
+### Testing
+
+- [OK] flutter analyze 0；flutter test 635（两条 loopback 超时单独重跑通过）+ 新增 6 → 641；插件 32；cargo fmt/test --locked 2+1 ignored；Kotlin github/fdroid 单测通过；apk_size_report/update_release self-test 通过；fdroid split 27,435,321 / 23,226,795，github（debug 签）27,459,921 / 23,251,395，均在 B7 阈值内、每包仅一个 lib/<abi>、无 libsqlite3.so
 
 ### Status
 
@@ -418,3 +457,6 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 
 - User device items: screenshots to research/screenshots, networkMode after restart, custom album + SAF, multi-P naming, ja Accept-Language capture, stage-5 timings
 - User decision: keep three quality groups (preview/detail/view) or collapse detail+view per R3 wording
+- 用户真机：API 29 与高版本各一次按 ABI 选资产的自更新（需 secrets + draft release）；--obfuscate 后 widgetBackgroundMain；B5 后登录/图片列表/大图下载与 ECH/TLS；B1 历史读写；B6 opt-3 vs opt-s 墙钟（build/b6-compare）
+- android-release 持续红直到 PIXIV_RELEASE_KEYSTORE_B64 等 secrets 配置；可考虑把 android-size 加入 required checks
+- F 迁 material_ui 后重测并重设 B7 阈值默认值

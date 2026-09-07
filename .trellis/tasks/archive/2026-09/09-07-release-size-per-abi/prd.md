@@ -19,7 +19,7 @@
 ### R1. per-ABI 发布流水线（D-1、D-2）
 
 - `ci.yml`、`release.yml` 改为 `flutter build apk --release --flavor <f> --split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/<f>`；
-  产出 `app-<f>-arm64-v8a-release.apk`、`app-<f>-armeabi-v7a-release.apk`；不产出 x86_64、不产出 universal。
+  产出 `app-arm64-v8a-<f>-release.apk`、`app-armeabi-v7a-<f>-release.apk`；不产出 x86_64、不产出 universal。
 - versionCode 保留 Flutter 偏移（arm64 `2000+n`、armeabi-v7a `1000+n`）；`build.gradle.kts` 注释更新。
 - 两个 APK 逐个 `apksigner verify`、拒绝 debug 签名；符号目录作为 release artifact 上传；`release.yml` 上传两个 APK。
 - 不使用 `--target-platform` 单独作为单 ABI 手段（cargokit 与插件 jniLibs 不受其约束，研究 §2）。
