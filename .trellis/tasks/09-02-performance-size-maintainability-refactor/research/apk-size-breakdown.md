@@ -128,9 +128,9 @@ panic=abort`。
 |---|---|---|---|
 | 用户下载的 release 包（arm64-v8a） | 88.6 MB（fat） | ≤ 32 MB 先落地（仅 per-ABI），再向 ≤ 28 MB 收敛 | `--split-per-abi`；随后 §4/§5 裁剪与 `--obfuscate` |
 | release 产物是否含 x86_64 | 含 | 不含（模拟器用 debug 包） | split 输出中不发布 x86_64 |
-| `libsqlite3.so` | 每 ABI 1.73 MB | 0（待验证）| Android 侧 `packaging.jniLibs.excludes`；桌面分支与主依赖按 D-4 保留 |
+| `libsqlite3.so` | 每 ABI 1.73 MB | 0（B1 已验证：split APK 内无 `libsqlite3.so`）| Android 侧 `packaging.jniLibs.excludes`；桌面分支与主依赖按 D-4 保留 |
 | 未使用依赖带入的 assets | `cupertino_icons` 0.26 MB | 0 | 删除依赖 |
-| CI 体积门禁 | 无 | 每次 release 构建输出 per-ABI 大小并对比上次 | workflow 步骤 |
+| CI 体积门禁 | 无 | 每次 release 构建输出 per-ABI 大小并对比上次（B3 输出、B7 门禁已落地） | `tool/apk_size_report.py` + `android-size` job |
 
 "≤ 28 MB"是 §3–§5 全部落地后的推算值，不是承诺；实现阶段每完成一项就重新测量一次并
 更新本文件。
@@ -517,6 +517,59 @@ B5a–B5g 合计（回退前）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,02
 **B5 最终**（B5a–d、B5f–g 生效，B5e 回退）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,042,000（−370,048）；armeabi-v7a 3,636,460 → 3,340,216（−296,244）。
 reqwest features 最终：`http2, query, rustls, stream, brotli, deflate, gzip, zstd`；tokio：`rt-multi-thread, net, time, sync, io-util, macros`。
 真机待用户（登录 + 图片列表 + 大图下载，一次覆盖 B5 全部）。
+
+### B6 `opt-level = "s"` 实验（已测量，未采用，待用户真机）
+
+按 `design.md` 协议：对照为 B5 最终（B5e 回退后，opt-level 3）的 fdroid split（无 `--obfuscate`）；只改 `plugins/rhttp/rhttp/rust/Cargo.toml` `[profile.release]` `opt-level = 3` → `"s"`，其余 profile 键不动；删 `build/rhttp/jniLibs/release/*/librhttp.so` 后重建。开始 2026-09-07T17:24:16Z，墙钟 97 s。对照组随后用同旗标重建，字节与「B5e 回退」逐字节一致（29,073,721 / 5,042,000），说明测量可复现。
+
+| | opt-level 3（B5 最终） | opt-level "s" | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,042,000 | 3,503,000 | −1,539,000（−30.5%） |
+| `librhttp.so` armeabi-v7a | 3,340,216 | 2,455,272 | −884,944（−26.5%） |
+| fdroid arm64 APK | 29,073,721 | 27,534,721 | −1,539,000 |
+| fdroid armeabi-v7a APK | 25,192,875 | 24,307,931 | −884,944 |
+| `lib/arm64-v8a` 桶 | 26,890,600 | 25,351,600 | −1,539,000 |
+
+`.so` 下降条件满足，且幅度是 B5 全部裁剪的 4.2 倍。采用门的另一半——列表 + 大图下载墙钟无可感知回退——只能由用户真机判定（`cc` crate 会把 `OPT_LEVEL=s` 映射为 `-Os`，brotli/zstd 的 C 解压也会随之改编译等级；rustls 的密码学在 aws-lc-rs 汇编里，不受影响）。**因此本轮不提交 profile 改动**（`Cargo.toml` 已 `git restore`），`UPSTREAM.md` 不记。两组 APK 已留在（gitignore 的）`build/b6-compare/opt-3/` 与 `build/b6-compare/opt-s/`（fdroid 两 ABI 各一），供用户装同一台机对比：同一账号、同一作品、同一网络档，先开推荐/关注图片列表，再下一张大图，记墙钟秒数。用户判定可采用时，单独一个提交 `size(rhttp): set release opt-level to s`（一行改动 + UPSTREAM.md 一笔）即可。
+
+### B7 阈值
+
+以 B1–B6（B6 未采用）之后、带 `--obfuscate` 的 fdroid split 实测为基线（2026-09-07，与 B3 口径相同；B3 值减去 B5 的 `.so` 节省恰好等于实测）：
+
+| ABI | 实测文件字节 | 阈值（实测 + 1,000,000） | 余量 |
+|---|---|---|---|
+| arm64-v8a | 27,435,321 | 28,435,321 | 1,000,000 |
+| armeabi-v7a | 23,226,795 | 24,226,795 | 1,000,000 |
+
+写入 `ci.yml`（`android-release`、`android-size` 两处）与 `release.yml`：`${{ vars.PIXIV_APK_MAX_BYTES_ARM64_V8A || '28435321' }}` / `${{ vars.PIXIV_APK_MAX_BYTES_ARMEABI_V7A || '24226795' }}`，仓库 vars 可覆盖；arm64 另受 B3 的硬顶 32,000,000（脚本取更严者）。注释含「F 迁 material_ui 后需重测」。本机验证：同一脚本对上表产物通过（exit 0）；把 armeabi-v7a 阈值临时设为 23,000,000 时报 `::error::armeabi-v7a APK exceeds size cap: 23226795 > 23000000` 并 exit 1。github flavor 比 fdroid 大 24,600 B（B3 表），在余量之内。
+
+### CI 复核（PR #4 `android-size`，干净 runner）
+
+`https://github.com/Lopution/pixiv-func/actions/runs/34144929182`，job 12 m 36 s：`rustup toolchain install`（`rust-toolchain.toml`）+ `Swatinem/rust-cache` + fdroid split/obfuscate + 体积报告 + `--analyze-size` + 两份 artifact 全部成功。runner 产物 arm64 27,809,465 / armeabi-v7a 23,525,215（B3 阶段，B5 之前），与本机 27,805,369 / 23,523,039 相差 4,096 / 2,176 字节（zip 对齐页），`lib/<abi>` 桶 25,626,344 / 21,368,564。`android-release` 在 `Decode release keystore` 处失败（secrets 未配置，现状，B 不绕过）；`android-unit` 6 m 9 s 通过。
+
+### 图片 CacheManager 配置（抄录，不改）
+
+`lib/core/network/compat/network_policy.dart:1162-1170`：`CacheManager(Config('pixiv_func_images', fileService: HttpFileService(httpClient: client(PixivDestinationPurpose.image))))`，未传 `stalePeriod` / `maxNrOfCacheObjects`。flutter_cache_manager 3.4.2 `lib/src/config/_config_io.dart:14-15` 默认：`stalePeriod = Duration(days: 30)`、`maxNrOfCacheObjects = 200`。本 child 不改配置；仅记录以便 parent 讨论磁盘占用时有据可查。
+
+### `rustls-platform-verifier` 评估：保留
+
+`plugins/rhttp/rhttp/rust/Cargo.toml:25,30`（`rustls-platform-verifier = "0.7"`，android 目标同版）。`init.rs` 每进程 `init_with_env`；app 的 TLS 路径走 webpki（`rhttp_client_factory.dart` + Dart 默认 `RootCertSource.webpki`），但 `RootCertSource.platform` 是插件公开能力，去掉它会增大 fork diff、砍掉平台信任库这条路，且 `android/build.gradle.kts` 为它解 AAR 的逻辑要跟着改。B5 未触碰；保留。
+
+### child B 收束（B0–B7）
+
+| 项 | 结果 | 依据 |
+|---|---|---|
+| release 产物 | 恰好 2 个 split APK（arm64-v8a、armeabi-v7a），无 universal、无 x86_64 | B3 / CI `android-size` |
+| arm64-v8a release APK | 27,435,321 B（≤ 32,000,000 硬顶；也低于 §6 表「≤ 28 MB」推算值） | B7 实测 |
+| armeabi-v7a release APK | 23,226,795 B | B7 实测 |
+| 相对 fat 88.6 MB | −69% | B0 → B7 |
+| `libsqlite3.so` | 可行，已排除（每 ABI −1.7 MB） | B1 |
+| cargokit 陈旧 ABI | 单 ABI 构建只含目标 ABI 的 `librhttp.so` | B2 |
+| `--obfuscate` | 保留（`libapp.so` −1,638,400 / −1,966,080）；`widgetBackgroundMain` 待用户真机 | B3 |
+| updater | schema 2 多资产，按 `supportedAbis` 选择 | B4 |
+| rhttp features | multipart / form / socks / cookies / charset 去掉，tokio 收窄；`query` 保留（B5e 回退）；`librhttp.so` −370,048 / −296,244 | B5 |
+| `opt-level = "s"` | 测得 −1,539,000 / −884,944，未采用，待用户真机墙钟 | B6 |
+| CI 门禁 | 28,435,321 / 24,226,795，vars 可覆盖，arm64 硬顶 32,000,000 | B7 |
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
