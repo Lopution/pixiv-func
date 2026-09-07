@@ -2,18 +2,19 @@
 
 ## 开工条件
 
-- [x] 匿名 policy 已核实（2026-09-02 决策记录）：SauceNAO 匿名可用，约 30 秒 4 次 /
-      每日 99 次；429 带 retry-after。研究结论见 parent decision-record
-      （外部事实复核章节）。
+- [x] 匿名 policy 已核实（2026-09-02 决策记录；**2026-09-07 开工复核** `research/anonymous-policy.md`）：
+      HTML `search.php` 匿名可用（实测 200 结果页）；JSON API 匿名被拒（403 "anonymous account
+      type does not permit API usage"）；未注册按 IP 每 30 秒 4 次 / 每日 150 次；超限为 429
+      `retry-after` 或超限页文案。
 - [x] 用户确认 D1：零配置 WebView 方案，不要求用户 key/注册。
-- [ ] 读取 parent R4/R5/R6 与现有 reverse-image 测试；本 task 不新建 provider registry。
-- [ ] `task.py start` 前完成 `design.md`/`implement.md` review。
+- [x] 读取 parent R4/R5/R6 与现有 reverse-image 测试；本 task 不新建 provider registry。
+- [x] `task.py start` 前完成 `design.md`/`implement.md` review。
 
 ## 阶段 0：事实与 fixture
 
-- [ ] 固定并记录匿名 endpoint、multipart 字段、成功 HTML、无匹配页面、限流响应和 HTML 挑战页。
-- [ ] 所有 fixture 脱敏，不提交用户图片、cookie、token 或 key。
-- [ ] 为响应大小、Content-Type、取消和超时建立可注入的 fake transport。
+- [x] 固定并记录匿名 endpoint、multipart 字段、成功 HTML、无匹配页面、限流响应和 HTML 挑战页。（真实成功页 fixture `test/fixtures/saucenao/anonymous_result_page.html`；限流 / 挑战 / 无匹配为文案级 fixture，见 `sauce_nao_provider_test.dart`；复核发现并修复 `cloudflare` 误判）
+- [x] 所有 fixture 脱敏，不提交用户图片、cookie、token 或 key。（上传文件名与 beacon token 已替换；探针图为合成噪声）
+- [x] 为响应大小、Content-Type、取消和超时建立可注入的 fake transport。（`MockClient` 注入；大小 / Content-Type / 取消用例已在测试中）
 
 ## 阶段 1：WebView transport
 
@@ -40,7 +41,7 @@
 
 - [x] `flutter analyze`（No issues）
 - [x] `flutter test`（全量 570+）
-- [ ] `git diff --check`（提交前统一执行）
+- [x] `git diff --check`（提交前统一执行）
 - [ ] 真机：Pixiv 截图命中并进详情、非 Pixiv 结果打开浏览器、限流等待、挑战页失败、隐私提示。
 
 ## 回滚点
