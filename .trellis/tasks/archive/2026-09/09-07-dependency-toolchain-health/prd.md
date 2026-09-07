@@ -23,8 +23,9 @@
 
 - Flutter 3.47.0 → 3.47.2：本地 SDK；`.github/workflows/ci.yml` 两处与 `release.yml` 一处
   `flutter-version`。3.47.2 含 libpng 安全修复，3.47.1 含插件注册器注入校验。
-- `androidx.core:core` 1.15.0 → 1.19.0；`androidx.work:work-runtime-ktx` → `work-runtime` 2.11.2（ktx 已空壳）。
-- `flutter pub upgrade`（不改约束）；`plugins/rhttp/rhttp/rust` 下 `cargo update`（含 rustls 0.23.43、
+- `androidx.work:work-runtime-ktx` → `work-runtime` 2.11.2（ktx 已空壳）。`androidx.core:core` 1.19.0
+  要求 compileSdk 37，并入 R3 的 AGP 9.1.1 项。
+- `flutter pub upgrade`（不改约束）；`plugins/rhttp/rhttp/rust` 下 `cargo update`（含 rustls 0.23.44、
   aws-lc-rs 1.18.1、webpki-root-certs 1.0.9、hyper 1.11.1、tokio 1.53.1 等）；核对新 crate 许可证；
   重编 `.so` 后跑插件 `flutter test` 与 `cargo test`。
 - `actions/checkout@v4` → `@v6`；`actions/setup-java@v4` → `@v5`。
@@ -35,7 +36,8 @@
 - `archive ^3.6.1` → `^4.2.0`，解锁 `image` 4.3.0 → 4.9.x。项目只用 `Inflate`/`getCrc32`（4.2.0 仍导出）
   与 `GifEncoder`/`QuantizerType.neural`/`Image.fromBytes`。验证 `test/ugoira_test.dart` + 真机 Ugoira 播放与 GIF 导出。
 - `flutter_secure_storage ^10.0.0` → `^11.0.0`：两处调用均为 `const FlutterSecureStorage()`，代码零改动；
-  需 AGP 9.1.0 → 9.1.1（明确支持 API 37）并确认本机与 CI 有 `platforms;android-37`。验证 `flutter build apk --debug`
+  需 AGP 9.1.0 → 9.1.1（明确支持 API 37）、`compileSdk 37`、`androidx.core:core` 1.15.0 → 1.19.0
+  （1.19.0 的 AAR 要求 compileSdk 37），并确认本机与 CI 有 `platforms;android-37`。验证 `flutter build apk --debug`
   与真机登录凭据、翻译凭据读写。项目未发布，无 v10 数据迁移问题。
 
 ### R4. 版本三元组与工具链固化
@@ -44,7 +46,9 @@
   的 `codegenVersion`、`rust/Cargo.toml` pin、`flutter_rust_bridge_codegen --version`；不一致即失败；进 CI。
 - 插件 `pubspec.yaml` 的 `flutter_rust_bridge: ^2.12.0` 收紧为与 Cargo 相同的精确版本，`flutter pub get` 后
   lock 回到 2.12.0，消除当前 Dart 2.13.0 / 生成代码 2.12.0 的漂移。`rhttp.dart:19` 的 `forceSameCodegenVersion: false` 保留（上游行为）。
-- `plugins/rhttp/rhttp/rust/rust-toolchain.toml`（当前 stable 1.98）；CI `flutter pub get --enforce-lockfile`、`cargo test --locked`。
+- 仓库根 `rust-toolchain.toml`（当前 stable 1.98）：cargokit 只读 `<app root>/rust-toolchain.toml`，否则回退 `stable`；
+  rustup 从 `rust/` 向上查找也命中同一文件，放在根目录才能让 APK 构建与 `cargo test` 共用一个 pin。
+  CI `flutter pub get --enforce-lockfile`、`cargo test --locked`。
 - 以上差异记入 `plugins/rhttp/UPSTREAM.md`（parent D-5 已允许构建配置类差异）。
 
 ### R5. CI 覆盖
@@ -61,14 +65,15 @@
 
 ## Acceptance Criteria
 
-- [ ] `flutter pub outdated` 直接依赖中无可解析的落后项（`go_router`/`cached_network_image` 的 material_ui 系大版本除外，留给 F）。
-- [ ] APK 中无 `cupertino_icons` 字体。
-- [ ] 本地与 CI 的 Flutter 为 3.47.2；`ci.yml`/`release.yml` 使用 `checkout@v6`、`setup-java@v5`。
-- [ ] `tool/frb_check.sh` 通过并在 CI 执行；`pubspec.lock` 的 `flutter_rust_bridge` 与 Cargo pin 一致。
-- [ ] `rust-toolchain.toml` 存在；CI 使用 `--enforce-lockfile` 与 `--locked`。
-- [ ] CI 跑 Kotlin JVM 测试、插件 Dart 测试、`cargo test`，全部通过。
-- [ ] `flutter analyze`、`flutter test`、双 flavor release 构建通过；Ugoira 与凭据读写真机验证通过。
-- [ ] `UPSTREAM.md` 记录 toolchain/lock 差异；spec 增加升级策略段（跟随 Flutter 验证矩阵）。
+- [x] `flutter pub outdated` 直接依赖中无可解析的落后项（`go_router`/`cached_network_image` 的 material_ui 系大版本除外，留给 F）。
+- [x] APK 中无 `cupertino_icons` 字体。
+- [x] 本地与 CI 的 Flutter 为 3.47.2；`ci.yml`/`release.yml` 使用 `checkout@v6`、`setup-java@v5`。
+- [x] `tool/frb_check.sh` 通过并在 CI 执行；`pubspec.lock` 的 `flutter_rust_bridge` 与 Cargo pin 一致。
+- [x] `rust-toolchain.toml` 存在；CI 使用 `--enforce-lockfile` 与 `--locked`。
+- [x] CI 跑 Kotlin JVM 测试、插件 Dart 测试、`cargo test`，全部通过。
+- [x] `flutter analyze`、`flutter test`、双 flavor release 构建通过（fdroid 88,181,654 B / github 88,206,254 B）。
+- [ ] 真机验证（待用户）：Ugoira 播放 + GIF 导出（A6 之后）；登录凭据与翻译凭据读写（A7 之后）。
+- [x] `UPSTREAM.md` 记录 toolchain/lock 差异；spec 增加升级策略段（跟随 Flutter 验证矩阵）。
 
 ## Notes
 

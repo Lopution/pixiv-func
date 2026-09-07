@@ -315,3 +315,59 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 ### Status
 
 [OK] **Completed**
+
+
+## Session 14: Child A：依赖与工具链健康（A0–A10 全部落地）
+<!-- trellis-session: v=2 fp=c04418dc80504a67 -->
+
+**Date**: 2026-09-07
+**Task**: Child A：依赖与工具链健康（A0–A10 全部落地）
+**Branch**: `task/09-07-dependency-toolchain-health`
+
+### Summary
+
+09-02 child A 在 task/09-07-dependency-toolchain-health 分支上按 implement.md 逐 checkbox 提交完成：删 cupertino_icons、Flutter 3.47.2、pub/Cargo lock 刷新（121 crate）、work-runtime、CI actions v6/v5、archive 4/image 4.9、flutter_secure_storage 11 + AGP 9.1.1 + compileSdk 37 + androidx.core 1.19、FRB 三元组精确 pin + tool/frb_check.sh、仓库根 rust-toolchain.toml 1.98.0 + --enforce-lockfile/--locked、cargo fmt 门禁（生成文件 rustfmt::skip）、CI 新增 plugin/android-unit/deps-report。全量检查 PASS WITH NOTES；真机验证留给用户。
+
+### Main Changes
+
+- cupertino_icons 移除；Flutter 3.47.0→3.47.2（本地 /opt/flutter-3.47.2 + ci.yml/release.yml）；pubspec.lock/Cargo.lock 刷新并记录新 crate 许可证
+- androidx.work ktx→work-runtime 2.11.2；archive ^4.2.0 带动 image 4.9.2（Inflate 命名参数、ZipEncoder.encode 非空两处源码改动）
+- flutter_secure_storage 11 + AGP 9.1.1 + compileSdk 37 字面量 + androidx.core 1.19.0；platforms;android-37.0 命名导致 cargokit plugin.gradle 解析修补（UPSTREAM.md D-5）
+- flutter_rust_bridge 三元组收紧到精确 2.12.0（两处 lock 由 2.13.0 回到 2.12.0，插件 lock 改为跟踪），tool/frb_check.sh 进 CI
+- 仓库根 rust-toolchain.toml（cargokit 只读 app 根目录，rustup 向上查找同一文件；.rustc_info.json 已证实 APK 构建用 1.98.0）；CI --enforce-lockfile；plugin/android-unit/deps-report 三个 job
+- spec：frontend/quality-guidelines.md 新增 Dependency and toolchain upgrade policy（跟随 Flutter 验证矩阵、Kotlin 停在 2.4.0 的理由、lock 即契约、生成代码免 fmt 门禁）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `5212efb` | chore(task): start dependency-toolchain-health on its branch |
+| `289faa5` | research(09-02): re-verify dependency and APK baselines at child A start |
+| `68bcae3` | deps: drop unused cupertino_icons |
+| `fe0643e` | build: flutter 3.47.2 |
+| `9b071fb` | deps: refresh pubspec.lock and Cargo.lock |
+| `67644db` | ci: bump actions |
+| `2d09f8c` | build(android): use work-runtime instead of the empty ktx artifact |
+| `20811c0` | deps: archive 4 / image 4.9 |
+| `8071f49` | deps: flutter_secure_storage 11 |
+| `ff65707` | build(rhttp): pin flutter_rust_bridge triplet and add check |
+| `170b49f` | build: pin rust toolchain and enforce lockfiles |
+| `abccfac` | style(rhttp): apply cargo fmt to the ECH additions |
+| `718f932` | ci: run kotlin, plugin and rust tests |
+| `da55454` | docs(spec): record the dependency and toolchain upgrade policy |
+
+### Testing
+
+- [OK] flutter analyze 0；flutter test 626；插件 flutter test 32；cargo fmt --check 干净、cargo test --locked 2 passed/1 ignored；Kotlin 13+13；fdroid release 88,181,654 B、github（debug 签名覆盖）88,206,254 B，compileSdk 37/minSdk 29/targetSdk 36，cupertino_icons 0 项
+- [OK] flutter pub outdated 直接依赖仅剩 go_router 17.5.0 / cached_network_image 3.4.1（留给 child F）；cargo update --dry-run 0 packages；frb_check.sh 从根目录与 /tmp 均 OK
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 用户真机验证：Ugoira 播放 + GIF 导出（archive/image 升级后）；登录凭据与翻译凭据读写（secure_storage 11 后）
+- 用户配置 GitHub secrets PIXIV_RELEASE_KEYSTORE_B64 等四项，否则 android-release job 持续红（非 ruleset 必需项，不阻塞合并）
+- 首次 CI 绿后考虑把 plugin / android-unit 加入 protect-main ruleset 的 required checks
+- child B（release-size-per-abi）以本分支合并后的 main 为基线重跑 B0

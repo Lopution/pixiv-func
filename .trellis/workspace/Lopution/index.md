@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 13
-- **Last Active**: 2026-09-02
+- **Total Sessions**: 14
+- **Last Active**: 2026-09-07
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~317 | Active |
+| `journal-1.md` | ~373 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 14 | 2026-09-07 | Child A：依赖与工具链健康（A0–A10 全部落地） | `5212efb`, `289faa5`, `68bcae3`, `fe0643e`, `9b071fb`, `67644db`, `2d09f8c`, `20811c0`, `8071f49`, `ff65707`, `170b49f`, `abccfac`, `718f932`, `da55454` | `task/09-07-dependency-toolchain-health` |
 | 13 | 2026-09-02 | 修复刷新与用户页 UX 正确性 | `10ea29d` | `main` |
 | 12 | 2026-09-01 | Pixiv 网络与作品转场修复 | `2eaf5aa` | `main` |
 | 11 | 2026-08-31 | 修复移动端 UI 动画与个人页问题 | `39181c2` | `main` |
