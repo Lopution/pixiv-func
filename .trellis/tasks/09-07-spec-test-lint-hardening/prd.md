@@ -10,8 +10,8 @@
 ## 开工 gate
 
 - E0（文档）可随 child A 开始。
-- E1–E3（spec 填写、测试收敛、格式与 lint）在 child C、D 之后：C 会重写 JSON 读取与目录结构，先开 `strict-*` 会产生两遍修改；
-  `dart format` 一次性格式化必须等 09-01 的未提交文件落地，否则冲突。
+- E1–E3（spec 填写、测试收敛、格式与 lint）在 child C、D、F 之后：C 会重写 JSON 读取与目录结构、F 会改导入与导航，先开
+  `strict-*` 会产生多遍修改；`dart format` 一次性格式化必须等前序 child 落地，否则冲突。
 
 ## Requirements
 
@@ -44,10 +44,10 @@
   （`SemanticsTester` / `find.bySemanticsLabel`）。
 - `test/architecture/layering_test.dart` 增加"`features/` 不得定义 `_*Tail/_*Error/_*Empty/_*Card`"名称检查。
 
-### R2c. 性能回归门禁（parent R9）
+### R2c. 静态性能约束的最终核对（parent R9，D-9 不做基线）
 
-- 确认 `research/runtime-baseline.md` 的"复测（C 后）"表已由用户填写并对照阈值给出结论；结论进 check 记录。
-- 把基线协议链接进 `backend/release-pipeline.md`，作为每次大版本前的手动检查项。
+- 确认 C/D/F 落地的约束测试都存在并通过：变体 `memCacheWidth` 断言、`startup_gate_test` 首帧等待项、history 查询计划、
+  通道分块；`backend/release-pipeline.md` 记录 B 的体积阈值（F 更新后的值）。
 
 ### R3. 格式与 lint（E3，D-7）
 
@@ -69,7 +69,7 @@
 - [ ] CI 的 `dart format` 检查通过；两批 lint 在 `analysis_options.yaml` 生效且 `flutter analyze` 0 问题。
 - [ ] `flutter test` 全绿。
 - [ ] 共享组件 semantics 测试存在并通过；layering_test 含私有 widget 名称检查。
-- [ ] 基线复测表已填并有阈值结论；协议已链接进 `release-pipeline.md`。
+- [ ] R2c 的约束测试全部存在并通过；`release-pipeline.md` 的体积阈值与 CI 一致。
 
 ## Notes
 

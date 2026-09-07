@@ -50,11 +50,10 @@
 - 同步指引扩为七步（diff 上游 → 重打 ECH → 重打构建配置差异 → `frb_check.sh` → 必要时 codegen → 双侧测试 → 更新记录）。
 - `.trellis/spec/backend/rust-plugin.md`：fork 策略、FRB 三元组、再生成命令、cargokit ABI/输出目录行为、插件 AGP/Kotlin 版本与 app 的差异。
 
-### R6b. 通道开销（parent R9）
+### R6b. 通道分块（parent R9，静态约束）
 
-- 统计一次 50 MB 下载经 `pixivfunc/mediastore` 的 `write` 调用次数与块大小（Dart 侧 `media_store_channel.dart:123` 按块调用），
-  SAF 同理；块过小则在 Dart 侧调整分块，协议不变；记录前后耗时。
-- 原生初始化（channel 注册、WorkManager 调度）不得进入首帧前的主线程同步路径；与 P0 冷启动指标对照。
+- 核对 `pixivfunc/mediastore`/SAF 的 Dart 侧写块大小（`media_store_channel.dart:123` 按块调用），低于 256 KiB 则调整，协议不变。
+- 原生初始化（channel 注册、WorkManager 调度）不得进入首帧前的主线程同步路径（code review）。
 
 ### R7. 不做
 

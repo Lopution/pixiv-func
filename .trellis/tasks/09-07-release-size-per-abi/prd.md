@@ -48,11 +48,10 @@
 - `--analyze-size` JSON 作为 artifact 归档（不阻塞）。
 - 每步更新 `research/apk-size-breakdown.md` §6。
 
-### R4b. 性能约束的记录项（parent R9）
+### R4b. 与 F 的衔接
 
-- 记录图片 `CacheManager` 的 `Config`（对象数上限、stalePeriod）与真机缓存目录大小，供 `research/runtime-baseline.md` 指标 7 引用；
-  不改配置，除非基线显示缓存目录失控。
-- `--obfuscate`/`--split-per-abi` 后用 P0 协议复测一次冷启动，确认无回归。
+- 记录图片 `CacheManager` 的 `Config`（对象数上限、stalePeriod），不改配置。
+- 体积门禁阈值注明"child F 迁 `material_ui` 后需重测更新"（app 用 material_ui、legacy 插件仍用 SDK material 可能让快照增大）。
 
 ### R5. 不做
 

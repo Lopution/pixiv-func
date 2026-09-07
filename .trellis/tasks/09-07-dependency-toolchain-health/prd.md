@@ -15,8 +15,9 @@
 
 ### R1. 删除零引用依赖
 
-- `go_router ^17.0.0`、`cupertino_icons ^1.0.8`：`lib/`、`test/` 均 0 import（研究 §1）。删除后
-  `flutter pub get`，确认 APK 中 `assets/flutter_assets/packages/cupertino_icons/` 消失（−0.26 MB）。
+- `cupertino_icons ^1.0.8`：`lib/`、`test/` 均 0 import（研究 §1）。删除后 `flutter pub get`，确认 APK 中
+  `assets/flutter_assets/packages/cupertino_icons/` 消失（−0.26 MB）。
+- `go_router ^17.0.0` 当前同样 0 import，但按 parent D-12 **保留**，由 child F 升到 18 并接线；本 child 不动它。
 
 ### R2. 低风险升级（每项一个提交，每项跑全量检查）
 
@@ -55,13 +56,13 @@
 
 ### R6. 不做
 
-- `cached_network_image` 4.x、`go_router` 18（已删）等 `material_ui` 系升级；AGP 9.3 / Gradle 9.7（超出 Flutter 验证矩阵）；
-  rhttp dev 工具链（ffigen/freezed/build_runner）与上游走。原因记入 spec 的升级策略。
+- `cached_network_image` 4.x、`go_router` 18 等 `material_ui` 系升级（parent D-11：在 child F 内随 app 迁移一起做）；
+  AGP 9.3 / Gradle 9.7（超出 Flutter 验证矩阵）；rhttp dev 工具链（ffigen/freezed/build_runner）与上游走。原因记入 spec 的升级策略。
 
 ## Acceptance Criteria
 
-- [ ] `flutter pub outdated` 直接依赖中无可解析的落后项（`cached_network_image` 除外并有记录）。
-- [ ] APK 中无 `cupertino_icons` 字体；`pubspec.yaml` 无 `go_router`。
+- [ ] `flutter pub outdated` 直接依赖中无可解析的落后项（`go_router`/`cached_network_image` 的 material_ui 系大版本除外，留给 F）。
+- [ ] APK 中无 `cupertino_icons` 字体。
 - [ ] 本地与 CI 的 Flutter 为 3.47.2；`ci.yml`/`release.yml` 使用 `checkout@v6`、`setup-java@v5`。
 - [ ] `tool/frb_check.sh` 通过并在 CI 执行；`pubspec.lock` 的 `flutter_rust_bridge` 与 Cargo pin 一致。
 - [ ] `rust-toolchain.toml` 存在；CI 使用 `--enforce-lockfile` 与 `--locked`。
