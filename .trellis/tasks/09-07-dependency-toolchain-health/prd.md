@@ -23,7 +23,8 @@
 
 - Flutter 3.47.0 → 3.47.2：本地 SDK；`.github/workflows/ci.yml` 两处与 `release.yml` 一处
   `flutter-version`。3.47.2 含 libpng 安全修复，3.47.1 含插件注册器注入校验。
-- `androidx.core:core` 1.15.0 → 1.19.0；`androidx.work:work-runtime-ktx` → `work-runtime` 2.11.2（ktx 已空壳）。
+- `androidx.work:work-runtime-ktx` → `work-runtime` 2.11.2（ktx 已空壳）。`androidx.core:core` 1.19.0
+  要求 compileSdk 37，并入 R3 的 AGP 9.1.1 项。
 - `flutter pub upgrade`（不改约束）；`plugins/rhttp/rhttp/rust` 下 `cargo update`（含 rustls 0.23.43、
   aws-lc-rs 1.18.1、webpki-root-certs 1.0.9、hyper 1.11.1、tokio 1.53.1 等）；核对新 crate 许可证；
   重编 `.so` 后跑插件 `flutter test` 与 `cargo test`。
@@ -35,7 +36,8 @@
 - `archive ^3.6.1` → `^4.2.0`，解锁 `image` 4.3.0 → 4.9.x。项目只用 `Inflate`/`getCrc32`（4.2.0 仍导出）
   与 `GifEncoder`/`QuantizerType.neural`/`Image.fromBytes`。验证 `test/ugoira_test.dart` + 真机 Ugoira 播放与 GIF 导出。
 - `flutter_secure_storage ^10.0.0` → `^11.0.0`：两处调用均为 `const FlutterSecureStorage()`，代码零改动；
-  需 AGP 9.1.0 → 9.1.1（明确支持 API 37）并确认本机与 CI 有 `platforms;android-37`。验证 `flutter build apk --debug`
+  需 AGP 9.1.0 → 9.1.1（明确支持 API 37）、`compileSdk 37`、`androidx.core:core` 1.15.0 → 1.19.0
+  （1.19.0 的 AAR 要求 compileSdk 37），并确认本机与 CI 有 `platforms;android-37`。验证 `flutter build apk --debug`
   与真机登录凭据、翻译凭据读写。项目未发布，无 v10 数据迁移问题。
 
 ### R4. 版本三元组与工具链固化

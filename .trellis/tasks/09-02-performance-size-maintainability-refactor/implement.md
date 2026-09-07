@@ -30,12 +30,14 @@ gate：用户批准。与 09-01 仅在 `pubspec.yaml` 行级可能冲突。
       由工具自动重写）；`ci.yml` 两处、`release.yml` 一处 `flutter-version`。提交 `build: flutter 3.47.2`。
 - [ ] A3 `flutter pub upgrade`（不改约束）；`cd plugins/rhttp/rhttp/rust && cargo update`；核对新 crate
       许可证；重编 `.so` 后跑插件 `flutter test` 与 `cargo test`。提交 `deps: refresh pubspec.lock and Cargo.lock`。
-- [ ] A4 Android 工件：`androidx.core:core:1.19.0`、`work-runtime:2.11.2`（去 ktx）；Kotlin 2.4.10
-      （可选，D 阶段可再定）。提交 `build(android): bump androidx artifacts`。
+- [ ] A4 Android 工件：仅 `work-runtime-ktx` → `work-runtime:2.11.2`（ktx 自 2.8 为空壳）。
+      `androidx.core:core:1.19.0` 因要求 compileSdk 37，并入 A7。Kotlin 2.4.10 可选（D 阶段可再定）。
+      提交 `build(android): use work-runtime instead of the empty ktx artifact`。
 - [ ] A5 CI actions：`actions/checkout@v6`、`actions/setup-java@v5`。提交 `ci: bump actions`。
 - [ ] A6 耦合升级 `archive: ^4.2.0` → `image` 解析到 4.9.x；跑 `test/ugoira_test.dart`；真机 Ugoira
       播放 + GIF 导出各一次。提交 `deps: archive 4 / image 4.9`。
-- [ ] A7 `flutter_secure_storage: ^11.0.0` + AGP `9.1.1` + 确认 `platforms;android-37`（本机 + CI 镜像）；
+- [ ] A7 `flutter_secure_storage: ^11.0.0` + AGP `9.1.1` + `compileSdk 37` +
+      `androidx.core:core:1.19.0` + 确认 `platforms;android-37`（本机 + CI 镜像）；
       `flutter build apk --debug` 走通；真机登录凭据与翻译凭据读写。提交 `deps: flutter_secure_storage 11`。
 - [ ] A8 FRB 三元组：`tool/frb_check.sh`；插件 `pubspec.yaml` 的 `flutter_rust_bridge` 收紧为与
       `Cargo.toml` 相同的精确版本；`flutter pub get` 后 lock 回到 2.12.0；脚本进 CI。提交

@@ -261,3 +261,11 @@ dependencies behind latest（未展开）。
 MIT OR Apache-2.0 改为 **BSD-3-Clause**；`android_system_properties` 仅 SPDX 写法
 `MIT/Apache-2.0` → `MIT OR Apache-2.0`。仓库无按 crate 列名的 NOTICE/THIRD 清单
 （根 `NOTICE` 只指向历史 license-audit），未新建。
+
+### A4 复核：androidx.core 1.19.0 不是"仅版本号变更"
+
+`androidx.core:core:1.19.0`（及传递的 `core-ktx:1.19.0`）在
+`:app:checkFdroidReleaseAarMetadata` 上要求 compileSdk 37。AGP 9.1.0 的推荐 compileSdk
+上限是 36；Flutter 3.47.2 默认 `compileSdkVersion` 也是 36；本机 SDK 只有
+`platforms;android-35` / `android-36`。因此 1.19.0 并入 A7（与 AGP 9.1.1、compileSdk 37、
+`platforms;android-37` 同提交），A4 只做 `work-runtime-ktx` → `work-runtime:2.11.2`。
