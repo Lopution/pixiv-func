@@ -97,7 +97,7 @@ git diff --check
   - 回滚：revert 该提交。
   - 真机：无。
 
-- [ ] **B3 per-ABI 流水线**（与 B4 同一 PR）
+- [x] **B3 per-ABI 流水线**（与 B4 同一 PR）
   - 做：
     - `.github/workflows/ci.yml` `android-release`：`flutter build apk` 改为 `--split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/github`；对 `app-arm64-v8a-github-release.apk` 与 `app-armeabi-v7a-github-release.apk` 循环 `apksigner verify`，拒绝 `Android Debug`；跑体积汇总脚本；arm64 `> 32_000_000` 即失败；`--analyze-size` JSON 上传 artifact（不阻塞）；`build/symbols/github` 上传 artifact。
     - `.github/workflows/ci.yml` 新增 **`android-size`** job（不依赖 secrets，见 `design.md`「体积汇总脚本」）：`checkout@v6`、`setup-java@v5`（temurin 17）、`subosito/flutter-action@v2`、`flutter pub get --enforce-lockfile`、`rustup toolchain install`（根 `rust-toolchain.toml`，含 Android targets）、fdroid split/obfuscate 构建、同一份体积汇总 + 阈值脚本（`app-fdroid-*`，arm64 硬顶 `32_000_000`）、上传 `--analyze-size` JSON（`continue-on-error`）与两个 fdroid split APK 为 artifact（`retention-days: 14`，供用户侧载验证）。体积脚本抽成 `tool/apk_size_report.py`（参数：APK 路径列表 + 可选阈值环境变量），两个 job 与本机调用同一文件，避免 workflow 内两份 python 漂移。首次运行必须核对 cargokit 在 runner 上的交叉编译（rustc/NDK 下载）耗时并写入 §6。
@@ -134,7 +134,7 @@ git diff --check
   - 真机（待用户真机）：`--obfuscate` 后 widget 后台入口（`widgetBackgroundMain`）——加 widget，确认 `WidgetBackground: entered` 与出图。失败则去掉 obfuscate 旗标并记录（停止条件）。
   - 注意：`android-release` 在用户配置 keystore secrets 之前会红；体积门禁与 fdroid 产物由 `android-size` 在每个 PR 上产出，PR 合并前必须看到 `android-size` 绿并把它的汇总数字抄进 §6（与本机 fdroid 对照）。
 
-- [ ] **B4 updater 多资产**（与 B3 同一 PR）
+- [x] **B4 updater 多资产**（与 B3 同一 PR）
   - 做：按 R5 与 `design.md` contracts：
     - `tool/update_release.py`：可重复 `--apk <abi>=<path>`；顶层 `schema: 2`、`versionCode` 为基数、`packageName` / `signingCertificateSha256` 在顶层；`assets[]` 含 `abi/url/size/sha256/versionCode`；URL 固定 `pixiv-func-v<version>-github-<abi>.apk`；`self-test` 改两 APK。
     - `lib/core/updater/update_manifest.dart`：只认 `schema == 2`；精确键集见 design；schema 1 → `UpdateManifestFormatException('schema')`。
