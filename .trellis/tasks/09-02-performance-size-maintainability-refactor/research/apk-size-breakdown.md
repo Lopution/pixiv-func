@@ -341,6 +341,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 |---|---|---|---|---|---|---|---|---|
 | B5a | reqwest `multipart` | 5,376,968 | 3,612,364 | 29,408,689 | 27,225,568 | 有：`http.rs:414-418` | 通过 | 待用户 |
 | B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
+| B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -388,6 +389,25 @@ host `cargo build --release --locked` 在 `http.rs:413` `request.form(&form)` �
 
 测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
 features 之后：`charset, cookies, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5c drop reqwest `socks`
+
+`Cargo.toml` 去掉 `socks`；`cargo update -w` 未改 lock（reqwest 0.13 的 `socks` 不再拉 `tokio-socks`）。
+host `cargo build --release --locked` 直接通过：`client.rs:146-160` 的 `reqwest::Proxy::{http,https,all}` 对 http/https 代理不需要该 feature。未改 `http.rs` / `client.rs`。`socks://` 代理若传入，走现有 `Error creating proxy` → `RhttpUnknownError`。app 零 `ProxySettings`。
+
+构建：同上 fdroid split。开始 2026-09-07T17:03:50Z，墙钟 40 s（Gradle 34.0 s）。
+`jniLibs` mtime 2026-09-08 01:04:11 +0800。
+
+| | B5b | B5c | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,375,112 | 5,330,032 | −45,080 |
+| `librhttp.so` armeabi-v7a | 3,611,044 | 3,583,788 | −27,256 |
+| fdroid arm64 APK | 29,406,833 | 29,361,753 | −45,080 |
+| `lib/arm64-v8a` 桶 | 27,223,712 | 27,178,632 | −45,080 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, cookies, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
 真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
