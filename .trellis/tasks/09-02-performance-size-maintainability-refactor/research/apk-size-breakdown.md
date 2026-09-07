@@ -190,3 +190,22 @@ fat APK，不是 github；flavor 差异未体现在这些桶上。`lib/arm64-v8a
 `libapp.so` 9,962,376 B，与 §1 单 ABI 表（5.44 / 1.73 / 11.75 / 9.96 MB）一致。
 新鲜树，无 §0.2 陈旧 ABI 污染。
 
+### A1 之后（已删 `cupertino_icons`）
+
+同一命令 `flutter build apk --release --flavor fdroid`（增量，Gradle 25.1 s，
+开始 `2026-09-07T12:06:47Z`）。`unzip -l … \| grep cupertino_icons` 无输出；
+`assets/flutter_assets/packages/` 下已无任何包目录。
+
+| 类别 | A0 | A1 | Δ |
+|---|---|---|---|
+| APK 文件 | 88,582,315 | 88,466,077 | −116,238（−0.116 MB） |
+| zip 条目合计 | 88,334,227 | 88,218,210 | −116,017 |
+| `lib/x86_64` | 31,810,096 | 31,810,096 | 0 |
+| `lib/arm64-v8a` | 29,020,544 | 29,020,544 | 0 |
+| `lib/armeabi-v7a` | 25,060,556 | 25,060,556 | 0 |
+| `classes.dex` | 1,561,052 | 1,561,052 | 0 |
+| `assets` | 635,806 | 519,789 | −116,017（−0.116 MB） |
+
+Flutter 打印从 88.6MB → 88.5MB。APK 文件少 0.116 MB，对齐字体压缩后体积
+（A0 的 115,944 B）加上 zip 目录开销；未压缩 0.258 MB 是条目 raw size，不是
+下载体积。`lib/*` 与 `classes.dex` 字节未变。
