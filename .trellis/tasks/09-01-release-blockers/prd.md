@@ -148,6 +148,10 @@ ABI 的 native 库，用户已决定 release **只发布 per-ABI 拆分 APK（ar
 - 验收补充：API 29 与高版本真机各完成一次**按 ABI 选择资产**的真实自更新；manifest 缺少本机 ABI
   时的负向用例可见原因。
 
+> 生成器、`release.yml` 多 APK 上传、消费端选资产与 `versionCode % 1000` 比较由 sibling
+> `09-07-release-size-per-abi`（B3+B4）落地；本段仍是字段合同的唯一出处。资产 URL 的仓库字面量
+> 两侧必须同为 `Lopution/Pixiv-func`（见 `research/github-redirect.md`）。
+
 ## 已确认的发布决策
 
 用户于 2026-09-02 已一次性确认以下方案：
