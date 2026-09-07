@@ -340,6 +340,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | 步 | 去掉 | `librhttp.so` arm64 | `librhttp.so` armeabi-v7a | fdroid arm64 APK | `lib/arm64-v8a` 桶 | 编译修补 | 双侧测试 | 真机 |
 |---|---|---|---|---|---|---|---|---|
 | B5a | reqwest `multipart` | 5,376,968 | 3,612,364 | 29,408,689 | 27,225,568 | 有：`http.rs:414-418` | 通过 | 待用户 |
+| B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -368,6 +369,26 @@ APK 文件与 `lib/arm64-v8a` 下降值与 arm64 `.so` 下降逐字节相等。
 
 features 之后：`charset, cookies, form, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`；`tokio` 仍 `full`。
 真机登录/图片/下载待用户。
+
+#### B5b drop reqwest `form`
+
+`Cargo.toml` 去掉 `form`；`cargo update -w` 未改 lock（`serde_urlencoded` 仍由 `query` 拉入）。
+host `cargo build --release --locked` 在 `http.rs:413` `request.form(&form)` 失败（E0599）。
+`HttpBody::Form(_)` 改为 `return Err(RhttpError::RhttpUnknownError("form body is not supported"))`（`:413-417`）。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:00:20Z，墙钟 74 s（Gradle 65.3 s）。
+`jniLibs` mtime 2026-09-08 01:01:20 +0800，APK mtime 01:01:34。
+
+| | B5a | B5b | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,376,968 | 5,375,112 | −1,856 |
+| `librhttp.so` armeabi-v7a | 3,612,364 | 3,611,044 | −1,320 |
+| fdroid arm64 APK | 29,408,689 | 29,406,833 | −1,856 |
+| `lib/arm64-v8a` 桶 | 27,225,568 | 27,223,712 | −1,856 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, cookies, http2, query, rustls, stream, socks, brotli, deflate, gzip, zstd`。
+真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
