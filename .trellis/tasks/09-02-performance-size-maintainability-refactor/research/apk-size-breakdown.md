@@ -291,6 +291,42 @@ libdartjni ['lib/arm64-v8a/libdartjni.so', 'lib/armeabi-v7a/libdartjni.so', 'lib
 与 `design.md` 一致：B2 只主张 `librhttp.so`；B3 的 `--split-per-abi`
 会设 `abiFilters`，jni / datastore 随过滤器走。
 
+### B3 per-ABI 流水线
+
+工作树 `/root/Pixiv-func-B`，`task/09-07-release-size-per-abi` 在 B0–B2 之后。
+Flutter 3.47.2 / `tool/apk_size_report.py` 口径（文件字节 + `zipfile` `compress_size`）。
+构建旗标：`--split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/<f>`。
+本机 github 加 `-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`（debug 签名，预期）。
+
+| 步 | 命令 | 开始 (UTC) | 墙钟 |
+|---|---|---|---|
+| fdroid split + obfuscate | `flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/fdroid` | 2026-09-07T16:39:25Z | 17.65 s（增量；B1/B2 已暖机） |
+| github split + obfuscate | 同上，`--flavor github` + debug-signing 旗标 | 2026-09-07T16:40:10Z | 100.49 s |
+
+产物恰好两份 / flavor：`app-arm64-v8a-<f>-release.apk`、`app-armeabi-v7a-<f>-release.apk`。
+无 `x86_64`、无 universal。每个 split 的 `lib/` 只有一个 ABI 目录。
+符号：`build/symbols/fdroid/` 与 `build/symbols/github/`（`app.android-arm.symbols` 4,217,792 B，`app.android-arm64.symbols` 4,901,824 B）。
+
+| 产物 | 文件字节 | `lib/<abi>` | `classes.dex` | `assets` |
+|---|---|---|---|---|
+| fdroid arm64-v8a | 27,805,369 | 25,622,248 | 1,309,820 | 513,721 |
+| fdroid armeabi-v7a | 23,523,039 | 21,366,388 | 1,309,820 | 513,721 |
+| github arm64-v8a（debug 签） | 27,829,969 | 25,622,248 | 1,313,584 | 513,707 |
+| github armeabi-v7a（debug 签） | 23,547,639 | 21,366,388 | 1,313,584 | 513,707 |
+
+arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐字节一致；github 多出的 ~24.6 KB 在 dex/资源（与 child A 收尾的 flavor 差同量级）。
+
+`libapp.so` vs B1（无 obfuscate；B0/B1 raw 9,962,376 / 10,994,248）：
+
+| ABI | B1 `libapp.so` | B3 `libapp.so` | Δ |
+|---|---|---|---|
+| arm64-v8a | 9,962,376 | 8,323,976 | −1,638,400 |
+| armeabi-v7a | 10,994,248 | 9,028,168 | −1,966,080 |
+
+`librhttp.so` 未变：5,412,048 / 3,636,460。fdroid arm64 APK 相对 B1 的 29,443,769 为 −1,638,400，与 `libapp.so` 下降一致。
+
+`tool/apk_size_report.py --self-test` 通过（单 ABI zip 通过；双 `lib/` 与 env 更严阈值失败并打 `::error::`）。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
