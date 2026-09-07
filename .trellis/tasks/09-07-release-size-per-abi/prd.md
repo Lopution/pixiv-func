@@ -48,6 +48,12 @@
 - `--analyze-size` JSON 作为 artifact 归档（不阻塞）。
 - 每步更新 `research/apk-size-breakdown.md` §6。
 
+### R4b. 性能约束的记录项（parent R9）
+
+- 记录图片 `CacheManager` 的 `Config`（对象数上限、stalePeriod）与真机缓存目录大小，供 `research/runtime-baseline.md` 指标 7 引用；
+  不改配置，除非基线显示缓存目录失控。
+- `--obfuscate`/`--split-per-abi` 后用 P0 协议复测一次冷启动，确认无回归。
+
 ### R5. 不做
 
 - 不替换 aws-lc-rs（ECH 依赖 HPKE）、不删压缩支持、不删 API 29、不删 flavor、不删测试；不改路由阶梯/ECH/SNI/证书语义。

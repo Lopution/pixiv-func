@@ -38,6 +38,17 @@
 - 删除 `test/zz_diag_tabbar_geometry_test.dart`（自述 one-off）；`.gitignore` 加 `test/failures/`。
 - 测试目录按 `core/`/`features/` 镜像分层为可选项，不作为验收。
 
+### R2b. 组件层与无障碍校验（parent R8）
+
+- 共享组件（`IllustCard`、`FeedTail/Empty/Error`、`showAppSnackBar`、settings 原语、收藏/关注按钮）的 semantics 测试
+  （`SemanticsTester` / `find.bySemanticsLabel`）。
+- `test/architecture/layering_test.dart` 增加"`features/` 不得定义 `_*Tail/_*Error/_*Empty/_*Card`"名称检查。
+
+### R2c. 性能回归门禁（parent R9）
+
+- 确认 `research/runtime-baseline.md` 的"复测（C 后）"表已由用户填写并对照阈值给出结论；结论进 check 记录。
+- 把基线协议链接进 `backend/release-pipeline.md`，作为每次大版本前的手动检查项。
+
 ### R3. 格式与 lint（E3，D-7）
 
 - `dart format lib test` 一次性提交（纯格式，不含逻辑）；CI 加 `dart format --output=none --set-exit-if-changed lib test`。
@@ -57,6 +68,8 @@
 - [ ] `rg "runtimeType.toString()" test` 为 0；诊断测试已删；`test/failures/` 被忽略。
 - [ ] CI 的 `dart format` 检查通过；两批 lint 在 `analysis_options.yaml` 生效且 `flutter analyze` 0 问题。
 - [ ] `flutter test` 全绿。
+- [ ] 共享组件 semantics 测试存在并通过；layering_test 含私有 widget 名称检查。
+- [ ] 基线复测表已填并有阈值结论；协议已链接进 `release-pipeline.md`。
 
 ## Notes
 
