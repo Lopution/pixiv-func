@@ -243,6 +243,54 @@ debug 353.18 s（Gradle 320.2 s，2026-09-07T16:05:11Z）。
 （arm64 1,732,360 / armeabi-v7a 1,713,736）。`librhttp.so` / `libapp.so`
 未变。真机历史读写待用户。
 
+### B2 cargokit 清理（child B，2026-09-07）
+
+`CargoKitBuildTask.build()` 在 `execOperations.exec` 之前
+`project.delete(outputDir)`（`jniLibs/<buildType>`）。
+`plugins/rhttp/UPSTREAM.md` D-5 增加对应一条。
+
+**清理前（B0 的 analyze-size 补齐，无 delete）**：先有三 ABI `jniLibs`，再
+`--target-platform android-arm64`（无 `--split-per-abi`）。Flutter 打印
+`app-fdroid-release.apk (41.8MB)`，分析表含 `lib/armeabi-v7a` 4 MB +
+`lib/x86_64` 7 MB。泄漏的是陈旧 `librhttp.so`（加上插件 AAR 的
+`libdartjni.so` / `libdatastore_shared_counter.so`）。§0.2 当时测得
+`librhttp.so` 跨 ABI 泄漏 10,353,372 B。
+
+**复现污染（本步 fat，delete 已在仓）**：
+`flutter build apk --release --flavor fdroid`（2026-09-07T16:11:34Z，
+墙钟 94.04 s，Gradle 83.9 s）后磁盘：
+
+```
+build/rhttp/jniLibs/release/arm64-v8a/librhttp.so     5,412,064
+build/rhttp/jniLibs/release/armeabi-v7a/librhttp.so   3,636,464
+build/rhttp/jniLibs/release/x86_64/librhttp.so        6,738,328
+```
+
+非目标 ABI 合计 10,374,792 B（若不被 delete，会原样打进下一包）。
+
+**清理后**：
+`flutter build apk --release --flavor fdroid --target-platform android-arm64`
+（2026-09-07T16:13:08Z，墙钟 130.01 s，Gradle 116.4 s）。磁盘
+`jniLibs/release/` 只剩 `arm64-v8a/librhttp.so`。
+
+```
+rhttp ['lib/arm64-v8a/librhttp.so']
+ASSERTION_OK
+```
+
+`app-fdroid-release.apk` 文件 29,690,737 B。相对 B0 同命令的 41.8 MB，
+少掉的主体是那两份陈旧 `librhttp.so`。
+
+`libdartjni.so`（及 `libdatastore_shared_counter.so`）在非 split 的
+`--target-platform` 下仍三 ABI 全出：
+
+```
+libdartjni ['lib/arm64-v8a/libdartjni.so', 'lib/armeabi-v7a/libdartjni.so', 'lib/x86_64/libdartjni.so']
+```
+
+与 `design.md` 一致：B2 只主张 `librhttp.so`；B3 的 `--split-per-abi`
+会设 `abiFilters`，jni / datastore 随过滤器走。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
