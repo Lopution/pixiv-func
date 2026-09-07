@@ -233,3 +233,26 @@ Gradle 50.9 s，墙钟约 57 s。产物 88,443,452 B，相对 A4 的 88,443,344 
 `assets` 513,620 → 513,726（+106；`NOTICES.Z` 随 lock：+`posix` 6.5.2，−`petitparser`/`xml`）。
 `classes.dex` 1,561,052 未变。`lib/*` 未变（含三 ABI `libapp.so`；image 4.9 未增大 AOT 快照）。
 `cupertino_icons` 仍不在包内。
+
+### A7 之后（flutter_secure_storage 11 / AGP 9.1.1 / compileSdk 37 / androidx.core 1.19.0）
+
+`flutter build apk --release --flavor fdroid`（3.47.2）。开始 `2026-09-07T14:05:24Z`，
+Gradle 77.2 s，墙钟约 83 s。产物 88,181,654 B，相对 A6 的 88,443,452 B 为 **−261,798 B**。
+`classes.dex` 1,561,052 → 1,309,768（−251,284；R8 对 core 1.19 / secure_storage 11 的收缩），
+`assets` −1，res/其它 +180，`lib/*` 未变（三 ABI `libapp.so` 与 `librhttp.so` 逐字节一致）。
+`aapt2 dump badging`：`compileSdkVersion='37'`、`minSdkVersion:'29'`、`targetSdkVersion:'36'`（target 未变）。
+
+### child A 收尾（A10 之后，HEAD da55454，全量检查复测）
+
+A8–A10 不改产物，fdroid release 复测为 88,181,654 B（与 A7 相同）。github flavor
+（`-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`，本机无正式 keystore）为 88,206,254 B，
+两 flavor 的 `lib/*` 逐字节一致，`cupertino_icons` 均为 0 项。
+
+| ABI | `librhttp.so` | `libapp.so` |
+|---|---|---|
+| arm64-v8a | 5,412,048 | 9,962,376 |
+| armeabi-v7a | 3,636,460 | 10,994,248 |
+| x86_64 | 6,738,312 | 10,224,520 |
+
+child A 全程：A0 基线 → 收尾，fdroid release 净变化见各小节；`cupertino_icons` 字体已从包内移除，
+其余体积工作留给 child B（per-ABI 拆分、`libsqlite3.so`、`librhttp.so` 特性裁剪）。

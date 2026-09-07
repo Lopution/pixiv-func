@@ -22,33 +22,33 @@ git status --short > /tmp/pre-09-02-status.txt
 
 gate：用户批准。与 09-01 仅在 `pubspec.yaml` 行级可能冲突。
 
-- [ ] A0 基线：`flutter pub outdated`、`cargo update --dry-run`、`unzip -l` 三 ABI 汇总，写入
+- [x] A0 基线：`flutter pub outdated`、`cargo update --dry-run`、`unzip -l` 三 ABI 汇总，写入
       `research/dependency-upgrade-audit.md` / `apk-size-breakdown.md` 的"实施时复核"小节。
-- [ ] A1 删除 `cupertino_icons`（`pubspec.yaml`；`go_router` 保留，D-12 后由 F 升级并接线）；`flutter pub get`；确认 APK 中
+- [x] A1 删除 `cupertino_icons`（`pubspec.yaml`；`go_router` 保留，D-12 后由 F 升级并接线）；`flutter pub get`；确认 APK 中
       `packages/cupertino_icons` 消失。提交 `deps: drop unused cupertino_icons`。
-- [ ] A2 Flutter 3.47.0 → 3.47.2：本地 SDK（新目录或 `flutter upgrade`，更新 `android/local.properties`
+- [x] A2 Flutter 3.47.0 → 3.47.2：本地 SDK（新目录或 `flutter upgrade`，更新 `android/local.properties`
       由工具自动重写）；`ci.yml` 两处、`release.yml` 一处 `flutter-version`。提交 `build: flutter 3.47.2`。
-- [ ] A3 `flutter pub upgrade`（不改约束）；`cd plugins/rhttp/rhttp/rust && cargo update`；核对新 crate
+- [x] A3 `flutter pub upgrade`（不改约束）；`cd plugins/rhttp/rhttp/rust && cargo update`；核对新 crate
       许可证；重编 `.so` 后跑插件 `flutter test` 与 `cargo test`。提交 `deps: refresh pubspec.lock and Cargo.lock`。
-- [ ] A4 Android 工件：仅 `work-runtime-ktx` → `work-runtime:2.11.2`（ktx 自 2.8 为空壳）。
+- [x] A4 Android 工件：仅 `work-runtime-ktx` → `work-runtime:2.11.2`（ktx 自 2.8 为空壳）。
       `androidx.core:core:1.19.0` 因要求 compileSdk 37，并入 A7。Kotlin 2.4.10 可选（D 阶段可再定）。
       提交 `build(android): use work-runtime instead of the empty ktx artifact`。
-- [ ] A5 CI actions：`actions/checkout@v6`、`actions/setup-java@v5`。提交 `ci: bump actions`。
-- [ ] A6 耦合升级 `archive: ^4.2.0` → `image` 解析到 4.9.x；跑 `test/ugoira_test.dart`；真机 Ugoira
+- [x] A5 CI actions：`actions/checkout@v6`、`actions/setup-java@v5`。提交 `ci: bump actions`。
+- [x] A6 耦合升级 `archive: ^4.2.0` → `image` 解析到 4.9.x；跑 `test/ugoira_test.dart`；真机 Ugoira
       播放 + GIF 导出各一次。提交 `deps: archive 4 / image 4.9`。
-- [ ] A7 `flutter_secure_storage: ^11.0.0` + AGP `9.1.1` + `compileSdk 37` +
+- [x] A7 `flutter_secure_storage: ^11.0.0` + AGP `9.1.1` + `compileSdk 37` +
       `androidx.core:core:1.19.0` + 确认 `platforms;android-37`（本机 + CI 镜像）；
       `flutter build apk --debug` 走通；真机登录凭据与翻译凭据读写。提交 `deps: flutter_secure_storage 11`。
-- [ ] A8 FRB 三元组：`tool/frb_check.sh`；插件 `pubspec.yaml` 的 `flutter_rust_bridge` 收紧为与
+- [x] A8 FRB 三元组：`tool/frb_check.sh`；插件 `pubspec.yaml` 的 `flutter_rust_bridge` 收紧为与
       `Cargo.toml` 相同的精确版本；`flutter pub get` 后 lock 回到 2.12.0；脚本进 CI。提交
       `build(rhttp): pin flutter_rust_bridge triplet and add check`。
-- [ ] A9 工具链固化：仓库根 `rust-toolchain.toml`（1.98.0；cargokit 只读 app 根目录，rustup 向上查找同一文件）；CI
+- [x] A9 工具链固化：仓库根 `rust-toolchain.toml`（1.98.0；cargokit 只读 app 根目录，rustup 向上查找同一文件）；CI
       `flutter pub get --enforce-lockfile`、`cargo test --locked`；`UPSTREAM.md` 记录。提交
       `build: pin rust toolchain and enforce lockfiles`。
-- [ ] A10 CI 覆盖：新增 `plugin`、`android-unit`、`deps-report` job（见 design §6）；`dart format
+- [x] A10 CI 覆盖：新增 `plugin`、`android-unit`、`deps-report` job（见 design §6）；`dart format
       --output=none --set-exit-if-changed` 暂不加入（E 负责一次性格式化后再加，避免 09-01 未提交文件冲突）。
       提交 `ci: run kotlin, plugin and rust tests`。
-- [ ] 退出条件：`flutter analyze`/`flutter test`/插件测试/`cargo test`/Kotlin 测试/双 flavor release
+- [x] 退出条件：`flutter analyze`/`flutter test`/插件测试/`cargo test`/Kotlin 测试/双 flavor release
       构建全部通过；`pub outdated` 直接依赖只剩 `go_router`/`cached_network_image` 的 material_ui 系大版本（留给 F）。
 
 回滚点：A2（SDK 版本）、A6、A7 各自独立；A3 的两个 lock 与其触发的 `.so` 重编同提交。
