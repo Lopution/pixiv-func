@@ -345,6 +345,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
 | B5e | reqwest `query` | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | 待用户 |
 | B5f | reqwest `charset` | 5,052,080 | 3,349,084 | 29,083,801 | 26,900,680 | 无 | 通过 | 待用户 |
+| B5g | tokio `full` → listed | 5,027,744 | 3,335,776 | 29,059,465 | 26,876,344 | 无 | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -470,6 +471,30 @@ host `cargo build --release --locked` 直接通过（源码无 charset API）。
 
 测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
 features 之后：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5g narrow tokio features
+
+`tokio = { version = "1.52", features = ["full"] }` 改为
+`["rt-multi-thread", "net", "time", "sync", "io-util", "macros"]`。
+host `cargo build --release --locked` 直接通过，未再补 feature（B5a 已去掉 `tokio::fs`；未要 `fs`/`process`/`signal`）。
+`cargo update -w` 从 lock 去掉 `parking_lot`、`signal-hook-registry`、`errno`。未改 `http.rs` / `client.rs`。`[profile.release]` 未动。
+
+构建：同上 fdroid split。开始 2026-09-07T17:14:41Z，墙钟 76 s（Gradle 67.3 s）。
+`jniLibs` mtime 2026-09-08 01:15:45 +0800。
+
+| | B5f | B5g | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,052,080 | 5,027,744 | −24,336 |
+| `librhttp.so` armeabi-v7a | 3,349,084 | 3,335,776 | −13,308 |
+| fdroid arm64 APK | 29,083,801 | 29,059,465 | −24,336 |
+| `lib/arm64-v8a` 桶 | 26,900,680 | 26,876,344 | −24,336 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+reqwest features 仍是：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
+tokio features：`rt-multi-thread, net, time, sync, io-util, macros`。
+
+B5 合计 vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,027,744（−384,304）；armeabi-v7a 3,636,460 → 3,335,776（−300,684）。
 真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
