@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 15
+- **Total Sessions**: 16
 - **Last Active**: 2026-09-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~420 | Active |
+| `journal-1.md` | ~462 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 16 | 2026-09-08 | child B release-size-per-abi：per-ABI 拆分、sqlite 排除、rhttp 裁剪、schema 2 updater、体积门禁 | `fa9220c`, `4365c8a`, `00f1df8`, `8184471`, `1967416`, `42bcc4b`, `f78c278`, `da669b0`, `6da1cec`, `c463431`, `280122d`, `c117953`, `719b008`, `c737cb9`, `e53d039`, `29a4f44`, `7e740f6`, `61936d4` | `task/09-07-release-size-per-abi` |
 | 15 | 2026-09-08 | 09-01 settings-productization: check, close gaps, archive | `82e6a19`, `ba6e637`, `e6ec619`, `dcf0f1b`, `9c1b020`, `e5f017a`, `50f8e95`, `ef15bb7`, `cfbcfe0` | `task/09-01-settings-productization` |
 | 14 | 2026-09-07 | Child A：依赖与工具链健康（A0–A10 全部落地） | `5212efb`, `289faa5`, `68bcae3`, `fe0643e`, `9b071fb`, `67644db`, `2d09f8c`, `20811c0`, `8071f49`, `ff65707`, `170b49f`, `abccfac`, `718f932`, `da55454` | `task/09-07-dependency-toolchain-health` |
 | 13 | 2026-09-02 | 修复刷新与用户页 UX 正确性 | `10ea29d` | `main` |
