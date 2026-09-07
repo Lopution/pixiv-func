@@ -83,16 +83,30 @@ B 承担 schema 1→2 迁移）；A 完成。
       否则回退并记录。
 - [ ] B7 阈值：按 B1–B6 后的实测设定 CI 门禁（建议 arm64 APK 上限 = 实测 + 1 MB）。
       提交 `ci: enforce per-ABI APK size budget`。
-- [ ] B8 更新 `research/apk-size-breakdown.md` §6 的实测值。
+- [ ] B8 更新 `research/apk-size-breakdown.md` §6 的实测值；记录图片 `CacheManager` 的 `Config`（对象数/stalePeriod）与
+      真机缓存目录大小（供 R9 基线引用），不改配置除非有证据。
 - [ ] 退出条件：release 产物为 2 个 split APK；arm64 ≤ 32 MB（B3 后）并记录 B1–B6 后的实际值；
       updater 跨 ABI 真机通过；双 flavor 构建通过。
 
 停止条件：任一 feature 裁剪导致 TLS 握手/解压/ECH 回归立即回退该提交；`--obfuscate` 导致 widget
 后台入口失效（`@pragma('vm:entry-point')`）则去掉 obfuscate 并记录。
 
+## Phase P0：运行时基线（parent 级，用户在真机执行；C 之前一次，C 之后一次）
+
+gate：用户有可用的 Android 真机（API 29 与高版本各一台更好）；A 完成后用 A 的工具链构建 profile 包。
+
+- [ ] P0-1 构建：`flutter build apk --profile --flavor fdroid --target-platform android-arm64`（B3 之前）或
+      `--split-per-abi`（B3 之后）；安装到真机，登录同一账号，关闭其它后台。
+- [ ] P0-2 按 design §14.2 采集：冷启动 `am start -W` ×5、`--trace-startup` 首帧 ×5、推荐页匀速滚动 60 秒的
+      jank 帧占比、冷启动/50 张/200 张后的 `dumpsys meminfo` PSS 与 Graphics、详情打开延迟 ×10、脚本会话
+      重复请求数、`flutter_cache_manager` 目录大小。
+- [ ] P0-3 结果写入 `research/runtime-baseline.md` 的"基线（C 前）"表；异常值注明环境（网络路线、机型）。
+- [ ] P0-4（C 之后）同一机型同一脚本复测，写入"复测（C 后）"表；对照 R9 阈值给出结论。
+- [ ] 退出条件：两张表齐全；任何"更省/更快"的结论都引用表中数字。
+
 ## Child C：`dart-architecture-convergence`
 
-gate：触及 `lib/` 的 09-01 child 全部归档；对当时 HEAD 重跑 `dart-architecture-audit.md` 与
+gate：触及 `lib/` 的 09-01 child 全部归档；P0 基线（C 前）已记录；对当时 HEAD 重跑 `dart-architecture-audit.md` 与
 `modernization-gaps.md` 的计数脚本。
 
 - [ ] C0 规则先行：`test/architecture/layering_test.dart`（import 图：`core→features` = 0；
@@ -106,9 +120,18 @@ gate：触及 `lib/` 的 09-01 child 全部归档；对当时 HEAD 重跑 `dart-
 - [ ] C2 路由与导航目录合并：`ReplicaPageRoute` 唯一；`lib/app/navigation/` 收拢；`routes.dart` 门面
       （`openIllust/openUser/openNovel/...`）；`HomeShellMetrics` 静态量改 provider。提交
       `refactor(nav): single route builder and navigation facade`。
-- [ ] C3 共享 UI 出 feature：`IllustCard`、瀑布流 sliver → `lib/app/widgets/`；`FeedTail/FeedEmpty/
-      FeedError` 消费 `PagedFeedState`，替换 32 个私有类（先写差异矩阵）。提交两次：
-      `refactor(ui): move IllustCard and masonry sliver to app/widgets`、`refactor(ui): shared feed state widgets`。
+- [ ] C3 组件层（design §13）：`lib/app/widgets/feed/`：`IllustCard`、`IllustFeedGrid`（8 处瀑布流统一，列数由
+      `illustColumnsFor(crossAxisExtent)` 计算，手机恒 2 列）、`FeedTail/FeedEmpty/FeedError`（替换 32 个私有类，
+      先写差异矩阵）；`lib/app/motion/`：`replica_page_route.dart`、`HeroRectClip`（原 `_GlobalRectClip`）、
+      `motion_tokens.dart`；共享组件带 `Semantics`/tooltip、≥48dp 触达。提交三次：
+      `refactor(ui): feed grid and IllustCard under app/widgets/feed`、`refactor(ui): shared feed state widgets`、
+      `refactor(ui): motion tokens and hero clip under app/motion`。
+- [ ] C3b `PixivImage` 变体与 decode 策略：`PixivImageSize.feed/detail/viewer/avatar` + 命名构造器（含 `.hero(tag:)`），
+      feed/avatar 传 `memCacheWidth`（布局宽 × dpr，上限 1.5× 逻辑像素），detail 按屏宽，viewer 不限；13 个调用点
+      切换；`PersonAvatar` 复用 avatar 变体。真机对照 P0：浏览 200 张后 PSS。提交 `perf(image): size-aware decode
+      policy for PixivImage variants`。
+- [ ] C3c 重建边界：DevTools rebuild 统计推荐页滚动与一次收藏操作；只有整卡重建被证实时才引入 `select`/拆分；
+      结论（含"无需改动"）写入 `research/runtime-baseline.md`。
 - [ ] C4 repository/controller 归位：5 个 repository、6 个 controller 迁入 `core/<domain>/`，
       controller 与 repository 分文件；`startup_gate.dart` 上移到 `lib/app/`。白名单清零。
       提交 `refactor(core): move repositories and controllers under core`。
@@ -119,12 +142,16 @@ gate：触及 `lib/` 的 09-01 child 全部归档；对当时 HEAD 重跑 `dart-
       key 校验进 CI。提交 `i18n: migrate to gen-l10n` 或 `i18n: typed keys and single accessor`。
 - [ ] C7 状态范式：3 个 `ChangeNotifier` → Riverpod；`history_page` → `HistoryFeedController`；
       页面不再 `new` 平台适配器。每项一个提交，测试改 provider override。
-- [ ] C8 文件拆分：`settings_page.dart`（含 `MePage` 去重）→ `illust_detail_page.dart`
+- [ ] C7b 持久化增长：`DownloadRecoveryStore` 在 500 条记录时的写入耗时（`setStringList` 整表重写）；history 三条
+      查询 `EXPLAIN QUERY PLAN`；超出可接受范围才改为增量写入，单独提交。
+- [ ] C8 文件拆分：`settings_page.dart`（含 `MePage` 去重；抽出 `SettingsSection`/`SettingsTile`/`SettingsControl`
+      原语，子页只做组合）→ `illust_detail_page.dart`
       （`_GlobalRectClip` 公开化，`hero_transition_test` 改 `find.byType`）→ `user_page.dart` →
       `network_policy.dart`（需 network-perf-ab 已归档）；5 个 >150 行方法拆分。每文件一个提交。
 - [ ] C9 颜色收敛到 `FuncTokens`/主题；142 个仅本文件使用的公共声明按需私有化（随 C8 顺带）。
-- [ ] 退出条件：layering_test 白名单为空；`flutter analyze`/`flutter test` 全绿且测试数不减少；
-      i18n key 校验通过；四个大文件单文件 ≤ 600 行；`rg "ChangeNotifier" lib` 为 0。
+- [ ] 退出条件：layering_test 白名单为空（含私有 widget 名称检查）；`flutter analyze`/`flutter test` 全绿且测试数
+      不减少；i18n key 校验通过；四个大文件单文件 ≤ 600 行；`rg "ChangeNotifier" lib` 为 0；`rg "crossAxisCount: 2" lib/features`
+      为 0；P0 复测无 R9 阈值内的回归。
 
 停止条件：任何拆分改变了 Hero 转场、Tab 动画、下拉刷新契约（`component-guidelines.md`）或
 `PagedFeedController` 三相语义 → 回滚该提交。
@@ -142,6 +169,8 @@ gate：`09-01-settings-productization`（`android/` 改动）与 `09-01-release-
 - [ ] D4 死分支与残留：12 处 `SDK_INT` 恒真分支；`drawable-v21`；debug/profile 冗余 `INTERNET`。
       提交 `android: remove pre-API29 branches and template residue`。
 - [ ] D5 updater 去重：`UpdaterPlatformInfo.kt` 进 main source set。提交 `android(updater): share platform info helpers`。
+- [ ] D5b 通道开销：统计一次 50 MB 下载经 `pixivfunc/mediastore` 的 `write` 调用次数与块大小，SAF 同理；块过小则在 Dart 侧
+      调整分块（协议不变），记录前后耗时。
 - [ ] D6 `UPSTREAM.md` 补全（构建配置差异、cargokit 清理、toolchain、tests/examples、同步七步）；
       `backend/rust-plugin.md`；`login_webview_intercept` 单侧残留清理（若 09-01 已删原生端）。
 - [ ] 退出条件：Kotlin 测试与 channel 单测通过；API 29 真机下载/SAF/反查/updater 各一次；
@@ -158,6 +187,11 @@ gate：E0 随 A 开始；E1–E3 在 C、D 之后。
 - [ ] E2 测试：`test/helpers/fake_account.dart`（凭据/元数据/账号 store + 标准 overrides）、
       `test/helpers/test_prefs.dart`；替换 17 个文件的重复假实现；去除类名字符串断言；删除
       `zz_diag_tabbar_geometry_test.dart`；`.gitignore` 加 `test/failures/`。测试数不减少。
+- [ ] E2b 无障碍与组件层校验：共享组件（`IllustCard`、`FeedTail/Empty/Error`、`showAppSnackBar`、settings 原语、
+      收藏/关注按钮）的 semantics 测试（`SemanticsTester`/`find.bySemanticsLabel`）；layering_test 增加"`features/`
+      不得定义 `_*Tail/_*Error/_*Empty/_*Card`"检查。
+- [ ] E2c 性能回归门禁：确认 P0 复测表已填并对照 R9 阈值；把 `research/runtime-baseline.md` 的协议链接进
+      `backend/release-pipeline.md`，作为每次大版本前的手动检查项。
 - [ ] E3 格式与 lint：`dart format lib test` 一次性提交；CI 加 format 检查；第一批 lint
       （`sort_pub_dependencies`、`prefer_single_quotes`、`unreachable_from_main`、`prefer_final_locals`）
       → 0 issues 提交；第二批（`strict-casts/raw-types/inference`、`unawaited_futures`、
@@ -200,6 +234,10 @@ for apk in glob.glob('build/app/outputs/flutter-apk/app-*-release.apk'):
     print(apk, f"{sum(agg.values())/1e6:.1f} MB", {k:f"{v/1e6:.1f}" for k,v in sorted(agg.items(),key=lambda kv:-kv[1])[:6]})
 EOF
 git diff --check
+# P0 基线（真机）
+flutter build apk --profile --flavor fdroid --target-platform android-arm64
+adb shell am start -W -n io.github.lopution.pixivfunc/.MainActivity
+adb shell dumpsys meminfo io.github.lopution.pixivfunc | grep -E "TOTAL PSS|Graphics"
 ```
 
 ## 高风险文件与停止条件

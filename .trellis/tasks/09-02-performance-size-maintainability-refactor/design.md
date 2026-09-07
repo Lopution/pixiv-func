@@ -265,9 +265,102 @@ CI 目标形态：
 | 许可/维护 | `cargo update` 后新 crate 许可证；NOTICE/UPSTREAM.md 同步 |
 | 用户回归 | parent 真机矩阵 + 跨 ABI 自更新 |
 
-## 12. 明确不采用
+## 13. 设计轴一：UI 组件体系（2026-09-07 GPT 评审后补入）
 
-- 不迁 Material 3 / `material_ui`；不引入 `go_router`/声明式路由；不引入 json 代码生成、freezed、
-  Result/Either；不新建全局 revision/epoch/journal/registry；不用无界缓存/预取/并发换观感。
+结论：不做 "M2 → M3"，也不单开 UI task；把 `lib/app/` 明确定义为项目的组件层（design system），
+C 中已有的 `IllustCard`/瀑布流/feed 状态/反馈/导航收敛都归入这条轴。事实依据：8 处 `SliverMasonryGrid.count`
+全部写死 `crossAxisCount: 2`；Hero + `PixivImage` 组合 3 处（卡片、详情、Ugoira viewer）；`PixivImage` 13 个调用点、
+`PersonAvatar` 9 处；`ReplicaPageRoute` 与 `_GlobalRectClip` 是仅有的转场原语；`Semantics(` 0 处但 37 个 `IconButton`
+中 35 个带 `tooltip`，14 处 `GestureDetector` 无语义。
+
+### 13.1 `lib/app/` 目标结构
+
+```text
+lib/app/
+  app.dart, startup_gate.dart                 应用壳
+  theme/      func_tokens.dart, replica_theme.dart     颜色/间距/字号 token（C9 把散落的 Color(0x…) 收进来）
+  motion/     replica_page_route.dart, hero_rect_clip.dart, motion_tokens.dart（时长/曲线单一来源）
+  navigation/ routes.dart（门面）, route_observer.dart
+  widgets/
+    feed/     illust_card.dart, feed_grid.dart（列数由宽度计算）, feed_states.dart（Tail/Empty/Error）
+    pixiv_image.dart（含 decode 策略与变体构造器）, person_avatar.dart
+    feedback.dart（showAppSnackBar）, replica_button/scaffold/switch_tile/empty_state（现有）
+    settings/ settings_section.dart, settings_tile.dart（若 settings 子页之外也复用；否则留在 features/settings/widgets）
+```
+
+规则：`features/` 不得再定义与 `lib/app/widgets/` 同职责的私有 widget（layering_test 以名称模式检查
+`_*Tail/_*Error/_*Empty/_*Card`）；新组件必须有 ≥3 处现存重复作为证据（`NovelCard`/`UserCard` 先盘点，
+不预设）。
+
+### 13.2 组件契约
+
+- **FeedGrid**：`feed_grid.dart` 提供 `IllustFeedGrid`（sliver）与 `illustColumnsFor(double crossAxisExtent)`：
+  以最小卡片宽度计算列数，手机宽度下恒为 2（与现状一致），折叠屏/平板自然增加。8 个调用点统一。
+- **PixivImage**：保持单一 widget，增加 `decodePolicy`（`PixivImageSize.feed/detail/viewer/avatar`）与对应
+  命名构造器；feed/avatar 传 `memCacheWidth`（按布局宽度 × devicePixelRatio 取整，上限 1.5× 逻辑像素），
+  detail 按屏宽，viewer 不限制。Hero 组合由 `PixivImage.hero(tag:)` 承担，`_GlobalRectClip` 公开为
+  `HeroRectClip` 放入 `motion/`。转场契约（`component-guidelines.md` Detail Transition）不变。
+- **Motion**：`motion_tokens.dart` 集中 300ms/`easeInOutCubic` 等常量；`ReplicaPageRoute`、Hero、bottom sheet、
+  dialog 的时长曲线只从这里取。这是日后 Predictive Back / M3 motion 的接入点，本 task 不启用它们。
+- **Settings 原语**：`SettingsSection`/`SettingsTile`/`SettingsControl` 在 C8 拆分时抽出；每个设置子页只
+  组合原语，不再各自布局。
+- **反馈**：`showAppSnackBar` 是唯一 SnackBar 出口（§2.2）。
+- **无障碍基线（只对共享组件与高频动作）**：共享组件带 `Semantics` 标签/`tooltip`、触达 ≥ 48dp、
+  可聚焦可键盘激活；14 处 `GestureDetector` 逐个评估改 `InkWell`/`IconButton` 或补 `Semantics`；
+  收藏、关注、下载、导航四类动作必须有语义标签。E 增加共享组件的 semantics 测试。
+
+### 13.3 明确延后（记入后续 task 候选，不在 09-02）
+
+| 项 | 原因 | 09-02 内的 enabler |
+|---|---|---|
+| Predictive Back（`enableOnBackInvokedCallback`）、Hero 手势返回 | 改变用户可见交互 | `motion/` 单一来源；`PopScope` 用法保持现代 API |
+| 按 tab 嵌套 Navigator / `StatefulShellRoute` | 改变返回栈语义，且 parent 明确不引入 `go_router` | `routes.dart` 门面：所有跳转经门面，日后只改门面内部 |
+| 进程被杀后的状态恢复（tab/滚动/搜索词/viewer 页码） | 产品能力，需单独验收 | feed 状态在 `PagedFeedController` 中集中；`PageStorageKey` 用法保留 |
+| Material 3 / M3 Expressive / `NavigationBar` / `SearchBar` / `SegmentedButton` | 打破 beta56 视觉冻结与 golden | 组件层收敛后切换范围只在 `lib/app/` |
+
+顺序：beta56 replica → Func 组件层（本 task）→ 现代交互模型 → M3 视觉。
+
+## 14. 设计轴二：性能约束（2026-09-07 GPT 评审后补入）
+
+性能不作为独立目标或 child，而是 C/B/D/E 的验收维度，并以一次真机基线（P0）为前提。事实依据：
+`PixivImage` 无任何 decode 尺寸限制（全仓库仅反查页 `cacheWidth: 1024`），瀑布流按原始像素 decode；
+`illustStoreProvider` 是普通 `Provider`，卡片重建不由它驱动，rebuild 是否有问题需实测；`main.dart`/`app.dart`
+已把 `Rhttp.init`、网络 warmUp、widget coordinator 置为不阻塞首帧，首帧前只等 settings 与账号读取；
+下载恢复记录以 `setStringList` 整表重写；应用自有 SQLite 仅 `history.db`（3 个索引）。
+
+### 14.1 约束
+
+| 维度 | 约束 | 落点 |
+|---|---|---|
+| 图片内存 | feed/avatar 按布局尺寸 decode；detail 按屏宽；viewer 原尺寸。刷 N 张图后的 PSS 不高于基线，目标显著下降（待测量） | C（`PixivImage.decodePolicy`），B 记录 `CacheManager` 磁盘配置 |
+| 重建范围 | 先用 DevTools rebuild 统计与 `Performance Overlay` 实测 feed 滚动；只有证据显示整卡重建时才引入 `select`/拆分边界；不预设 | C |
+| 启动 | 保持"首帧前只等 settings + 账号"；任何新初始化必须 `unawaited` 或后置；冷启动到首帧不高于基线 | C、D（原生 init 不进主线程同步路径） |
+| 持久化增长 | 下载恢复表在 500 条记录时的写入耗时可接受；history 三条查询 `EXPLAIN QUERY PLAN` 命中索引 | C（若需改写为增量写入则单独提交） |
+| 请求复用 | 只统计（一次脚本会话内相同 URL 的重复请求数），有证据再决定是否在 repository 层共享 in-flight Future；不建全局缓存层 | P0 基线 → C 决策 |
+| 通道开销 | MediaStore/SAF 写入按块经 MethodChannel（`media_store_channel.dart:123`）：测块大小与调用次数，必要时调块大小；不改协议 | D |
+| 回归门禁 | C 之后重跑 P0 协议，任一指标劣化超过阈值（首帧 +10%、内存 +10%、jank 帧率 +2 个百分点）即回滚该项 | E |
+
+### 14.2 基线协议（`research/runtime-baseline.md`，真机、用户执行，C 之前与之后各一次）
+
+- 构建：`flutter build apk --profile --flavor fdroid --split-per-abi --target-platform android-arm64`（B3 之前用 `--target-platform`
+  单 ABI 即可）。
+- 冷启动/首帧：`adb shell am start -W -n io.github.lopution.pixivfunc/.MainActivity` 取 `TotalTime`；`flutter run --profile --trace-startup`
+  取 `timeToFirstFrameMicros`；各 5 次取中位数。
+- 滚动 jank：DevTools Performance 录制推荐页匀速滚动 60 秒，记录 build/raster 超 16ms 的帧占比。
+- 内存：`adb shell dumpsys meminfo io.github.lopution.pixivfunc` 在冷启动、浏览 50 张、200 张后各取 `TOTAL PSS`
+  与 `Graphics`。
+- 详情打开延迟：从点击卡片到详情首图完成的时间（DevTools timeline 事件或屏幕录制帧数），10 次中位数。
+- 请求重复：`NetworkAccessPolicy` 诊断日志开启，统计一次脚本会话（推荐 → 详情 → 用户页 → 返回 ×5）中相同 URL 的重复请求。
+- 图片缓存：`flutter_cache_manager` 目录大小与对象数。
+
+### 14.3 明确不做
+
+Impeller 参数调优、大规模 isolate 改造、自研图片缓存、自定义渲染管线、自适应布局之外的平板专用 UI。
+
+## 15. 明确不采用
+
+- 不迁 Material 3 / `material_ui`；不引入 `go_router`/声明式路由/嵌套 Navigator；不引入 json 代码生成、freezed、
+  Result/Either；不新建全局 revision/epoch/journal/registry/请求缓存层；不用无界缓存/预取/并发换观感。
 - 不为体积替换 aws-lc-rs（ECH 依赖 HPKE）、不删压缩支持、不删 API 29、不删 flavor、不删测试。
 - 不把 `--target-platform` 当作单 ABI 打包手段。
+- 不在本 task 启用 Predictive Back、状态恢复、M3 视觉（见 §13.3）。

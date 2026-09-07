@@ -51,8 +51,26 @@
 | D-7 | lint 严格度 | **分两批开启** `strict-casts/strict-raw-types/strict-inference`、`unreachable_from_main`、`prefer_final_locals`、`unawaited_futures`、`avoid_dynamic_calls`、`sort_pub_dependencies`；不开 `public_member_api_docs`、`lines_longer_than_80_chars` | child E |
 | D-8 | 任务结构 | **转为 parent，创建 5 个 child** | 已按任务地图创建（见 Notes） |
 
-明确不在本轮决策、留待后续独立 task：Material 3 迁移与 `material_ui`/`cupertino_ui` 迁移（会改变
-被冻结的 beta56 视觉与 golden）；网络路线/ECH/SNI/证书策略。
+2026-09-07 GPT 两轮评审后新增（推荐默认，待用户确认）：
+
+| # | 决策 | 推荐 | 后果 |
+|---|---|---|---|
+| D-9 | 运行时性能基线 | **C 开工前由用户在真机按 `research/runtime-baseline.md` 协议测一次，C 之后再测一次**；模拟器无 Pixiv 网络，agent 不能代测 | 没有基线则 C 的图片 decode/重建改动不得声称"更快/更省"，只能声称"不劣化" |
+| D-10 | 现代交互与视觉项的归属 | **Predictive Back、按 tab 嵌套 Navigator、进程被杀后的状态恢复、Hero 手势返回、M3/M3 Expressive 视觉 全部延后为 09-02 之后的独立 task**；09-02 只交付 enabler（`motion/` 单一来源、`routes.dart` 门面、组件层收敛） | 这些都改变用户可见行为或打破 beta56 视觉冻结，需单独验收 |
+
+明确不在本轮决策、留待后续独立 task：D-10 所列各项；网络路线/ECH/SNI/证书策略。
+
+## 两条横跨 child 的设计轴（2026-09-07 补入）
+
+GPT 对推送后 HEAD 的两轮评审，经代码核实后吸收为两条设计轴。它们不是新 child，而是 A–E 的验收维度：
+
+1. **UI 组件体系**：`lib/app/` 明确成为组件层（theme tokens / motion / navigation 门面 / feed 组件 /
+   图片 / 反馈 / settings 原语），`features/` 只做组合。事实：8 处瀑布流写死 2 列；Hero+`PixivImage`
+   组合 3 处；`Semantics` 0 处、14 处 `GestureDetector` 无语义；两份路由实现；32 个私有 feed 状态 widget。
+   详见 design §13。
+2. **性能约束**：不作为独立目标；以真机基线为前提，对图片 decode 尺寸、重建范围、启动、持久化增长、
+   请求复用、通道开销设约束与回归门禁。事实：`PixivImage` 无 decode 尺寸限制；启动已是"首帧前只等
+   settings + 账号"；下载恢复表整表重写。详见 design §14。
 
 ## Requirements
 
@@ -156,15 +174,39 @@
 - 每个阶段提交前 `git diff --check`；最终由用户执行 parent 级真机矩阵（API 29 与高版本 Android、
   登录、浏览、下载、Ugoira、widget、updater 跨 ABI 自更新、大陆网络）。
 
-## 任务地图（建议的 child，待 D-8 确认后创建）
+### R8. UI 组件体系（设计轴一，主要落在 C，E 校验）
+
+- `lib/app/` 按 design §13.1 组织：`theme/`、`motion/`、`navigation/`、`widgets/feed/`、`widgets/pixiv_image.dart`、
+  `widgets/feedback.dart`、settings 原语。`features/` 不得再定义与组件层同职责的私有 widget（layering_test 按名称模式检查）。
+- `IllustFeedGrid` 统一 8 处瀑布流，列数由宽度计算（手机恒为 2 列，与现状一致）。
+- `PixivImage` 增加 decode 策略与 `feed/detail/viewer/avatar/hero` 变体构造器；Hero 组合与 `HeroRectClip` 进 `motion/`；
+  转场契约不变。
+- `motion_tokens.dart` 是所有时长/曲线的单一来源。
+- 共享组件与收藏/关注/下载/导航四类动作满足无障碍基线：语义标签或 tooltip、≥ 48dp 触达、可聚焦可键盘激活；
+  14 处 `GestureDetector` 逐个评估。
+- 新组件必须有 ≥ 3 处现存重复作为证据（`NovelCard`/`UserCard` 先盘点）。
+- D-10 所列交互/视觉项不在本 task 实现，只保证 enabler 到位。
+
+### R9. 性能约束（设计轴二，P0 基线 + C/B/D/E 验收）
+
+- C 开工前完成一次真机基线（D-9，协议见 design §14.2 与 `research/runtime-baseline.md`）：冷启动/首帧、
+  滚动 jank、浏览 50/200 张后的 PSS、详情打开延迟、重复请求数、图片缓存大小。
+- feed/avatar 图片按布局尺寸 decode，detail 按屏宽，viewer 不限制；效果以基线前后 PSS 对比记录。
+- 重建边界、请求复用只在实测证据下改动；不建全局缓存层。
+- 首帧前的等待项不得增加；任何新初始化 `unawaited` 或后置。
+- 下载恢复表 500 条记录时的写入耗时与 history 三条查询的 `EXPLAIN QUERY PLAN` 有记录。
+- C 之后重跑基线：首帧 +10%、PSS +10%、jank 帧占比 +2 个百分点以上视为回归，回滚对应提交。
+
+## 任务地图（child 已于 2026-09-07 创建，均 `planning`）
 
 | Child | 交付物 | 开工 gate | 阻塞谁 |
 |---|---|---|---|
+| P0 `runtime-baseline`（parent 级步骤，非 child） | 真机运行时基线（design §14.2 协议），结果写入 `research/runtime-baseline.md` | 用户可执行时；需一个 profile 构建 | C（C 之前必须有基线；C 之后复测） |
 | A `dependency-toolchain-health` | R2 全部；`cupertino_icons`/`go_router` 删除；FRB 校验脚本；CI 覆盖 Kotlin/插件/Rust 测试 | 用户批准即可（与 09-01 仅 `pubspec.yaml` 级微冲突） | B（`cupertino_icons`、lock 刷新是 B 的基线） |
-| B `release-size-per-abi` | per-ABI 发布流水线 + updater 多资产消费端 + Android 侧排除 `libsqlite3.so`（待验证）+ rhttp 裁剪/profile + obfuscate + cargokit 清理 + CI 体积门禁 | D-1～D-5 已确认；`09-01-release-blockers` 的 R5（多资产 manifest）落地或与其并行协作；A 完成 | parent 真机 updater 验收 |
-| C `dart-architecture-convergence` | R4 的分层修正与单一 owner、R3 的合并/删除、R5 的 i18n/状态范式/history 分页/颜色 | 所有触及 `lib/` 的 09-01 child 归档（settings-productization、behavior-correctness-cleanup、network-perf-ab、reverse-image-saucenao、comment-translation） | E |
-| D `native-rust-hygiene` | channel 错误风格与线程约定、死分支、updater 去重、manifest/模板残留、`UPSTREAM.md` 补全、FRB 再生成流程文档 | `09-01-settings-productization`（`android/` 改动）与 `09-01-release-blockers` 归档 | E |
-| E `spec-test-lint-hardening` | spec 填写与索引修正、模块级文档、共享测试假实现、断言整理、`dart format` + lint 两批启用 | 文档部分可随 A 开始；测试/lint 部分在 C、D 之后 | parent 归档 |
+| B `release-size-per-abi` | per-ABI 发布流水线 + updater 多资产消费端 + Android 侧排除 `libsqlite3.so`（待验证）+ rhttp 裁剪/profile + obfuscate + cargokit 清理 + CI 体积门禁；记录图片 `CacheManager` 磁盘配置与缓存目录大小（R9） | D-1～D-5 已确认；`09-01-release-blockers` 的 R5（多资产 manifest）落地或与其并行协作；A 完成 | parent 真机 updater 验收 |
+| C `dart-architecture-convergence` | R4 的分层修正与单一 owner、R3 的合并/删除、R5 的 i18n/状态范式/history 分页/颜色；**R8 组件层**（`lib/app/` 结构、`IllustFeedGrid`、`PixivImage` 变体与 decode 策略、`motion/`、settings 原语、共享组件无障碍基线）；**R9** 的图片 decode、重建边界（实测后）、持久化增长检查 | 所有触及 `lib/` 的 09-01 child 归档（settings-productization、behavior-correctness-cleanup、network-perf-ab、reverse-image-saucenao、comment-translation） | E |
+| D `native-rust-hygiene` | channel 错误风格与线程约定、死分支、updater 去重、manifest/模板残留、`UPSTREAM.md` 补全、FRB 再生成流程文档；R9 的通道开销测量（MediaStore/SAF 分块）与原生 init 不阻塞首帧 | `09-01-settings-productization`（`android/` 改动）与 `09-01-release-blockers` 归档 | E |
+| E `spec-test-lint-hardening` | spec 填写与索引修正、模块级文档、共享测试假实现、断言整理、`dart format` + lint 两批启用；R8 共享组件 semantics 测试与 layering_test 的私有 widget 名称检查；R9 回归门禁（C 之后复测基线并记录） | 文档部分可随 A 开始；测试/lint 部分在 C、D 之后 | parent 归档 |
 
 ## 跨 child 约束
 
@@ -181,14 +223,17 @@
 
 - 在对应 09-01 child 归档前改写其代码或未定契约。
 - 重新设计网络绕过路线、认证协议、下载产品行为、翻译/搜图产品决策、发布密钥策略。
-- Material 3 / `material_ui` 迁移、声明式路由、json 代码生成、Result 类型、全局缓存/预取/并发体系。
+- Material 3 / M3 Expressive / `material_ui` 迁移、声明式路由与嵌套 Navigator、Predictive Back、Hero 手势返回、
+  进程被杀后的状态恢复（D-10：均为 09-02 之后的独立 task；本 task 只交付 enabler）、json 代码生成、Result 类型、
+  全局缓存/预取/并发/请求缓存层。
 - 直接手改生成文件（`frb_generated.*`）、构建缓存或 vendored 第三方源码逻辑。
 - F-Droid 上架元数据与其构建服务器配置（本 task 只保证产物形态与工具链声明满足要求）。
-- 性能测量与优化（无证据热点；用户目标不含性能）。
+- 以性能为名的架构改造：Impeller 调优、大规模 isolate、自研图片缓存、自定义渲染管线（R9 只做约束、基线与有证据的局部改动）。
 
 ## Acceptance Criteria
 
-- [ ] D-1～D-8 均有用户明确答复并记录在本文件。
+- [ ] D-1～D-10 均有用户明确答复并记录在本文件。
+- [ ] P0：C 开工前 `research/runtime-baseline.md` 有一组真机基线数据；C 完成后有复测数据。
 - [ ] 每个 child 的 `prd.md`（复杂 child 另有 `design.md`/`implement.md`）通过 review 后才 `task.py start`。
 - [ ] A：`flutter pub outdated` 直接依赖无可解析的落后项（`cached_network_image` 除外并有记录）；
       FRB 三元组校验通过；CI 跑 Kotlin/插件/Rust 测试与格式检查。
@@ -199,6 +244,11 @@
       路由门面）；主机 allowlist 只在 `PixivClientIdentity` 一处声明；零引用文件/声明为 0；
       i18n key 集合校验通过；`settings_page.dart` 等 4 个文件拆分后单文件 ≤ 600 行；3 个
       ChangeNotifier 控制器已入 Riverpod；行为测试全绿且未删除测试。
+- [ ] C（R8）：`lib/app/` 按 design §13.1 组织；8 处瀑布流统一为 `IllustFeedGrid` 且手机仍为 2 列；`PixivImage`
+      变体覆盖全部 13 个调用点并带 decode 策略；`motion_tokens.dart` 是唯一时长/曲线来源；共享组件与四类高频动作
+      有语义标签；`features/` 无与组件层同职责的私有 widget。
+- [ ] C（R9）：feed 图片 decode 尺寸生效且基线复测 PSS 不高于基线；首帧前等待项未增加；重复请求数与查询计划有记录；
+      任一指标劣化超过 R9 阈值的提交已回滚。
 - [ ] D：channel 错误风格与线程约定有 spec 并被代码遵守；12 处死分支清除；updater 重复函数合并；
       `UPSTREAM.md` 覆盖全部 fork 差异与再生成步骤。
 - [ ] E：spec 索引状态列与实际一致，6 份模板已填；`lib/core/<domain>/` 均有 library 文档；测试假实现
