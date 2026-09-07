@@ -181,7 +181,7 @@ git diff --check
   - 不做：去掉 `gzip/deflate/brotli/zstd`；不换 aws-lc-rs；不删 `rustls-platform-verifier`。
   - 回滚：单步 revert。
 
-- [ ] **B6 `opt-level = "s"` 实验**
+- [x] **B6 `opt-level = "s"` 实验**（已测量：`.so` −1,539,000 / −884,944；**未采用、未提交**——采用门的墙钟判定待用户真机，APK 对照组在 `build/b6-compare/`）
   - 做：严格按 `design.md` 协议。只改 `Cargo.toml:57`。测量 `.so` + APK；**待用户真机**一次图片列表 / 大图下载墙钟（同一作品、同一网络档，对照 B5g）。
   - 采用 → 提交 `size(rhttp): set release opt-level to s`，UPSTREAM.md 记一笔。
   - 不采用 → **不提交** profile 改动（`git restore` `Cargo.toml`），数字写入 §6「不采用」。不要空提交。
@@ -189,7 +189,7 @@ git diff --check
   - 回滚：若已提交则 revert；若未提交则无代码边界。
   - 停止条件：吞吐不可接受视为「不采用」，不是缺陷。
 
-- [ ] **B7 阈值**
+- [x] **B7 阈值**
   - 做：把 B1–B6 之后的 fdroid arm64 / armeabi-v7a split APK 实测文件字节 `+ 1_000_000` 写入 `ci.yml`（`android-size` 与 `android-release` 两处）/ `release.yml` 的默认值，并在注释写 **「F 迁 material_ui 后需重测」**。读取 `vars.PIXIV_APK_MAX_BYTES_ARM64_V8A` / `vars.PIXIV_APK_MAX_BYTES_ARMEABI_V7A`（env 可覆盖）。超出失败。arm64 另保留 B3 起的硬顶 `32_000_000`（取更严者）。
   - 触及：`ci.yml`、`release.yml`、`tool/apk_size_report.py`（脚本已在 B3 落地，本步只把「打印」改成「比较」并填数字）。
   - 验证：对本机 fdroid split 跑同一脚本，确认当前产物低于阈值；把阈值临时改成 `1` 确认会失败（再改回）。CI：`android-size` 在 PR 上绿即门禁生效；github 路径等 secrets。
@@ -198,7 +198,7 @@ git diff --check
   - 回滚：revert 该提交后恢复只打印。
   - 真机：无。
 
-- [ ] **B8 记录**
+- [x] **B8 记录**
   - 做：收束 `research/apk-size-breakdown.md` §6（B0–B7 全部数字、sqlite 可行/放弃、obfuscate 保留/放弃、rhttp 逐步表、B6 结论、`rustls-platform-verifier` 评估「保留」）。抄录图片 CacheManager：`Config('pixiv_func_images')`，默认 `stalePeriod = Duration(days: 30)`、`maxNrOfCacheObjects = 200`（`network_policy.dart:1162-1170` + flutter_cache_manager 3.4.2 `_config_io.dart:14-15`），**不改配置**。阈值注释已含「F 迁 material_ui 后需重测」。
   - 触及：仅研究文件（及若 B7 漏写那句注释则补 workflow 注释）。
   - 验证：§6 无「待填 / TODO / 约」；每个 B5 步都有前后字节。
