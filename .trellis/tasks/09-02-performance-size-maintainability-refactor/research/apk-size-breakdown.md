@@ -344,6 +344,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
 | B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
 | B5e | reqwest `query` | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | 待用户 |
+| B5f | reqwest `charset` | 5,052,080 | 3,349,084 | 29,083,801 | 26,900,680 | 无 | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -450,6 +451,25 @@ host `cargo build --release --locked` 在 `http.rs:376` `request.query(&query)` 
 
 测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
 features 之后：`charset, http2, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5f drop reqwest `charset`
+
+`Cargo.toml` 去掉 `charset`；`cargo update -w` 从 lock 去掉 `encoding_rs` 0.8.40、`mime` 0.3.17、`multiversion`/`multiversion-macros`/`multiversion_no_op`、`core_detect`、`target-features`。
+host `cargo build --release --locked` 直接通过（源码无 charset API）。插件 `.text()` 仍编过，无 charset 时按 UTF-8；app 兼容层只取字节、Dart `http.Response.fromStream` 解码。未改 `http.rs` / `client.rs`。
+
+构建：同上 fdroid split。开始 2026-09-07T17:11:52Z，墙钟 69 s（Gradle 60.4 s）。
+`jniLibs` mtime 2026-09-08 01:12:49 +0800。
+
+| | B5e | B5f | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,237,280 | 5,052,080 | −185,200 |
+| `librhttp.so` armeabi-v7a | 3,514,492 | 3,349,084 | −165,408 |
+| fdroid arm64 APK | 29,269,001 | 29,083,801 | −185,200 |
+| `lib/arm64-v8a` 桶 | 27,085,880 | 26,900,680 | −185,200 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
 真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
