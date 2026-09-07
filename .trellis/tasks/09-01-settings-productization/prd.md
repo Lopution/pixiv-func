@@ -66,12 +66,14 @@
   普通用户页不出现 DoH / ECH / SNI / 证书校验 / PlatformView 等实现名词。
 - **C15**：`AppSettings` 增加 `networkMode`（automatic / directOnly）并持久化。当前该
   选择不落盘，用户手动切到 Direct only 后重启或 provider 重建会退回 Automatic。
-  只持久化模式本身，route memory 与探测结果不持久化。
+  只持久化模式本身；route memory 与探测结果仍不落盘，内部 PixEz 兼容层另行持久化已成功
+  使用的 host 地址，避免每次冷启动重复污染 DNS 与 `HEAD` 探测。
 - **C16**：删除 native login WebView intercept 的生产设置与 wiring。首次登录只走稳定
   的普通 WebView。该能力对应的目标已取消，代码不保留为「实验模式」。
-- **C17**：删除普通用户可见的全局 `insecureNoSni` 开关。若图片 CDN 的 A/B 证明放松传输
-  确有收益，那属于 Automatic 内部的 image-only 策略，不扩大到 API / OAuth，也不作为
-  用户开关暴露。
+- **C17**：删除普通用户可见的全局 `insecureNoSni` 开关。根据 2026-09-03 的性能决策，
+  Automatic 内部采用 PixEz 式兼容快速层覆盖 API、OAuth、图片和下载：启动时读取持久化或
+  内置 bootstrap 地址，直接建立共享连接池并跳过冷启动 `HEAD`；请求成功后由 DoH 后台刷新
+  地址。该实现不新增用户开关，`directOnly` 仍可强制回到直连路径。
 - 高级页可为 power user 保留 DoH endpoint 与 ECH front host 编辑；网络诊断尽量只读，
   展示当前 route 与最近探测结果。
 
@@ -146,8 +148,8 @@
 
 ## Open Questions
 
-- R4 的「自定义相册」与「SAF 文件夹」在 UI 上如何并列呈现，需在 design 阶段定稿。
-- R2 高级页保留哪些 power user 编辑项的最终清单待定。
+用户已确认：R4 通过单一“保存位置”入口并列选择相册/文件夹；R2 高级页只保留 DoH endpoint、
+ECH front host 和恢复默认值。实现阶段不再重新讨论这两项。
 
 ## Notes
 
