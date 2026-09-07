@@ -166,16 +166,16 @@ ABI 的 native 库，用户已决定 release **只发布 per-ABI 拆分 APK（ar
 
 ## Acceptance Criteria
 
-- [ ] release 构建使用正式 keystore；构建产物的签名证书指纹可查且与 debug 不同。
-- [ ] 缺少密钥时构建行为明确（失败或显式标记），不会静默退回 debug 签名。
-- [ ] 存在可复现的 manifest 生成 + 签名脚本，产物格式与 `update_manifest.dart` 的解析一致。
-- [ ] 私钥不出现在仓库、构建产物与日志中。
-- [ ] **API 29 真机上完成一次真实的自更新**（下载 → 验签 → 安装），这是 R2 的核心验收。
-- [ ] 高版本 Android 真机上同样完成一次。
-- [ ] 验签失败时能区分未配置 / 算法不可用 / 签名不匹配三种原因。
-- [ ] 篡改 manifest 或签名后，更新被拒绝且原因可见（负向用例）。
-- [ ] GitHub release asset 的完整重定向链在白名单内可通过；实测记录写进 research。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [~] release 构建使用正式 keystore；构建产物的签名证书指纹可查且与 debug 不同。（Gradle 只接受外部注入的 keystore 属性；本机无正式材料，debug 显式放行路径 `apksigner` 指纹 `CN=Android Debug` 可查——**正式指纹需用户在 CI Secrets 配好后从 `release.yml` 输出核对**）
+- [x] 缺少密钥时构建行为明确（失败或显式标记），不会静默退回 debug 签名。（`verifyGithubReleaseSigning` 明确失败并列出四个属性名；`-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true` 打印 `!!! RELEASE SIGNING: DEBUG KEYS`）
+- [x] 存在可复现的 manifest 生成 + 签名脚本，产物格式与 `update_manifest.dart` 的解析一致。（`tool/update_release.py` genkey/pubkey/generate/self-test；schema 2 键集与解析器逐键一致，size/sha256 与 APK 一致）
+- [x] 私钥不出现在仓库、构建产物与日志中。（分支扫描干净；`release.yml` 泄漏扫描步骤；`.gitignore` 覆盖 jks/keystore/p12/pem）
+- [ ] **API 29 真机上完成一次真实的自更新**（下载 → 验签 → 安装），这是 R2 的核心验收。（**用户真机项**，需先有正式签名的 draft release）
+- [ ] 高版本 Android 真机上同样完成一次。（**用户真机项**）
+- [x] 验签失败时能区分未配置 / 算法不可用 / 签名不匹配三种原因。（github verifier 五个 code `public_key_missing` / `algorithm_unavailable` / `signature_mismatch` / `message_missing` / `signature_missing`；Dart 原样透出 `errorCode`；`updater_flavor_contract_test` 钉住）
+- [x] 篡改 manifest 或签名后，更新被拒绝且原因可见（负向用例）。（`update_release.py self-test` tamper 分支；Dart `signature_mismatch` 单测；真机负向留给用户自更新那一轮）
+- [x] GitHub release asset 的完整重定向链在白名单内可通过；实测记录写进 research。（`research/github-redirect.md`：`github.com` 302 → `release-assets.githubusercontent.com` 200 单跳；allowlist 与 `isStrictUpdateRedirectUrl` 测试覆盖该 host）
+- [x] `flutter analyze` 与 `flutter test` 通过。（2026-09-08 final check）
 
 ## Open Questions
 
