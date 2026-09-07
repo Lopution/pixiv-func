@@ -327,6 +327,10 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 
 `tool/apk_size_report.py --self-test` 通过（单 ABI zip 通过；双 `lib/` 与 env 更严阈值失败并打 `::error::`）。
 
+### B4 schema 2 生成器
+
+`python3 tool/update_release.py self-test` 通过：schema 2、两笔 assets、顶层 `versionCode` 为基数、sign→verify→tamper、拒绝覆盖。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
