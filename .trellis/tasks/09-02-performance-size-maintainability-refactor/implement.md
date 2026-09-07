@@ -12,7 +12,7 @@
 ## 工具链前置
 
 ```bash
-export PATH="/opt/flutter-3.47.0/bin:$PATH"     # child A 完成后改为 3.47.2 的路径
+export PATH="/opt/flutter-3.47.2/bin:$PATH"
 python3 ./.trellis/scripts/task.py current --source
 python3 ./.trellis/scripts/task.py list --json
 git status --short > /tmp/pre-09-02-status.txt
@@ -229,7 +229,7 @@ gate：E0 随 A 开始；E1–E3 在 C、D、F 之后。
 ## 验证命令
 
 ```bash
-export PATH="/opt/flutter-3.47.0/bin:$PATH"
+export PATH="/opt/flutter-3.47.2/bin:$PATH"
 flutter pub get --enforce-lockfile
 dart format --output=none --set-exit-if-changed lib test          # E3 之后
 flutter analyze
