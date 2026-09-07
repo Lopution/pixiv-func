@@ -342,6 +342,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | B5a | reqwest `multipart` | 5,376,968 | 3,612,364 | 29,408,689 | 27,225,568 | 有：`http.rs:414-418` | 通过 | 待用户 |
 | B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
 | B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
+| B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -408,6 +409,26 @@ host `cargo build --release --locked` 直接通过：`client.rs:146-160` 的 `re
 
 测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
 features 之后：`charset, cookies, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5d drop reqwest `cookies`
+
+`Cargo.toml` 去掉 `cookies`；`cargo update -w` 从 lock 去掉 `cookie` 0.18.2、`cookie_store` 0.22.1、`publicsuffix` 2.3.0、`psl-types`、`time`/`time-core`/`time-macros`、`serde_json`、`deranged`、`num-conv`、`powerfmt`、`document-features`、`litrs`、`zmij`。`icu_*` 仍在（`url` 需要）。
+host `cargo build --release --locked` 在 `client.rs:166` `cookie_store(...)` 失败（E0599）。
+`settings.cookie_settings.is_some()` 改为 `return Err(RhttpError::RhttpUnknownError("cookie store is not supported"))`（`:165-169`）。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:06:11Z，墙钟 76 s（Gradle 62.8 s）。
+`jniLibs` mtime 2026-09-08 01:07:12 +0800。
+
+| | B5c | B5d | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,330,032 | 5,243,360 | −86,672 |
+| `librhttp.so` armeabi-v7a | 3,583,788 | 3,519,188 | −64,600 |
+| fdroid arm64 APK | 29,361,753 | 29,275,081 | −86,672 |
+| `lib/arm64-v8a` 桶 | 27,178,632 | 27,091,960 | −86,672 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
 真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
