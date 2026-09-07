@@ -243,3 +243,21 @@ zstd-sys 2.0.16+zstd.1.5.7 → 2.1.0+zstd.1.5.7
 
 `flutter_rust_bridge` 仍为 Cargo `=2.12.0` pin，dry-run 未改。verbose 提示另有 3 个 unchanged
 dependencies behind latest（未展开）。
+
+### A3 实际 cargo update
+
+`cd plugins/rhttp/rhttp/rust && cargo update` 写入 lock：`Locking 122 packages`，
+与 A0 dry-run 一致。`flutter_rust_bridge` 仍为 Cargo `=2.12.0`。落地版本：
+`rustls` 0.23.40→**0.23.44**、`tokio` 1.52.3→**1.53.1**、`hyper` 1.10.1→**1.11.1**、
+`aws-lc-rs` 1.17.0→**1.18.1**、`aws-lc-sys` 0.41.0→**0.45.0**、
+`webpki-root-certs` 1.0.7→**1.0.9**、`h2` 0.4.14→0.4.19、`quinn` 0.11.9→0.11.11。
+
+新 crate（`cargo metadata` 相对更新前）：`chacha20` 0.10.2（MIT OR Apache-2.0）、
+`core_detect` 1.0.0（MIT/Apache-2.0）、`cpufeatures` 0.3.1（MIT OR Apache-2.0）、
+`multiversion` / `multiversion-macros` 0.8.0（MIT OR Apache-2.0）、
+`multiversion_no_op` 1.0.0（Apache-2.0 OR MIT）、`rand_pcg` 0.10.2（MIT OR Apache-2.0）、
+`target-features` 0.1.6（MIT OR Apache-2.0）、`zlib-rs` 0.6.7（Zlib）；另增同名第二版本
+`miniz_oxide` 0.9.1、`syn` 3.0.5。许可证字符串变化：`zstd-safe` / `zstd-sys` 从
+MIT OR Apache-2.0 改为 **BSD-3-Clause**；`android_system_properties` 仅 SPDX 写法
+`MIT/Apache-2.0` → `MIT OR Apache-2.0`。仓库无按 crate 列名的 NOTICE/THIRD 清单
+（根 `NOTICE` 只指向历史 license-audit），未新建。

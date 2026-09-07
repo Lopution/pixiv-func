@@ -209,3 +209,19 @@ fat APK，不是 github；flavor 差异未体现在这些桶上。`lib/arm64-v8a
 Flutter 打印从 88.6MB → 88.5MB。APK 文件少 0.116 MB，对齐字体压缩后体积
 （A0 的 115,944 B）加上 zip 目录开销；未压缩 0.258 MB 是条目 raw size，不是
 下载体积。`lib/*` 与 `classes.dex` 字节未变。
+
+### A3 之后（pub upgrade + cargo update）
+
+`flutter build apk --release --flavor fdroid`（3.47.2，新 Cargo.lock 重编三 ABI
+`.so`）。开始 `2026-09-07T12:42:01Z`，Gradle 230.5 s，墙钟约 4 min 6 s。
+产物 88,443,521 B（Flutter 打印 88.4MB），相对 A2 的 88,466,077 B 为 **−22,556 B**。
+`cupertino_icons` 仍不在包内。`assets` 519,789 → 513,620（`NOTICES.Z` 随 lock
+去掉一批仅测试用传递依赖而缩小）。
+
+`librhttp.so`（stored = raw）相对 A2：
+
+| ABI | A2 | A3 | Δ |
+|---|---|---|---|
+| `arm64-v8a` | 5,439,920 | 5,412,048 | −27,872 |
+| `armeabi-v7a` | 3,651,244 | 3,636,460 | −14,784 |
+| `x86_64` | 6,702,128 | 6,738,312 | +36,184 |
