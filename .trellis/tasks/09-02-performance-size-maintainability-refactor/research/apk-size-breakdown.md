@@ -343,9 +343,10 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
 | B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
 | B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
-| B5e | reqwest `query` | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | 待用户 |
+| B5e | reqwest `query`（**已回退**，见下） | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | — |
 | B5f | reqwest `charset` | 5,052,080 | 3,349,084 | 29,083,801 | 26,900,680 | 无 | 通过 | 待用户 |
 | B5g | tokio `full` → listed | 5,027,744 | 3,335,776 | 29,059,465 | 26,876,344 | 无 | 通过 | 待用户 |
+| B5e 回退 | 恢复 reqwest `query` | 5,042,000 | 3,340,216 | 29,073,721 | 26,890,600 | 恢复 `request.query(&query)` | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -494,8 +495,28 @@ host `cargo build --release --locked` 直接通过，未再补 feature（B5a 已
 reqwest features 仍是：`http2, rustls, stream, brotli, deflate, gzip, zstd`。
 tokio features：`rt-multi-thread, net, time, sync, io-util, macros`。
 
-B5 合计 vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,027,744（−384,304）；armeabi-v7a 3,636,460 → 3,335,776（−300,684）。
+B5a–B5g 合计（回退前）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,027,744（−384,304）；armeabi-v7a 3,636,460 → 3,335,776（−300,684）。
 真机待用户。
+
+#### B5e 回退（`git revert c463431`）
+
+主会话复核发现 B5e 的前提「app 自行拼 URL」不成立：`plugins/rhttp/rhttp/lib/src/client/io/io_request.dart:46-53` 把 URL 重建为 `scheme://host:port/path`，查询串一律经 `query: uri.queryParameters` 传给 Rust（空 map 也是 `Some`）。app 全部请求走 `RhttpCompatibleClient`（`lib/core/network/compat/rhttp_client_factory.dart:68`），B5e 之后 `http.rs:375` 对每个请求返回 `RhttpUnknownError("query parameters are not supported")`——app 41 个测试在 mock 层通过，没有覆盖真实 Rust 路径。按 B5 停止条件（行为回归 → revert 该提交）回退：`Cargo.toml` 恢复 `query`，`cargo update -w` 后 lock 恢复 `serde_urlencoded` 0.7.1、`ryu` 1.0.23（无其他变化），`http.rs` 恢复 `request.query(&query)`。`UPSTREAM.md` 改记为「保留」。
+
+构建：fdroid split，无 `--obfuscate`，删 `build/rhttp/jniLibs/release/*/librhttp.so` 后重建。开始 2026-09-07T17:20:30Z，墙钟 70 s（Gradle 60.4 s）。`jniLibs` mtime 2026-09-08 01:21:24 +0800。
+
+| | B5g | B5e 回退 | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,027,744 | 5,042,000 | +14,256 |
+| `librhttp.so` armeabi-v7a | 3,335,776 | 3,340,216 | +4,440 |
+| fdroid arm64 APK | 29,059,465 | 29,073,721 | +14,256 |
+| `lib/arm64-v8a` 桶 | 26,876,344 | 26,890,600 | +14,256 |
+
+（回加 `query` 后多出的字节大于 B5e 当时省下的 6,080：`serde_urlencoded` 回来时 `charset`/`cookies` 已不在，链接布局不同。）
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。
+
+**B5 最终**（B5a–d、B5f–g 生效，B5e 回退）vs B0/B3 `librhttp.so`：arm64 5,412,048 → 5,042,000（−370,048）；armeabi-v7a 3,636,460 → 3,340,216（−296,244）。
+reqwest features 最终：`http2, query, rustls, stream, brotli, deflate, gzip, zstd`；tokio：`rt-multi-thread, net, time, sync, io-util, macros`。
+真机待用户（登录 + 图片列表 + 大图下载，一次覆盖 B5 全部）。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
