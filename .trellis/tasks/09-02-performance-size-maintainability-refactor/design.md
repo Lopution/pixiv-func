@@ -119,7 +119,7 @@ lib/core/<domain>/  entity / repository / controller(Notifier) / store /   可 i
 ### 4.1 per-ABI 发布
 
 - 构建：`flutter build apk --release --flavor <f> --split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/<f>`
-  产出 `app-<f>-arm64-v8a-release.apk`、`app-<f>-armeabi-v7a-release.apk`；不产出 x86_64、不产出 universal。
+  产出 `app-arm64-v8a-<f>-release.apk`、`app-armeabi-v7a-<f>-release.apk`；不产出 x86_64、不产出 universal。
 - versionCode：保留 Flutter 偏移（arm64 = `2000 + n`，armeabi-v7a = `1000 + n`）。
 - cargokit 只为请求的 target 编译（`build_gradle.dart:23–30`），但输出目录 `build/rhttp/jniLibs/<buildType>/`
   不清理非目标 ABI（实测污染 10.4 MB）→ 在 `plugins/rhttp/rhttp/cargokit/gradle/plugin.gradle` 的

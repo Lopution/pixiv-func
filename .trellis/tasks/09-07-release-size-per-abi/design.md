@@ -24,8 +24,8 @@ release.yml
     --obfuscate --split-debug-info=build/symbols/github
     + 正式 keystore Gradle 属性
         │
-        ├─ app-github-arm64-v8a-release.apk      (versionCode = 2000+n)
-        ├─ app-github-armeabi-v7a-release.apk    (versionCode = 1000+n)
+        ├─ app-arm64-v8a-github-release.apk      (versionCode = 2000+n)
+        ├─ app-armeabi-v7a-github-release.apk    (versionCode = 1000+n)
         └─ build/symbols/github/                 (Actions artifact，不上公开 Release)
         │
         ▼
@@ -146,10 +146,10 @@ flutter build apk --release --flavor <f> \
   --split-debug-info=build/symbols/<f>
 ```
 
-产出（Flutter 3.47.2 的 split 命名）：
+产出（Flutter 3.47.2 的 split 命名，B0 实测：`app-<abi>-<flavor>-release.apk`，ABI 在 flavor 之前）：
 
-- `build/app/outputs/flutter-apk/app-<f>-arm64-v8a-release.apk`
-- `build/app/outputs/flutter-apk/app-<f>-armeabi-v7a-release.apk`
+- `build/app/outputs/flutter-apk/app-arm64-v8a-<f>-release.apk`
+- `build/app/outputs/flutter-apk/app-armeabi-v7a-<f>-release.apk`
 
 不产出 `*-x86_64-*`，不产出 `app-<f>-release.apk` universal。禁止用单独的 `--target-platform` 当发布手段（研究 `apk-size-breakdown.md` §2、`native-and-build-audit.md` §0.2：cargokit / 插件 jniLibs 不受该旗标约束，陈旧 ABI 曾泄漏 `10,353,372` B）。
 
@@ -172,8 +172,8 @@ github CI / `release.yml` 继续附加正式签名属性（`ci.yml:55-59`、`rel
 
 ```bash
 for APK in \
-  build/app/outputs/flutter-apk/app-github-arm64-v8a-release.apk \
-  build/app/outputs/flutter-apk/app-github-armeabi-v7a-release.apk
+  build/app/outputs/flutter-apk/app-arm64-v8a-github-release.apk \
+  build/app/outputs/flutter-apk/app-armeabi-v7a-github-release.apk
 do
   test -s "$APK" || { echo "::error::missing $APK"; exit 1; }
   "$APKSIGNER" verify --verbose --print-certs "$APK"
@@ -199,7 +199,7 @@ done
 
 **门禁必须在 secrets 缺失时也能生效。** `android-release` 在 keystore secrets 落地前必然红（`ci.yml:36-44`），若体积门禁只放在那里，B3–B7 期间 CI 对体积回退是盲的。因此 B3 在 `ci.yml` 新增不依赖 secrets 的 **`android-size`** job：fdroid flavor、同一套 split/obfuscate 旗标、`rustup toolchain install`（cargokit 交叉编译需要根 `rust-toolchain.toml` 的 Android targets；NDK 缺失时由 AGP 经 sdkmanager 下载）、体积汇总 + 阈值脚本（与 `android-release` 共用同一段脚本，只是文件名前缀 `app-fdroid-`）、`--analyze-size` JSON 与两个 fdroid split APK 作为 artifact 上传（后者供用户无签名侧载验证 widget 入口 / 历史读写 / rhttp 裁剪）。`android-release` 保留验签循环并复用同一阈值脚本；两处阈值来自同一对 `vars`。fdroid 与 github 的 `lib/*` 逐字节一致（child A 收尾：两 flavor 仅差 24,600 B 的 dex/资源），所以 fdroid 上的门禁对 github 产物同样有代表性。B7 改「打印」为「比较」时两处同时改。
 
-`--analyze-size --code-size-directory=build/analyze-size/<f>` 的 JSON 作为 artifact 上传，`continue-on-error: true`，不阻塞。
+`--analyze-size --code-size-directory=build/analyze-size/<f>` 的 JSON 作为 artifact 上传，`continue-on-error: true`，不阻塞。 Flutter 3.47.2 拒绝在多 ABI 构建上做 code-size analysis（B0 实测 `Cannot perform code size analysis when building for multiple ABIs`），所以该步是**单独一次** `--target-platform android-arm64 --analyze-size` 构建，只产 JSON，不当发布产物，也不当体积基线。
 
 ### `release.yml` 上传什么
 
@@ -299,7 +299,7 @@ D-4 保留桌面分支与 `sqflite_common_ffi` 主依赖；`sqlite3` 的 `hook/b
 | 去掉的 feature 或 profile 项 | 原文 |
 | `librhttp.so` arm64 字节 | stored = raw |
 | `librhttp.so` armeabi-v7a 字节 | 同上 |
-| fdroid arm64 split APK 文件字节 | `app-fdroid-arm64-v8a-release.apk` |
+| fdroid arm64 split APK 文件字节 | `app-arm64-v8a-fdroid-release.apk` |
 | `lib/arm64-v8a` 桶 | python 汇总 |
 | 编译修补（若有） | 文件:行，或「无」 |
 | 双侧测试 | 通过 / 失败摘要 |

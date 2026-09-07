@@ -46,9 +46,9 @@ git diff --check
 
 ## 清单
 
-- [ ] **B0 基线**
+- [x] **B0 基线**
   - 做：`rm -rf build/rhttp/jniLibs`（消除 `native-and-build-audit.md` §0.2 的陈旧 ABI 污染，上次泄漏 `10,353,372` B）。然后：
-    1. 三 ABI fat：`flutter build apk --release --flavor fdroid --analyze-size --code-size-directory=/tmp/pixiv-size-b0-fat`
+    1. 三 ABI fat：`flutter build apk --release --flavor fdroid`（实测：3.47.2 不允许多 ABI 带 `--analyze-size`；JSON 由单独一次 `--target-platform android-arm64 --analyze-size --code-size-directory=/tmp/pixiv-size-b0-fat` 补齐，不作基线）
     2. 干净 split（**不加** obfuscate，作为「只拆 ABI」对照）：`flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm`
   - 触及：仅 `../09-02-performance-size-maintainability-refactor/research/apk-size-breakdown.md` §6（新建「B0」小节）。
   - 测量写入 §6：fat 文件字节（对照 `88,181,654`）；两份 split 的文件字节与 python 桶（`lib/<abi>`、`classes.dex`、`assets`）；三 ABI `librhttp.so` / `libapp.so` / `libsqlite3.so` raw 字节；`--analyze-size` 目录路径。禁止用单独 `--target-platform` 当「单 ABI 基线」。
@@ -57,15 +57,15 @@ git diff --check
   - 回滚：revert 该文档提交。
   - 真机：无。
 
-- [ ] **B1 `libsqlite3.so`**
+- [x] **B1 `libsqlite3.so`**
   - 做：`android/app/build.gradle.kts` 的 `android { }` 在 `buildTypes` 后加 `packaging { jniLibs { excludes += "**/libsqlite3.so" } }`。抽出 `@visibleForTesting` 工厂选择（见 `design.md`），`history_database.dart:27-31` 生产路径仍是 `Platform.isAndroid || Platform.isIOS → sqflite.databaseFactory`。新测试断言 Android/mobile 工厂是 `sqflite.databaseFactory` 不是 `databaseFactoryFfi`。
   - 触及：`android/app/build.gradle.kts`、`lib/core/history/history_database.dart`、`test/` 下新测试（建议 `test/history_database_factory_test.dart`）。不删 `sqflite_common_ffi`。
   - 验证：
     ```bash
     flutter test test/history_database_factory_test.dart test/history_persistence_test.dart
     flutter build apk --release --flavor fdroid --split-per-abi --target-platform android-arm64,android-arm
-    unzip -l build/app/outputs/flutter-apk/app-fdroid-arm64-v8a-release.apk | grep libsqlite3.so   # 必须无输出
-    unzip -l build/app/outputs/flutter-apk/app-fdroid-armeabi-v7a-release.apk | grep libsqlite3.so
+    unzip -l build/app/outputs/flutter-apk/app-arm64-v8a-fdroid-release.apk | grep libsqlite3.so   # 必须无输出
+    unzip -l build/app/outputs/flutter-apk/app-armeabi-v7a-fdroid-release.apk | grep libsqlite3.so
     flutter build apk --debug --flavor fdroid
     unzip -l build/app/outputs/flutter-apk/app-fdroid-debug.apk | grep libsqlite3.so
     ```
@@ -75,7 +75,7 @@ git diff --check
   - 回滚：revert 该提交即恢复打包。
   - 真机（待用户真机）：历史记录读写（debug + release）。
 
-- [ ] **B2 cargokit 清理**
+- [x] **B2 cargokit 清理**
   - 做：`plugins/rhttp/rhttp/cargokit/gradle/plugin.gradle` 的 `CargoKitBuildTask.build()` 在 `execOperations.exec`（约 `:71`）之前 `project.delete(outputDir)`。`plugins/rhttp/UPSTREAM.md` D-5 列表加一条「cargo 任务前删除 `jniLibs/<buildType>`」。
   - 触及：上述两个文件。
   - 验证（复现 §0.2 后再证明已修好）：
@@ -99,7 +99,7 @@ git diff --check
 
 - [ ] **B3 per-ABI 流水线**（与 B4 同一 PR）
   - 做：
-    - `.github/workflows/ci.yml` `android-release`：`flutter build apk` 改为 `--split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/github`；对 `app-github-arm64-v8a-release.apk` 与 `app-github-armeabi-v7a-release.apk` 循环 `apksigner verify`，拒绝 `Android Debug`；跑体积汇总脚本；arm64 `> 32_000_000` 即失败；`--analyze-size` JSON 上传 artifact（不阻塞）；`build/symbols/github` 上传 artifact。
+    - `.github/workflows/ci.yml` `android-release`：`flutter build apk` 改为 `--split-per-abi --target-platform android-arm64,android-arm --obfuscate --split-debug-info=build/symbols/github`；对 `app-arm64-v8a-github-release.apk` 与 `app-armeabi-v7a-github-release.apk` 循环 `apksigner verify`，拒绝 `Android Debug`；跑体积汇总脚本；arm64 `> 32_000_000` 即失败；`--analyze-size` JSON 上传 artifact（不阻塞）；`build/symbols/github` 上传 artifact。
     - `.github/workflows/ci.yml` 新增 **`android-size`** job（不依赖 secrets，见 `design.md`「体积汇总脚本」）：`checkout@v6`、`setup-java@v5`（temurin 17）、`subosito/flutter-action@v2`、`flutter pub get --enforce-lockfile`、`rustup toolchain install`（根 `rust-toolchain.toml`，含 Android targets）、fdroid split/obfuscate 构建、同一份体积汇总 + 阈值脚本（`app-fdroid-*`，arm64 硬顶 `32_000_000`）、上传 `--analyze-size` JSON（`continue-on-error`）与两个 fdroid split APK 为 artifact（`retention-days: 14`，供用户侧载验证）。体积脚本抽成 `tool/apk_size_report.py`（参数：APK 路径列表 + 可选阈值环境变量），两个 job 与本机调用同一文件，避免 workflow 内两份 python 漂移。首次运行必须核对 cargokit 在 runner 上的交叉编译（rustc/NDK 下载）耗时并写入 §6。
     - `.github/workflows/release.yml`：同样的 build 旗标；验签循环；两 APK 指纹必须一致；`generate` 改多 `--apk <abi>=<path>`；draft Release 上传两个命名 APK + manifest + sig（不再上传 fat `pixiv-func-v<ver>-github.apk`）；符号目录只做 Actions artifact。
     - `android/app/build.gradle.kts:33-36` 注释改为写明 `2000+n` / `1000+n`，禁止 `-Pforce-version-code-ignoring-abi`。
@@ -109,7 +109,7 @@ git diff --check
     flutter build apk --release --flavor fdroid \
       --split-per-abi --target-platform android-arm64,android-arm \
       --obfuscate --split-debug-info=build/symbols/fdroid
-    ls -l build/app/outputs/flutter-apk/app-fdroid-*-release.apk
+    ls -l build/app/outputs/flutter-apk/app-*-fdroid-release.apk
     # 必须恰好两份：arm64-v8a、armeabi-v7a；无 x86_64、无 universal
     flutter build apk --release --flavor github \
       --split-per-abi --target-platform android-arm64,android-arm \
