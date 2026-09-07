@@ -201,6 +201,48 @@ fat 另含 x86_64：`librhttp.so` 6,738,312 / `libapp.so` 10,224,520 /
 （cargokit / 插件 jniLibs 陈旧 ABI，§0.2），再次确认 `--target-platform`
 不能当发布手段。
 
+### B1 `libsqlite3.so` 排除（child B，2026-09-07）
+
+`android/app/build.gradle.kts` 在 `buildTypes` 后加入
+`packaging { jniLibs { excludes += "**/libsqlite3.so" } }`。未删除
+`sqflite_common_ffi`。`historyDatabaseFactory({required bool useMobileSqflite})`
+抽出为 `@visibleForTesting` 纯函数；生产 `_platformDatabaseFactory` 仍是
+`Platform.isAndroid || Platform.isIOS` → `sqflite.databaseFactory`。
+`test/history_database_factory_test.dart`：mobile 分支 `identical` 于
+`sqflite.databaseFactory` / `databaseFactorySqflitePlugin`，且不是
+`databaseFactoryFfi`（Linux VM 需先注册 plugin factory，否则 getter 抛
+uninitialized）。`test/history_persistence_test.dart` 未改，与新测试合计
+9 passed。
+
+验证（`unzip -l … | grep libsqlite3.so` 均为空）：
+
+| APK | 文件字节 | `libsqlite3.so` |
+|---|---|---|
+| `app-arm64-v8a-fdroid-release.apk` | 29,443,769 | 无 |
+| `app-armeabi-v7a-fdroid-release.apk` | 25,489,119 | 无 |
+| `app-fdroid-debug.apk` | 202,265,375 | 无 |
+
+`assets/flutter_assets/NativeAssetsManifest.json` 仍列出
+`package:sqlite3/src/ffi/libsqlite3.g.dart` → `["absolute","libsqlite3.so"]`
+（release 224 B，debug 313 B），但 `lib/<abi>/` 没有对应 `.so`。按
+`design.md`「清单仍列、库不在包内」视为排除成功，运行时不加载。**可行。**
+
+墙钟：split release 111.77 s（Gradle 100.0 s，2026-09-07T16:03:12Z）；
+debug 353.18 s（Gradle 320.2 s，2026-09-07T16:05:11Z）。
+
+前后桶（fdroid split，无 obfuscate；compress = raw）：
+
+| | B0 arm64 | B1 arm64 | Δ | B0 armeabi-v7a | B1 armeabi-v7a | Δ |
+|---|---|---|---|---|---|---|
+| APK 文件 | 31,187,258 | 29,443,769 | −1,743,489 | 27,203,718 | 25,489,119 | −1,714,599 |
+| `lib/<abi>` | 28,993,008 | 27,260,648 | −1,732,360 | 25,046,204 | 23,332,468 | −1,713,736 |
+| `classes.dex` | 1,309,768 | 1,309,768 | 0 | 1,309,768 | 1,309,768 | 0 |
+| `assets` | 513,720 | 513,720 | 0 | 513,720 | 513,720 | 0 |
+
+`lib/<abi>` 桶减少值与 B0 的 `libsqlite3.so` raw 字节逐字节相等
+（arm64 1,732,360 / armeabi-v7a 1,713,736）。`librhttp.so` / `libapp.so`
+未变。真机历史读写待用户。
+
 ## 7. 对既有契约的影响（必须在 design 中处理）
 
 1. **updater manifest**：`tool/update_release.py generate` 当前接受单一 `--asset-url` 与单一
