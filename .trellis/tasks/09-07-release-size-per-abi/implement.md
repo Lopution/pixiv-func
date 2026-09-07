@@ -176,7 +176,7 @@ git diff --check
     - B5d `size(rhttp): drop reqwest cookies feature`
     - B5e `size(rhttp): drop reqwest query feature`
     - B5f `size(rhttp): drop reqwest charset feature`
-    - B5g `size(rhttp): narrow tokio features`  
+    - B5g `size(rhttp): narrow tokio features`
       （`full` → `rt-multi-thread, net, time, sync, io-util, macros`，按 rustc 补齐，不预先扩大）
   - 不做：去掉 `gzip/deflate/brotli/zstd`；不换 aws-lc-rs；不删 `rustls-platform-verifier`。
   - 回滚：单步 revert。
