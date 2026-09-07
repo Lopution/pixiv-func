@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/implement.md", "reason": "Child A checklist A0-A10: order, per-step commit messages, verification commands, rollback points"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/dependency-upgrade-audit.md", "reason": "Fact source for every upgrade item: versions, coupling (archive+image, secure_storage+AGP), FRB triplet drift, risks"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/apk-size-breakdown.md", "reason": "A0 baseline method (unzip -l per ABI, cargokit stale-ABI caveat) and the numbers to re-verify"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/native-and-build-audit.md", "reason": "CI gaps (no Kotlin/plugin/Rust tests, no lockfile enforcement), cargokit ABI behaviour"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/design.md", "reason": "Parent design: §5.2-5.3 rhttp fork strategy and FRB triplet check, §6 dependency order and CI target job shape"}
+{"file": ".trellis/spec/backend/index.md", "reason": "Spec index; A adds the dependency/toolchain upgrade-policy guide here (docs in English)"}
