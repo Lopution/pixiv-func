@@ -343,6 +343,7 @@ arm64 文件字节 ≤ 32,000,000（硬顶）。两 flavor 的 `lib/<abi>` 逐�
 | B5b | reqwest `form` | 5,375,112 | 3,611,044 | 29,406,833 | 27,223,712 | 有：`http.rs:413-417` | 通过 | 待用户 |
 | B5c | reqwest `socks` | 5,330,032 | 3,583,788 | 29,361,753 | 27,178,632 | 无 | 通过 | 待用户 |
 | B5d | reqwest `cookies` | 5,243,360 | 3,519,188 | 29,275,081 | 27,091,960 | 有：`client.rs:165-169` | 通过 | 待用户 |
+| B5e | reqwest `query` | 5,237,280 | 3,514,492 | 29,269,001 | 27,085,880 | 有：`http.rs:375-379` | 通过 | 待用户 |
 
 #### B5a drop reqwest `multipart`
 
@@ -429,6 +430,26 @@ host `cargo build --release --locked` 在 `client.rs:166` `cookie_store(...)` �
 
 测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
 features 之后：`charset, http2, query, rustls, stream, brotli, deflate, gzip, zstd`。
+真机待用户。
+
+#### B5e drop reqwest `query`
+
+`Cargo.toml` 去掉 `query`；`cargo update -w` 从 lock 去掉 `serde_urlencoded` 0.7.1、`ryu` 1.0.23。`form_urlencoded` 仍由 `url` 拉入。
+host `cargo build --release --locked` 在 `http.rs:376` `request.query(&query)` 失败（E0599）。
+`query.is_some()` 改为 `return Err(RhttpError::RhttpUnknownError("query parameters are not supported"))`（`:375-379`）。app 自行拼 URL。未跑 FRB codegen。
+
+构建：同上 fdroid split。开始 2026-09-07T17:09:09Z，墙钟 68 s（Gradle 60.0 s）。
+`jniLibs` mtime 2026-09-08 01:10:02 +0800。
+
+| | B5d | B5e | Δ |
+|---|---|---|---|
+| `librhttp.so` arm64 | 5,243,360 | 5,237,280 | −6,080 |
+| `librhttp.so` armeabi-v7a | 3,519,188 | 3,514,492 | −4,696 |
+| fdroid arm64 APK | 29,275,081 | 29,269,001 | −6,080 |
+| `lib/arm64-v8a` 桶 | 27,091,960 | 27,085,880 | −6,080 |
+
+测试：plugin flutter 32 passed；cargo test 2 passed + 1 ignored；app 41 passed。clippy 未跑（CI 无）。
+features 之后：`charset, http2, rustls, stream, brotli, deflate, gzip, zstd`。
 真机待用户。
 
 ## 7. 对既有契约的影响（必须在 design 中处理）
