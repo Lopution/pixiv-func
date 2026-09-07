@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Build Toolchain + upgrade policy: SDK path, lockfiles, no material_ui bump, verification expected per change"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Backend quality rules to check updater, Kotlin platformInfo, and CI against"}
+{"file": ".trellis/tasks/09-07-release-size-per-abi/prd.md", "reason": "R1-R5 and acceptance: two split APKs, arm64 ≤32 MB, schema consumer, trims, stop conditions"}
+{"file": ".trellis/tasks/09-07-release-size-per-abi/design.md", "reason": "Field-level schema 2 contract, ABI error surface, Gradle/CI details, trim protocol, F handoff"}
+{"file": ".trellis/tasks/09-07-release-size-per-abi/implement.md", "reason": "Per-step verification, measurements into §6, paired B3+B4 revert, device-only items"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/research/apk-size-breakdown.md", "reason": "§6 must receive real unzip -l numbers after each step; check no leftover TODOs or invented sizes"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/implement.md", "reason": "高风险文件与停止条件: Cargo.toml/cargokit, updater bytes, network semantics, no TLS/ECH/obfuscate regressions"}
