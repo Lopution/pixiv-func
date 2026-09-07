@@ -12,7 +12,7 @@
   "assignee": "Lopution",
   "createdAt": "2026-09-01",
   "completedAt": null,
-  "branch": null,
+  "branch": "task/09-01-settings-productization",
   "base_branch": "main",
   "worktree_path": null,
   "commit": null,
