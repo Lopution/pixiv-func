@@ -121,18 +121,18 @@ UI 侧（`lib/features/comments/comment_item.dart:115-150`）：
 
 ## Acceptance Criteria
 
-- [ ] 设置页可选择四条路径；选中需要凭据的路径时提供输入与保存。
-- [ ] 百度路径配置成功后，中文以外语言的评论可翻译出结果。
-- [ ] 通用 LLM 路径填入 base URL / model / key 后可翻译出结果。
-- [ ] Google 路径行为与当前一致（回归不破坏）。
-- [ ] 关闭时点击翻译显示「已关闭」，不发出任何网络请求。
-- [ ] 百度配置引导中出现实名认证与额度说明。
-- [ ] 凭据不出现在 `AppSettings` 的 JSON 中（单测断言序列化结果）。
-- [ ] 凭据不出现在账号迁移 payload 中（单测断言）。
-- [ ] 凭据无效 / 超限 / 网络失败三类错误在 UI 上可区分。
-- [ ] 清除凭据后该 provider 回到未配置状态。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
-- [ ] 真机验证清单交付（大陆网络下百度路径真实可用是本 child 的核心价值，必须真机确认）。
+- [x] 设置页可选择四条路径；选中需要凭据的路径时提供输入与保存。（`settings_page.dart` 四 tile + `TranslationCredentialsPage`）
+- [x] 百度路径配置成功后，中文以外语言的评论可翻译出结果。（单测：签名 / 表单 / 错误码分类 `comment_translation_test.dart`；大陆网络真实可用 **待用户真机**）
+- [x] 通用 LLM 路径填入 base URL / model / key 后可翻译出结果。（单测：HTTPS-only、固定 prompt、401/403/429/超大响应；真实 endpoint **待用户真机**）
+- [x] Google 路径行为与当前一致（回归不破坏）。（`comments_replies_test.dart` 回归）
+- [x] 关闭时点击翻译显示「已关闭」，不发出任何网络请求。（`comment_translation_test.dart` 零请求断言；overlay `comment_item.dart`）
+- [x] 百度配置引导中出现实名认证与额度说明。（四语言 `translateBaiduHint`；实名只挂在高级版，078458a + 2860ba8）
+- [x] 凭据不出现在 `AppSettings` 的 JSON 中（单测断言序列化结果）。（`toJson` 仅 `translateIndex`；`settings_test.dart`）
+- [x] 凭据不出现在账号迁移 payload 中（单测断言）。（`account_transfer_service_test.dart` 逐层 key 集合 + 文本否定断言，08da6f0）
+- [x] 凭据无效 / 超限 / 网络失败三类错误在 UI 上可区分。（`comment_item.dart` 三分支，四语言文案）
+- [x] 清除凭据后该 provider 回到未配置状态。（每次 translate 读 store；缺失 → `notConfigured`）
+- [x] `flutter analyze` 与 `flutter test` 通过。（2026-09-08：analyze 0；全量通过，一条 loopback 超时单独重跑通过）
+- [ ] 真机验证清单交付（大陆网络下百度路径真实可用是本 child 的核心价值，必须真机确认）。**待用户真机**：大陆网络百度真实翻译；LLM 自定义 endpoint；Google 回归；关闭时无网络请求（抓包或飞行模式）。
 
 ## Open Questions
 

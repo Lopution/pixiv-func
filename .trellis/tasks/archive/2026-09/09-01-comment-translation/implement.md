@@ -7,7 +7,7 @@
       Google gtx 大陆被阻断（保留为显式兼容路径）。
 - [x] 用户确认 D2 仍成立：新安装默认关闭、旧 Google 配置兼容，不自动 provider fallback。
 - [x] 用户确认独立安全 namespace 存储凭据，LLM 使用固定 prompt，不开放高级参数。
-- [ ] `task.py start` 前 `design.md`、`implement.md` 无阻塞 open question。
+- [x] `task.py start` 前 `design.md`、`implement.md` 无阻塞 open question。
 
 ## 阶段 0：事实与安全契约
 
@@ -52,7 +52,7 @@
 
 - [x] `flutter analyze`（No issues）
 - [x] `flutter test`（全量 570+）
-- [ ] `git diff --check`（提交前统一执行）
+- [x] `git diff --check`（提交前统一执行）
 - [ ] 真机：大陆网络百度真实翻译；LLM 自定义 endpoint；Google 回归；关闭无网络请求。
 - [x] 静态复核：日志/设置 JSON/迁移剪贴板路径不含 secret（toString 断言覆盖）。
 
