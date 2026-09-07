@@ -47,9 +47,10 @@
 ## 阶段 4：GitHub redirect 与真实 updater
 
 - [x] `release-assets.githubusercontent.com` 已加入精确 host allowlist（`download_request.dart`）。
-- [ ] 发布测试资产，记录完整 redirect chain 与 path/`.apk` 后缀实测到
-      `research/github-redirect.md`（await 发布阶段；`isStrictUpdateAssetUrl` 默认拒绝
-      非 `.apk`/非白名单 host，不放松）。
+- [x] 发布测试资产，记录完整 redirect chain 与 path/`.apk` 后缀实测到
+      `research/github-redirect.md`（2026-09-07 用临时 prerelease 探针测完即删：
+      `github.com` 302 → `release-assets.githubusercontent.com` 200，单跳，CDN path 无
+      `.apk` 后缀；`isStrictUpdateAssetUrl` 默认拒绝非 `.apk`/非白名单 host，不放松）。
 - [ ] API 29 与高版本真机各执行一次下载、验签、安装；负向用例（await 真机/发布阶段）。
 - [x] 阶段门：allowlist 单测与 updater 相关测试通过（真实资产待发布阶段）。
 
