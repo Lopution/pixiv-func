@@ -408,6 +408,24 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 - B3 ci.yml/release.yml 改 --split-per-abi + --obfuscate，双 APK 验签且证书一致，tool/apk_size_report.py（32 MB arm64 硬顶），新增无 secrets 的 android-size job（干净 runner 12m36s 通过）；B4 updater schema 2：顶层 packageName/cert，assets[] abi/url/size/sha256/versionCode，Kotlin supportedAbis，abi_unsupported 不得报已最新，versionCode % 1000
 - B5 rhttp features：multipart/form/socks/cookies/charset 去掉、tokio 收窄，librhttp.so 5,412,048→5,042,000 / 3,636,460→3,340,216；B5e（query）回退——compat 适配层 io_request.dart 对每个请求传 query，app 测试在 Rust 边界之上 mock 未能发现；UPSTREAM.md 记「query 保留」
 - B6 opt-level s 测得 −1,539,000 / −884,944，未采用未提交（采用门需用户真机墙钟；对照 APK 在 build/b6-compare/）；B7 阈值 28,435,321 / 24,226,795（vars 可覆盖）；B8 §6 收束；check 后补 android-release analyze-size 归档、release 重跑总是 upload --clobber、6 个 manifest 解析拒绝测试；spec backend/release-artifacts.md
+## Session 17: 09-01 comment-translation：D2 事实复核、实名文案归位、封套负向测试、归档
+<!-- trellis-session: v=2 fp=b0bb9e455c02bf8d -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 comment-translation：D2 事实复核、实名文案归位、封套负向测试、归档
+**Branch**: `task/09-01-comment-translation`
+
+### Summary
+
+评论翻译 child 收尾：复核 D2 三条外部事实（百度标准版/高级版额度、腾讯 TMT 在售、Google gtx 大陆阻断），实名要求只挂高级版（hint + picker 四语言），未使用的 translationProvider 回退改为 disabled，迁移封套逐层 key 集合与文本否定断言，百度错误码表补齐 90107/54000/54005，PRD 验收逐条附证据；大陆网络真实翻译等留给用户真机。
+
+### Main Changes
+
+- 研究：research/external-facts-2026-09-07.md 三条事实复核；D2 路径集合不变（关闭 / Google / 百度 / 通用 LLM），腾讯 provider 作为可选项留给用户决定
+- i18n：translateBaiduHint 与 translateBaidu picker 四语言中实名认证只出现在高级版句子；BaiduCommentTranslationService 额度注释改为两档事实
+- settings_controller.translationProvider 回退 google → disabled，与 translationSelectionProvider 一致
+- 测试：迁移封套 version/payloadType/payload/checksum、accountId/userId/credential、accessToken/refreshToken 精确 key 集合 + 解码文本不含 baidu/llm/apikey；错误码表 8 条
+- spec：backend/quality-guidelines.md 新增「Secrets stay out of every serialized surface」
 
 ### Git Commits
 
@@ -448,6 +466,15 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 ### Testing
 
 - [OK] flutter analyze 0；flutter test 635（两条 loopback 超时单独重跑通过）+ 新增 6 → 641；插件 32；cargo fmt/test --locked 2+1 ignored；Kotlin github/fdroid 单测通过；apk_size_report/update_release self-test 通过；fdroid split 27,435,321 / 23,226,795，github（debug 签）27,459,921 / 23,251,395，均在 B7 阈值内、每包仅一个 lib/<abi>、无 libsqlite3.so
+| `ec92d20` | docs(translation): re-verify the three external facts behind D2 |
+| `078458a` | i18n(translation): attach the real-name requirement to Baidu premium, not standard |
+| `2860ba8` | fix(translation): keep real-name on the Baidu premium tier only |
+| `08da6f0` | test(translation): pin transfer envelope keys and all Baidu error codes |
+| `4135b11` | chore(task): tick comment-translation acceptance criteria with evidence |
+
+### Testing
+
+- [OK] flutter analyze 0；flutter test 全量 626（download_manager 一条环境超时单独重跑通过）；受影响四个测试文件 46 passed；git diff --check 干净
 
 ### Status
 
@@ -460,3 +487,5 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 - 用户真机：API 29 与高版本各一次按 ABI 选资产的自更新（需 secrets + draft release）；--obfuscate 后 widgetBackgroundMain；B5 后登录/图片列表/大图下载与 ECH/TLS；B1 历史读写；B6 opt-3 vs opt-s 墙钟（build/b6-compare）
 - android-release 持续红直到 PIXIV_RELEASE_KEYSTORE_B64 等 secrets 配置；可考虑把 android-size 加入 required checks
 - F 迁 material_ui 后重测并重设 B7 阈值默认值
+- 用户真机：大陆网络百度真实翻译、LLM 自定义 endpoint、Google 回归、关闭时零请求
+- 用户决定是否新增腾讯 TMT provider（同样需实名，TC3 签名工作量更大）
