@@ -155,7 +155,7 @@ git diff --check
   - 回滚：与 B3 一起。
   - 真机（待用户真机）：API 29 与高版本各一次**按 ABI 选择资产**的真实自更新；manifest 缺少本机 ABI 时 UI 可见 `abi_unsupported`，不得显示「已是最新」。依赖正式签名包与 draft Release，须 secrets 已配置。
 
-- [ ] **B5 rhttp feature 裁剪**（七个提交，顺序固定）
+- [x] **B5 rhttp feature 裁剪**（七个提交，顺序固定；B5e 已按停止条件回退 `719b008`——compat 适配层对每个请求传 `query`，见 §6「B5e 回退」）
   - 每步：改 `plugins/rhttp/rhttp/rust/Cargo.toml` 去掉该 feature → 若 rustc 失败，在 `http.rs` / `client.rs` 把对应分支改为返回 `RhttpError`（不跑 `flutter_rust_bridge_codegen`）→ 清理 `build/rhttp/jniLibs` → fdroid split 重编 → 测 `.so` / APK → 跑测试 → `UPSTREAM.md` 追加该 feature。
   - 每步验证：
     ```bash
