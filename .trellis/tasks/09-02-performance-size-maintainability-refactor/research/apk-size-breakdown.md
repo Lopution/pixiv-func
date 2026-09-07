@@ -225,3 +225,11 @@ Flutter 打印从 88.6MB → 88.5MB。APK 文件少 0.116 MB，对齐字体压�
 | `arm64-v8a` | 5,439,920 | 5,412,048 | −27,872 |
 | `armeabi-v7a` | 3,651,244 | 3,636,460 | −14,784 |
 | `x86_64` | 6,702,128 | 6,738,312 | +36,184 |
+
+### A6 之后（archive 4.2.0 / image 4.9.2）
+
+`flutter build apk --release --flavor fdroid`（3.47.2）。开始 `2026-09-07T13:45:28Z`，
+Gradle 50.9 s，墙钟约 57 s。产物 88,443,452 B，相对 A4 的 88,443,344 B 为 **+108 B**。
+`assets` 513,620 → 513,726（+106；`NOTICES.Z` 随 lock：+`posix` 6.5.2，−`petitparser`/`xml`）。
+`classes.dex` 1,561,052 未变。`lib/*` 未变（含三 ABI `libapp.so`；image 4.9 未增大 AOT 快照）。
+`cupertino_icons` 仍不在包内。
