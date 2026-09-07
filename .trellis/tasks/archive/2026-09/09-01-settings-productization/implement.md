@@ -23,8 +23,12 @@
 - [x] 实现纯过滤谓词，覆盖 R18、AI、blocked tags 的交集/规范化规则。
 - [x] 接入 Recommended、Ranking、Search、用户作品列表；收藏、历史、详情明确不接入。
 - [x] 接入 `WidgetFeedLoader`（R18 保持基线过滤），错误与清理语义不变。
-- [x] 实现有上限的续拉：cursor 去重、服务端耗尽、无过滤不续拉均有处理；
-      单测覆盖谓词与续拉分支（`local_block_filter_test.dart`）。
+- [x] 实现有上限的续拉：cursor 去重、服务端耗尽、无过滤不续拉均有处理
+      （`paged_feed_controller.dart`，`filterMaxRefillPages == 3`）。
+      谓词单测在 `local_block_filter_test.dart`；一页过滤在
+      `feed_generation_commit_test.dart`；续拉循环在
+      `paged_feed_refill_test.dart`；小组件空页续拉在
+      `widget_feed_loader_test.dart`。
 - [x] 设置变更后失效/重新计算发现类 feed（基类 watch 过滤设置）。
 - [x] 阶段门：feed/widget 单测与 widget test 通过。
 
@@ -34,7 +38,7 @@
       `savePath`/`saveFolder` 迁移规则（旧值无可验证语义 → 内置相册）。
 - [x] 接通内置 PixivFunc 相册（`Pictures/PixivFunc`）、用户自定义相册
       （`Pictures/<name>`，MediaStore relativePath）与 SAF tree URI（系统选择器 +
-      persistable permission；`SafeTreeChannel.kt` + Dart 侧 `saf_tree.dart`）。
+      persistable permission；`SafTreeChannel.kt` + Dart 侧 `saf_tree.dart`）。
 - [x] 将规范化 destination 传给 sink/channel（`DestinationAwareSinkFactory` 路由
       MediaStore/SAF；pending/finalize/abort owner 数据不变）。
 - [x] 实现预设/受限模板、非法字符清理、长度裁剪、日期和多页编号（`naming_rule.dart`）；
@@ -67,8 +71,8 @@
 - [x] `flutter analyze`
 - [x] `flutter test`
 - [x] `git diff --check`
-- [ ] `flutter build apk --release --flavor github`（最终集成阶段统一构建验证）
-- [ ] `flutter build apk --release --flavor fdroid`（最终集成阶段统一构建验证）
+- [x] `flutter build apk --release --flavor github`（2026-09-07 check：88.2MB；无本地 keystore，出现 debug-signing 警告）
+- [x] `flutter build apk --release --flavor fdroid`（2026-09-07 check：88.2MB）
 - [ ] 用户真机验证：过滤、质量、下载三种目标、命名、多页、语言和网络模式重启保持。
 
 ## 回滚点

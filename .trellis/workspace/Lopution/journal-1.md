@@ -371,3 +371,50 @@ Revalidated live endpoints on 2026-08-28 via in-app probe through the real Pixiv
 - 用户配置 GitHub secrets PIXIV_RELEASE_KEYSTORE_B64 等四项，否则 android-release job 持续红（非 ruleset 必需项，不阻塞合并）
 - 首次 CI 绿后考虑把 plugin / android-unit 加入 protect-main ruleset 的 required checks
 - child B（release-size-per-abi）以本分支合并后的 main 为基线重跑 B0
+
+
+## Session 15: 09-01 settings-productization: check, close gaps, archive
+<!-- trellis-session: v=2 fp=8d02f3a7e59898d7 -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 settings-productization: check, close gaps, archive
+**Branch**: `task/09-01-settings-productization`
+
+### Summary
+
+Full-scope Grok check of the settings child (already on main via 6d720f2) passed with notes; closed the code-side notes, tightened three weak tests, recorded device-only items and the R3 quality-group deviation, archived.
+
+### Main Changes
+
+- Removed dead LoginWebViewInterceptController and networkWebViewIntercept*/networkInsecureNoSni* keys in all four locales; locale-parity test pins them absent
+- Dropped unused imageSourceProvider (imageSource field kept hidden per R7)
+- Widget feed loader refills up to 3 extra pages (same cap as feeds) before transient failure; R-18 baseline kept
+- Tests: networkModeCode round-trip, legacy quality migration both halves, Accept-Language header + provider rebuild on languageTag, bounded refill loop semantics (refill ApiError is swallowed, first-page error surfaces)
+- Spec: on-disk SQLite shared by parallel test files (database is locked) documented; sweep goes to spec-test-lint-hardening
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `82e6a19` | chore(task): record settings-productization full-scope check |
+| `ba6e637` | settings(network): remove dead login-intercept controller and leftover i18n keys |
+| `e6ec619` | settings: drop unused imageSourceProvider |
+| `dcf0f1b` | filter(widget): refill up to the shared page cap before giving up |
+| `9c1b020` | test(settings): cover networkMode persistence, legacy quality migration, Accept-Language |
+| `e5f017a` | test(feed): cover the bounded filter refill loop |
+| `50f8e95` | test(settings): make migration, R6 provider watch and widget null-cursor cases discriminating |
+| `ef15bb7` | chore(task): point refill coverage at the new tests |
+| `cfbcfe0` | chore(task): tick settings-productization code-side acceptance criteria |
+
+### Testing
+
+- [OK] flutter analyze clean; full suite 641 tests, 4 loopback timeouts pass alone; fdroid/github release APKs 88.2 MB each (before child B)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- User device items: screenshots to research/screenshots, networkMode after restart, custom album + SAF, multi-P naming, ja Accept-Language capture, stage-5 timings
+- User decision: keep three quality groups (preview/detail/view) or collapse detail+view per R3 wording
