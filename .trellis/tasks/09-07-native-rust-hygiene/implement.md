@@ -37,7 +37,7 @@
 
 ## 阶段 D3：线程
 
-- [ ] **D3** 四处同步 IO 移出主线程：`MediaStoreChannel.kt:134` write、`SafTreeChannel.kt:114` write、
+- [x] **D3** 四处同步 IO 移出主线程（webprofile 未移：`CookieManager.getCookie/flush` 无线程安全文档，留主线程并记入 spec）：`MediaStoreChannel.kt:134` write、`SafTreeChannel.kt:114` write、
       `ReverseImageInputChannel.kt:147-158` 复制、github `DistributionUpdaterChannel.kt:128/207-213` `getPackageArchiveInfo`。
       方式：`BinaryMessenger.makeBackgroundTaskQueue()` 注册对应 channel（`MethodChannel(messenger, name, StandardMethodCodec.INSTANCE, taskQueue)`），
       或 IO 协程/executor 后 `Handler(Looper.getMainLooper()).post { result.success(...) }`。同一 channel 内的 begin/write/finalize 顺序必须保持
