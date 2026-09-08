@@ -81,15 +81,15 @@
 
 ## Acceptance Criteria
 
-- [ ] 用一张 Pixiv 作品的截图搜索，能命中该作品，点击进入站内详情页。
-- [ ] 用一张非 Pixiv 来源的图搜索，结果可点击并由系统浏览器打开。
-- [ ] 触发限流时显示「可重试 + 等待时间」，而不是泛化的失败文案。
-- [ ] 服务端返回 HTML / 挑战页时显示明确失败，不显示空结果列表。
-- [ ] 「无匹配结果」与「请求失败」在界面上是两种不同的呈现。
-- [ ] 取消 / 失败 / 成功三条路径均已清理临时文件（扩展现有的 exactly-once 清理测试）。
-- [ ] 全流程不要求用户填写任何 key 或注册任何账号。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
-- [ ] 真机验证清单交付（结果跳转、限流提示、隐私提示可见）。
+- [ ] 用一张 Pixiv 作品的截图搜索，能命中该作品，点击进入站内详情页。（**用户真机项**；代码侧：SauceNAO 的 `member_illust.php?mode=medium&illust_id=` 与 `/en/artworks/` 已映射到 `IllustRoute` → `IllustDetailPage`，`intent_router_test` / `sauce_nao_navigation_policy_test` 覆盖）
+- [ ] 用一张非 Pixiv 来源的图搜索，结果可点击并由系统浏览器打开。（**用户真机项**；代码侧 `openExternal` → 安全 launcher，单测覆盖）
+- [x] 触发限流时显示「可重试 + 等待时间」，而不是泛化的失败文案。（429 `Retry-After` 秒数 / 30 s 窗口 → `searchReverseRateLimitedWait`；日限额 → `searchReverseDailyLimit`；page test 断言文案）
+- [x] 服务端返回 HTML / 挑战页时显示明确失败，不显示空结果列表。（`challenge` 码 + `searchReverseChallenge` 文案；Cloudflare interstitial / Attention Required / turnstile 标记测试）
+- [x] 「无匹配结果」与「请求失败」在界面上是两种不同的呈现。（无匹配页 → 空成功 → `searchReverseNoResults`；失败走 `_failure` 组件；page test 覆盖两者）
+- [x] 取消 / 失败 / 成功三条路径均已清理临时文件（扩展现有的 exactly-once 清理测试）。（`reverse_image_search_test`：cancel / rate limit / WebView success 各 exactly-once）
+- [x] 全流程不要求用户填写任何 key 或注册任何账号。（reverse-image 目录无 `api_key`/`apiKey` 引用；匿名 HTML 路径实测可用，见 `research/anonymous-policy.md`）
+- [x] `flutter analyze` 与 `flutter test` 通过。（2026-09-08）
+- [x] 真机验证清单交付（结果跳转、限流提示、隐私提示可见）。（见 `implement.md` 最终验证「真机」一项；执行由用户完成）
 
 ## Open Questions
 
