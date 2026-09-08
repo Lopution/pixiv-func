@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 20
+- **Total Sessions**: 21
 - **Last Active**: 2026-09-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~603 | Active |
+| `journal-1.md` | ~632 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,7 +29,8 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
-| 20 | 2026-09-08 | 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive | `465c640`, `eb19b83`, `48b1f3b`, `4bffc60`, `664ed1e`, `d57bb8c`, `5cee5ee`, `4c4ac70`, `b46d64e` | `task/09-01-reverse-image-saucenao` |
+| 21 | 2026-09-08 | 09-01 behavior-correctness-cleanup: guard tests, spec truth, archive | `4d4424f`, `511ad3c`, `82c8783`, `6aeddbe`, `01b28c4` | `task/09-01-behavior-correctness-cleanup` |
+| 20 | 2026-09-08 | 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive | `204f086`, `d4bcd3d`, `88e0eb7`, `59acfb4`, `5ea1e51`, `f7bd03a`, `4e5b6e4`, `7a2b716`, `a61981f` | `task/09-01-reverse-image-saucenao` |
 | 19 | 2026-09-08 | 09-01 network-perf-ab: archive gate, doc sync, probe environment header | `ea6e884`, `5892a11`, `ad6eb7f`, `51098cf` | `task/09-01-network-perf-ab` |
 | 18 | 2026-09-08 | 09-01 release-blockers: final check, contract tests, archive | `98f3333`, `9d7260e`, `c224d5e`, `378913c`, `4939b23`, `3a13304` | `task/09-01-release-blockers` |
 | 17 | 2026-09-08 | 09-01 comment-translation：D2 事实复核、实名文案归位、封套负向测试、归档 | `ec92d20`, `078458a`, `2860ba8`, `08da6f0`, `4135b11` | `task/09-01-comment-translation` |
