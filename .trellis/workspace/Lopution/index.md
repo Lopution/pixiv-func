@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 17
+- **Total Sessions**: 18
 - **Last Active**: 2026-09-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~491 | Active |
+| `journal-1.md` | ~534 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 18 | 2026-09-08 | 09-01 release-blockers: final check, contract tests, archive | `98f3333`, `9d7260e`, `c224d5e`, `378913c`, `4939b23`, `3a13304` | `task/09-01-release-blockers` |
 | 17 | 2026-09-08 | 09-01 comment-translation：D2 事实复核、实名文案归位、封套负向测试、归档 | `ec92d20`, `078458a`, `2860ba8`, `08da6f0`, `4135b11` | `task/09-01-comment-translation` |
 | 16 | 2026-09-08 | child B release-size-per-abi：per-ABI 拆分、sqlite 排除、rhttp 裁剪、schema 2 updater、体积门禁 | `fa9220c`, `4365c8a`, `00f1df8`, `8184471`, `1967416`, `42bcc4b`, `f78c278`, `da669b0`, `6da1cec`, `c463431`, `280122d`, `c117953`, `719b008`, `c737cb9`, `e53d039`, `29a4f44`, `7e740f6`, `61936d4` | `task/09-07-release-size-per-abi` |
 | 15 | 2026-09-08 | 09-01 settings-productization: check, close gaps, archive | `82e6a19`, `ba6e637`, `e6ec619`, `dcf0f1b`, `9c1b020`, `e5f017a`, `50f8e95`, `ef15bb7`, `cfbcfe0` | `task/09-01-settings-productization` |

@@ -489,3 +489,46 @@ Full-scope Grok check of the settings child (already on main via 6d720f2) passed
 - F 迁 material_ui 后重测并重设 B7 阈值默认值
 - 用户真机：大陆网络百度真实翻译、LLM 自定义 endpoint、Google 回归、关闭时零请求
 - 用户决定是否新增腾讯 TMT provider（同样需实名，TC3 签名工作量更大）
+
+
+## Session 18: 09-01 release-blockers: final check, contract tests, archive
+<!-- trellis-session: v=2 fp=19ae8d18785f2e13 -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 release-blockers: final check, contract tests, archive
+**Branch**: `task/09-01-release-blockers`
+
+### Summary
+
+Verified the release signing / manifest signing / redirect allowlist implementation on main after child B; pinned the verifier contract in tests; archived. Real self-update on API 29 and modern devices plus the official certificate fingerprint stay with the user (need the real keystore + CI secrets).
+
+### Main Changes
+
+- Fail-closed github signing re-verified: no material -> verifyGithubReleaseSigning names the four properties, no APK; debug opt-in prints the warning and apksigner shows CN=Android Debug
+- Both flavor split builds ok (fdroid 27,435,321 / 23,226,795; github debug-signed 27,459,921 / 23,251,395); update_release.py dry run produces schema 2 with exactly the parser's key sets
+- Tests pin SHA256withECDSA + the five verifier codes and the measured release-assets.githubusercontent.com hop; root .gitignore covers jks/keystore/p12/pem; spec release-artifacts.md gains a Signing section
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `98f3333` | chore(task): start release-blockers on its branch |
+| `9d7260e` | docs(release): record GitHub release asset redirect chain |
+| `c224d5e` | docs(release): point R5 at the sibling that implements it |
+| `378913c` | test(updater): pin verifier algorithm, error codes and the measured CDN hop |
+| `4939b23` | docs(release): tick verified items; leave device and secrets items to the user |
+| `3a13304` | spec(backend): record the release signing and verifier contract |
+
+### Testing
+
+- [OK] flutter analyze clean; flutter test 658 passed (one oauth loopback timeout flake, rerun 16/16)
+- [OK] Secret scan over branch log/diff, ls-files and tree: clean; release.yml leak-scan step present
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- User: configure keystore + manifest key secrets, dispatch release.yml, verify official fingerprint, run API 29 and modern-device self-update (positive + tampered)
+- Next 09-01 children: reverse-image-saucenao and network-perf-ab checks, behavior-correctness-cleanup, then parent AC
