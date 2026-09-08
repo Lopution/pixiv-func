@@ -656,3 +656,43 @@ Closed the behaviour-correctness child on its own branch: 14 guard tests for the
 
 - User device: API 29 + modern, with/without widget, kill/restart recovery, bookmark/follow/comment token refresh, user deep link, multi-tab scroll
 - 09-01 parent func-1-0-hardening: AC check and archive via PR once network-perf-ab (PR #7) and saucenao (PR #8) are merged
+
+
+## Session 22: 09-01 parent func-1-0-hardening: acceptance on main, settings-consumer spec, archive
+<!-- trellis-session: v=2 fp=0072e97ece0f7148 -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 parent func-1-0-hardening: acceptance on main, settings-consumer spec, archive
+**Branch**: `task/09-01-func-1-0-hardening`
+
+### Summary
+
+Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acceptance verified against main HEAD 1186ff2 (children archived, R5 final owner, R6 greps zero, N-FIXED-1..9 intact with network suites 112/112), the one missing spec convention (settings must have a real consumer) written, and the journal union-merge hazard recorded in AGENTS.md. Device matrix stays with the user.
+
+### Main Changes
+
+- spec/frontend/quality-guidelines.md: 'A setting without a real consumer' forbidden pattern with the settings R7 gated-field exception
+- research/parent-acceptance-2026-09-08.md: AC1-AC5 evidence; AC2 judged on final state (D5 and identity owner landed together in 6d720f2)
+- AGENTS.md: after a rebase that touched .trellis/workspace, rebuild journal-1.md as main's copy + own block, re-point hashes, check session order (union merge interleaved sessions 19/20 today)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `90ab551` | spec(frontend): a setting without a real consumer is removed |
+| `c4b1f60` | docs(09-01): parent acceptance evidence on main HEAD 1186ff2 |
+| `a2ef1ad` | docs(agents): rebuild the journal after a rebase; union merge interleaves sessions |
+
+### Testing
+
+- [OK] Check agent (a692c601) network suites 112/112, flutter analyze clean; git diff --check clean
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- User: parent 最终真机验收 (API 29 + modern, mainland networks with/without proxy, OAuth, full feature pass, kill/restart recovery, updater install x2 with secrets) plus each child's device list in research/parent-acceptance-2026-09-08.md
+- User decisions still open: settings R3 three vs two quality groups; Tencent translation provider
+- 09-02: child D stages 3-4, child C plan from the recount, then F and E
