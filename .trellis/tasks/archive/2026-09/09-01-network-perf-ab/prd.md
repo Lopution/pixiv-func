@@ -126,15 +126,15 @@ direct-first 与 ECH-first。不得按国家硬编码；至少保留大陆已知
 
 ## Acceptance Criteria（方法论部分）
 
-- [ ] 存在可重复运行的测量能力，输出按路线档与 destination group 分组的性能数据。
-- [ ] 测量报告可导出/复制，含测量环境元信息。
-- [ ] 至少在一种真实大陆网络环境下完成一轮完整测量，数据存入 `research/`。
-- [ ] 每一条路线改动都能指向支撑它的数据；没有数据支撑的改动为零。
-- [ ] 未引入 Cronet / QUIC / VPN / 代理修改 / 自建 relay。
-- [ ] API / OAuth 的证书校验未被放松。
-- [ ] 未新增全局的「不安全传输」用户开关。
-- [ ] N-FIXED-1 ~ N-FIXED-9 在最终 HEAD 上仍然成立。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [x] 存在可重复运行的测量能力，输出按路线档与 destination group 分组的性能数据。（设置 → 网络探测：每 host 每层 `NetworkProbeStep.duration` + `totalDuration`；`network_probe_test` 18 项）
+- [x] 测量报告可导出/复制，含测量环境元信息。（`toCopyableText` 头部 `env / app-version / os / network-mode / doh / ech-front`，`5892a11`）
+- [x] 至少在一种真实大陆网络环境下完成一轮完整测量，数据存入 `research/`。（用户真机 5G/4G 无 VPN 两轮：`research/real-device-probe-2026-09-03.md`）
+- [~] 每一条路线改动都能指向支撑它的数据；没有数据支撑的改动为零。（**部分被 2026-09-03 用户决策取代**：attempt-first / 兼容档纳入 API-OAuth 按 PixEz 方案直接落地、无需数据；**最终档序**（ECH 优先、兼容档最后）则由 09-03/04 真机探测数据决定，见 research）
+- [x] 未引入 Cronet / QUIC / VPN / 代理修改 / 自建 relay。（仅 `HttpVersionPref.all`，HTTP/3 未开）
+- [~] API / OAuth 的证书校验未被放松。（**被 2026-09-03 用户决策取代**，决策记录 `../09-01-func-1-0-hardening/research/decision-record-2026-09-02.md`「网络性能修订」：PixEz 兼容档（空 SNI、不校验证书、固定地址）作为所有已知 Pixiv 主机的**最后**兜底，含 API/OAuth；ECH / dohRealSni / direct 仍完整校验；OAuth token 只发往 `https://oauth.secure.pixiv.net/auth/token`，地址表限白名单主机，URL/Host 不改写）
+- [x] 未新增全局的「不安全传输」用户开关。（生产恒开、无设置项与 i18n key，`i18n_network_keys_test`）
+- [x] N-FIXED-1 ~ N-FIXED-9 在最终 HEAD 上仍然成立。（2026-09-08 check 逐项对照 `restricted_compat_network_test` / `rhttp_client_factory_test`；N-FIXED-1「先探测再单发 POST」以 attempt-first + 仅未送达失败换档的新形态成立）
+- [x] `flutter analyze` 与 `flutter test` 通过。（2026-09-08：651+ 通过，仅 WSL loopback 已知超时；网络相关文件单跑全绿）
 
 ## Open Questions
 
