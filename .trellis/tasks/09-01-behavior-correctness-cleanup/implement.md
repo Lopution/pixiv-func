@@ -2,13 +2,13 @@
 
 ## 开工条件
 
-- [ ] 已阅读 `../09-01-func-1-0-hardening/research/audit-source.md`，并对当前 HEAD 的
-      C2/C3/C4/C14/C21/C22 完成最小复核。
-- [ ] `settings-productization` 已交付 D5 destination value object 与迁移测试。
-- [ ] settings、reverse-image、comment-translation 等 UI child 的改动已完成或明确不再
-      触及本 child 将修改的文件；C1 不得提前开始。
-- [ ] `design.md` 中的 owner、replay、merge 和 lazy-state 合同获得 review；未确认的产品
-      行为不以实现方推测替代。
+- [x] 已阅读 `../09-01-func-1-0-hardening/research/audit-source.md`，并对当前 HEAD 的
+      C2/C3/C4/C14/C21/C22 完成最小复核。（`research/current-head-recheck.md`；2026-09-08 check 逐项复核）
+- [x] `settings-productization` 已交付 D5 destination value object 与迁移测试。（已归档，PR #3）
+- [x] settings、reverse-image、comment-translation 等 UI child 的改动已完成或明确不再
+      触及本 child 将修改的文件；C1 不得提前开始。（三者均已归档：PR #3 / #8 / #5）
+- [x] `design.md` 中的 owner、replay、merge 和 lazy-state 合同获得 review；未确认的产品
+      行为不以实现方推测替代。（合同已按落地实现写入 `spec/frontend/state-management.md`）
 
 ## 阶段 0：当前 HEAD 证据与测试基线
 
@@ -60,10 +60,10 @@
 
 ## 最终验证
 
-- [ ] `flutter analyze`
-- [ ] `flutter test`
-- [ ] `git diff --check`
-- [ ] 检查 `flutter test` 输出中不存在因删除 guard 而被静默跳过的测试。
+- [x] `flutter analyze`（2026-09-08：No issues）
+- [x] `flutter test`（2026-09-08 check：660/660；补守护测试后全量再跑，见 journal）
+- [x] `git diff --check`
+- [x] 检查 `flutter test` 输出中不存在因删除 guard 而被静默跳过的测试。（`rg 'skip:' test` 仅 `skip: false` 一处；输出无 skipped）
 - [ ] 用户真机：API 29、高版本、无/有 widget、kill/restart recovery、收藏/关注/评论 token
       refresh、用户深链和多 tab 滚动状态。
 
