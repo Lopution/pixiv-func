@@ -549,6 +549,22 @@ Archive gate for the network route work already on main: analyze clean, network 
 
 - NetworkProbeEnvironment header (env/app-version/os/network-mode/doh/ech-front) in toCopyableText, assembled by the probe page
 - state-management.md route contract rewritten to the final tier order with file references; design/implement notes mark the 09-03 PixEz-first draft as revised by the device probe
+## Session 20: 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive
+<!-- trellis-session: v=2 fp=b8265748acec6cbe -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive
+**Branch**: `task/09-01-reverse-image-saucenao`
+
+### Summary
+
+Re-verified SauceNAO's anonymous HTML route with one synthetic probe (JSON API refuses anonymous callers), which exposed that every real result page was classified as a Cloudflare challenge; fixed that, routed SauceNAO's Pixiv link forms (member_illust.php / member.php / /en/ prefix) into the app, surfaced rate-limit wait time, daily limit and challenge as distinct outcomes, made no-match an empty success, kept every test offline and sanitized the fixture. Archived; device checklist stays with the user.
+
+### Main Changes
+
+- _classifyHtml matches only challenge markers; sanitized real result page fixture; challenge/dailyLimit codes; retryAfter rendered; no-match -> empty success
+- IntentRouter accepts member_illust.php?mode=&illust_id=, member.php?id= and two-letter language prefixes; deny table pinned
+- Page tests inject offline providers (previous test could POST to saucenao.com); success-path exactly-once cleanup test
 
 ### Git Commits
 
@@ -562,6 +578,19 @@ Archive gate for the network route work already on main: analyze clean, network 
 ### Testing
 
 - [OK] flutter analyze clean; network_probe 18 + restricted_compat_network 27 + network_fast_route 4 + i18n_network_keys 4 passed
+| `465c640` | fix(reverse-image): stop treating real SauceNAO result pages as challenges |
+| `eb19b83` | research(reverse-image): re-verify SauceNAO anonymous policy and tick stage 0 |
+| `48b1f3b` | fix(reverse-image): route SauceNAO's Pixiv links into the app |
+| `4bffc60` | fix(reverse-image): show wait time, daily limit and challenge as distinct outcomes |
+| `664ed1e` | test(reverse-image): keep page tests offline and pin success-path cleanup |
+| `d57bb8c` | test(reverse-image): finish sanitizing the SauceNAO result fixture |
+| `5cee5ee` | docs(reverse-image): tick verified acceptance items; device checks stay with the user |
+| `4c4ac70` | test(reverse-image): cover daily-limit copy and more deny shapes; sync design notes |
+| `b46d64e` | docs(reverse-image): record final full-suite result |
+
+### Testing
+
+- [OK] flutter analyze clean; full flutter test 672 passed; targeted reverse-image/intent tests 49
 
 ### Status
 
@@ -570,3 +599,5 @@ Archive gate for the network route work already on main: analyze clean, network 
 ### Next Steps
 
 - Parent 09-01 acceptance check once behavior-correctness-cleanup and reverse-image-saucenao are archived
+- User device: Pixiv screenshot -> in-app detail, non-Pixiv -> browser, rate-limit wait copy, challenge copy, privacy notice
+- Parent 09-01 acceptance once behavior-correctness-cleanup is archived
