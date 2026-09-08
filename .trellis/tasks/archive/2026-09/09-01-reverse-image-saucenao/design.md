@@ -30,10 +30,11 @@
 | 情况 | outcome | 约束 |
 |---|---|---|
 | 2xx HTML 结果页 | webview ready | 页面由 SauceNAO 渲染，不在首版自建 HTML parser |
-| HTML challenge/错误页 | `malformedResponse` / `providerUnavailable` | 不得当作无匹配 |
-| 429/明确限流字段 | `rateLimited` | 解析非负 retry-after，无法解析则仍可见且可重试 |
+| HTML challenge/错误页 | `challenge`（2026-09-08 修订：原 `malformedResponse` / `providerUnavailable`） | 不得当作无匹配；文案不得声称「图片未上传」 |
+| HTML 无匹配页 | 空 `ReverseImageSearchSuccess`（2026-09-08 修订） | 显示「无结果」而非失败 |
+| 429/明确限流字段 | `rateLimited`（`retryAfter` 透传到 UI；`Search Rate Too High` 页 = 30 s）；`Daily Search Limit Exceeded` → `dailyLimit`（可重试、无倒计时） | 解析非负 retry-after，无法解析则仍可见且可重试 |
 | timeout/socket/取消 | `network` / `cancelled` | 取消沿用现有 token，网络错误标记 retryable |
-| provider 明确拒绝匿名 | `providerUnavailable` | 记录事实，不偷偷切 provider |
+| provider 明确拒绝匿名（403） | `challenge`（2026-09-08 修订；未配置 provider 仍为 `providerUnavailable`） | 记录事实，不偷偷切 provider |
 | mapper `unsafeResultUrl` | 原 code | 不放宽外链安全 |
 
 ## 3. 数据流与 UI
