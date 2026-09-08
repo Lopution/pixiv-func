@@ -11,48 +11,48 @@
 
 ## C0 规则先行
 
-- [ ] C0 写 `test/architecture/layering_test.dart`：import 图断言（core 不 import features/app；
+- [x] C0 写 `test/architecture/layering_test.dart`：import 图断言（core 不 import features/app；
       features 之间只允许 `lib/app/navigation/routes.dart`；repository/controller/entity 只在 `core/`；
-      `features/` 无 `_*Tail/_*Error/_*Empty/_*Card/_*Status`）。白名单初值 = recount §B 的 1+44+1+16 条
+      `features/` 无 `_*Tail/_*Error/_*Empty/_*Card/_*Status`）。白名单初值 = recount §B 的 1+44+1 条
       （抄 HEAD 行号）。首次运行以白名单通过。规则文本写入 `.trellis/spec/frontend/directory-structure.md`
       （先修模板，状态列改真实状态；与 E 协作，C 负责规则文本）。
-      提交 `test(arch): layering rules with current violations allow-listed`。
+      提交 `test(arch): layering rules with current violations allow-listed`（f05f485）。
 
 ## C1 删除零引用
 
-- [ ] C1a 删 `lib/core/network/compat_network.dart`、`lib/core/platform/android_platform.dart`（2 个 0 导入 barrel）。
-- [ ] C1b `tag_search_repository.dart`：视 `test/illust_detail_controller_test.dart:16` 处理（若测试用
-      其中类型则迁到 core/search/，否则删文件改测试）。
-- [ ] C1c 12 个 once 公共声明删或私有化（recount §F2 表：`DnsRecordType`、`PageFetcher`、
-      `ProfileFieldContract`、`SearchResultTypeWire`、`localBlockR18Provider`、`localBlockAIProvider`、
-      `UserRestrictWire`、`StableAnchor`、`showProfileEditPage`、`ProfileTab`、`MeProfileTab`、`showMePage`）。
-- [ ] C1d 删 8 个未用 `AppIcons` 常量（`addFollow/filter/me/toggle/pawoo/twitter/web/blocked`）；
-      放宽 `test/icon_font_test.dart` 到实际 glyph 集。
-- [ ] C1e `analysis_options.yaml` 开 `unreachable_from_main` → 0 问题。
-      提交 `refactor: remove unreferenced files and declarations`（可拆 2–3 个提交）。
+- [x] C1a 删 `lib/core/network/compat_network.dart`、`lib/core/platform/android_platform.dart`（2 个 0 导入 barrel）。
+- [x] C1b `tag_search_repository.dart`：视 `test/illust_detail_controller_test.dart:16` 处理（测试改用 `searchFeedProvider` + `IllustSearchQuery`，文件删除）。
+- [x] C1c 12 个 once 公共声明删或私有化：实际删除 9 个（`DnsRecordType`、`PageFetcher`、`StableAnchor`、`ProfileTab`、`MeProfileTab`、`localBlockR18Provider`、`localBlockAIProvider`、`showProfileEditPage`、`showMePage`）；`ProfileFieldContract`/`SearchResultTypeWire`/`UserRestrictWire` 成员仍在使用，保留。
+- [x] C1d 删 8 个未用 `AppIcons` 常量（`addFollow/filter/me/toggle/pawoo/twitter/web/blocked`）；放宽 `test/icon_font_test.dart` 到实际 glyph 集。
+- [x] C1e `analysis_options.yaml` 开 `unreachable_from_main` → 0 问题。
+      提交 `refactor: remove unreferenced files and declarations`（两个提交 5d23552、7045cdb）。
 
 ## C2 路由与导航目录合并
 
-- [ ] C2a `ReplicaPageRoute` 唯一：删 `replicaRoute()`（3 处调用改 `ReplicaPageRoute`）；
-      `lib/core/navigation/route_observer.dart` 迁 `lib/app/navigation/`；
-      `lib/core/navigation/` 移除后 `home_shell_metrics.dart` 移到 `lib/app/navigation/`。
-- [ ] C2b `lib/app/navigation/routes.dart` 门面：以 id/参数为形参（`openIllust(context, id)` 等），
-      调用点 28 处 `Navigator.of(context).push(ReplicaPageRoute(...))` 走门面；
-      `home_page.dart`/`illust_detail_page.dart` 的 `HomeShellMetrics` 静态量改 provider。
-      提交 `refactor(nav): single route builder and navigation facade`。
+- [x] C2a `ReplicaPageRoute` 唯一：删 `replicaRoute()`（3 处调用改 `ReplicaPageRoute`）；
+      `lib/core/navigation/route_observer.dart` 保留在 core（被 `history_visibility` 使用）；
+      `home_shell_metrics.dart` 移到 `lib/app/navigation/`。
+- [x] C2b `lib/app/navigation/routes.dart` 门面：以 id/参数为形参（`openIllust(context, id)` 等），
+      28 处 `Navigator.of(context).push(ReplicaPageRoute(...))` 走门面；`search_router.dart` 并入
+      `openSearchResults`（数字 ID 分派）；`homeShellTabs` 进门面；`HomeShellMetrics` 静态量改
+      Riverpod Notifier（Hero flight 读，无 ProviderScope 时回退常量）；`NovelCard` 顺带迁
+      `lib/app/widgets/`（3 处调用点）。提交 `refactor(nav): routes.dart facade and shell metrics provider`（813e9f4）。
 
 ## C3 组件层
 
-- [ ] C3a `lib/app/widgets/feed/illust_card.dart`：`IllustCard` 从 `recommended_illust_page.dart:236` 移出；
-      6 个 import 点更新。提交 `refactor(ui): IllustCard under app/widgets/feed`。
-- [ ] C3b `lib/app/widgets/feed/feed_grid.dart`：`IllustFeedGrid` + `illustColumnsFor(crossAxisExtent)`；
-      8 处 `SliverMasonryGrid.count` 统一（recount §D 8 处清单）。提交 `refactor(ui): unify feed grids`。
-- [ ] C3c `lib/app/widgets/feed/feed_states.dart`：`FeedTail/FeedEmpty/FeedError` 消费 `PagedFeedState`；
-      32 个私有 widget 替换（差异矩阵见 design.md §4.1；`_StartupError`/`_ErrorView`/`_InitialErrorView`
-      保留或参数化）。提交 `refactor(ui): shared feed state widgets`。
-- [ ] C3d `lib/app/motion/`：`motion_tokens.dart`（16 处 Duration/3 处 Curves 收拢）、
-      `replica_page_route.dart` 迁入、`HeroRectClip`（`_GlobalRectClip` 公开化，配合 C8d 一起做也行）。
-      提交 `refactor(ui): motion tokens and hero clip under app/motion`。
+- [x] C3a `IllustCard` 移 `lib/app/widgets/feed/illust_card.dart`；`BookmarkSwitchButton` 一并移 `lib/app/widgets/`；
+      Hero 转场几何（`illustHeroTag`/`illustHeroFlightShuttleBuilder`/clip）移 `lib/app/motion/hero_transition.dart`。
+      提交 `refactor(ui): IllustCard, BookmarkSwitchButton, feed grid and hero motion under app`（676cf93）。
+- [x] C3b `lib/app/widgets/feed/feed_grid.dart`：`IllustFeedGrid` + `illustColumnsFor`（手机恒 2 列）；8 处统一。
+      提交同 676cf93。
+- [x] C3c `feed_states.dart`（`FeedTail/FeedEmpty/FeedError`）替换 24 个私有 feed 态 widget
+      （recommended×2 页、new、ranking、search、search_result、user、novel、comments、history）。
+      保留特殊：`_StartupError`、`_ErrorView`、`_InitialErrorView`、`_ErrorOverlay`、`_InitializationFailure`、
+      `_PagePlaceholder`、`_StatusBody`、`_ProfileStatusPage`（整页状态）。视觉保持原样（home_bar golden 逐字节一致）。
+      提交 3fb0855、8f87d8b。
+- [x] C3d `motion_tokens.dart`（页面 300ms/easeInOutCubic、fast 180ms/easeOut、medium 200ms、imageFade 350ms；
+      数据类 Duration 不收拢）；`replica_page_route.dart` 迁 `app/motion/`；`_GlobalRectClip` 公开化留 C8b。
+      提交 `refactor(ui): MotionTokens single source...`（74bae8c）。
 
 ## C3b PixivImage 变体与 decode 策略
 
