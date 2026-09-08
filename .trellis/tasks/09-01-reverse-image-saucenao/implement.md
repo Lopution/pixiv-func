@@ -45,7 +45,7 @@
 ## 最终验证
 
 - [x] `flutter analyze`（No issues）
-- [x] `flutter test`（全量 570+；2026-09-08 check：654+381 通过，仅 WSL loopback 已知超时项单跑通过）
+- [x] `flutter test`（全量 570+；2026-09-08 主会话最终全量 672 通过，无超时）
 - [x] `git diff --check`（提交前统一执行；fixture 尾随空白已清）
 - [ ] 真机：Pixiv 截图命中并进详情、非 Pixiv 结果打开浏览器、限流等待、挑战页失败、隐私提示。
 
