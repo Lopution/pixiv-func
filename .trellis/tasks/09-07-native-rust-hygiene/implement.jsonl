@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/09-07-native-rust-hygiene/implement.md", "reason": "D1-D6 checklist with file:line targets, commit messages, D5b decision rule, rollback points"}
+{"file": ".trellis/tasks/09-07-native-rust-hygiene/research/native-audit-recount.md", "reason": "HEAD recount: 10 channels table, 15 argument!! sites, 3 blanket codes, 12 dead SDK_INT, 4 main-thread IO sites, updater duplicate ranges, FRB triple, missing UPSTREAM items"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/design.md", "reason": "§5.1 MethodChannel conventions (payload, invalid_argument, <channel>_<reason>, TaskQueue, SDK_INT), §5.2 rhttp fork seven-step sync, §5.3 FRB triple"}
+{"file": ".trellis/spec/backend/release-artifacts.md", "reason": "Signing/verifier contract and rhttp Cargo feature rules that D must not break (SHA256withECDSA, five codes, query kept, opt-level s not adopted)"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "Secrets, spec-truth and testing rules that apply to Kotlin/Dart changes"}
+{"file": "plugins/rhttp/UPSTREAM.md", "reason": "Current fork record: what child B already documented and the 4-step sync guide to extend to seven"}

@@ -1,0 +1,5 @@
+{"file": ".trellis/tasks/09-07-native-rust-hygiene/prd.md", "reason": "R1-R7 and acceptance criteria (argument!! = 0, <channel>_<reason>, four IO sites off main, SDK_INT only TIRAMISU x3, updater dedupe, UPSTREAM/rust-plugin/android-channels, builds + Kotlin tests)"}
+{"file": ".trellis/tasks/09-07-native-rust-hygiene/implement.md", "reason": "Per-step exit criteria and final verification commands"}
+{"file": ".trellis/tasks/09-07-native-rust-hygiene/research/native-audit-recount.md", "reason": "Baseline counts to compare against after D2-D5"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/design.md", "reason": "§5 target shape the check verifies"}
+{"file": ".trellis/spec/backend/release-artifacts.md", "reason": "Contracts that must survive: verifier codes, signing, per-ABI, query feature"}
