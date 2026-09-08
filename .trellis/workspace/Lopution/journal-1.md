@@ -532,3 +532,41 @@ Verified the release signing / manifest signing / redirect allowlist implementat
 
 - User: configure keystore + manifest key secrets, dispatch release.yml, verify official fingerprint, run API 29 and modern-device self-update (positive + tampered)
 - Next 09-01 children: reverse-image-saucenao and network-perf-ab checks, behavior-correctness-cleanup, then parent AC
+
+
+## Session 19: 09-01 network-perf-ab: archive gate, doc sync, probe environment header
+<!-- trellis-session: v=2 fp=851a3694497366e6 -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 network-perf-ab: archive gate, doc sync, probe environment header
+**Branch**: `task/09-01-network-perf-ab`
+
+### Summary
+
+Archive gate for the network route work already on main: analyze clean, network suites green, N-FIXED-1..9 re-verified. Synced comments, task docs and the frontend state-management spec to the shipped ladder (ECH first, insecureNoSni last, forced on, undelivered-only POST advance) and added an environment header to the copyable probe report. Two PRD criteria are marked superseded by the user's 2026-09-03 decision rather than ticked.
+
+### Main Changes
+
+- NetworkProbeEnvironment header (env/app-version/os/network-mode/doh/ech-front) in toCopyableText, assembled by the probe page
+- state-management.md route contract rewritten to the final tier order with file references; design/implement notes mark the 09-03 PixEz-first draft as revised by the device probe
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ea6e884` | chore(task): start network-perf-ab on its branch |
+| `5892a11` | feat(network): prepend measurement environment to copyable probe reports |
+| `ad6eb7f` | docs(network): describe the shipped route ladder, not the 09-03 draft |
+| `51098cf` | docs(network-perf): record acceptance verdicts, marking decision-superseded items |
+
+### Testing
+
+- [OK] flutter analyze clean; network_probe 18 + restricted_compat_network 27 + network_fast_route 4 + i18n_network_keys 4 passed
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Parent 09-01 acceptance check once behavior-correctness-cleanup and reverse-image-saucenao are archived
