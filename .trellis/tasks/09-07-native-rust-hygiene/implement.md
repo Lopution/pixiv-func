@@ -14,7 +14,7 @@
 
 ## 阶段 D1：契约文档先写现状
 
-- [ ] **D1** 新建 `.trellis/spec/backend/android-channels.md`：10 个 channel 的方法 / 参数（名、类型、必填）/ 返回 /
+- [x] **D1** 新建 `.trellis/spec/backend/android-channels.md`：10 个 channel 的方法 / 参数（名、类型、必填）/ 返回 /
       当前错误码 / 线程（现状全部 main）/ Dart 调用点；`widget_snapshot/active.json` 文件契约
       （`schemaVersion=1`、`accountKey`、`accountRevision`、`generatedAtMs`、`items[]`、64 KiB / 1 MiB / 24 h / 8 项 / 512 字上限、
       `.write.lock`）；`pixivfunc/widget_background` 方向反转说明；updater `{valid:false, errorCode}` / `{status:failed, errorCode}`
@@ -23,14 +23,14 @@
 
 ## 阶段 D2：参数与错误
 
-- [ ] **D2a** `MediaStoreChannel.kt`（8 处）与 `SafTreeChannel.kt`（7 处）的 `call.argument<T>()!!` 改为显式
+- [x] **D2a** `MediaStoreChannel.kt`（8 处）与 `SafTreeChannel.kt`（7 处）的 `call.argument<T>()!!` 改为显式
       `result.error("<channel>_invalid_argument", "<name> missing", null)` 提前返回；`SafTreeChannel.kt:134` `data.data!!` 改为空判 +
       `saf_launch_failed`。`SafTreeChannel.create` 若继续忽略 Dart 传的 `ownerId`，在文档标明。
-- [ ] **D2b** 三个笼统码细分：`mediastore_error` → `mediastore_<reason>`（如 `mediastore_insert_failed` / `mediastore_write_failed` /
+- [x] **D2b** 三个笼统码细分：`mediastore_error` → `mediastore_<reason>`（如 `mediastore_insert_failed` / `mediastore_write_failed` /
       `mediastore_finalize_failed` / `mediastore_not_found` / `mediastore_permission`）；`saf_error` → `saf_<reason>`；
       `webprofile_error` → `webprofile_<reason>`。全部码符合 `<channel>_<reason>` 小写下划线。Dart 侧若按码分类
       （`rg -n "mediastore_error|saf_error|webprofile_error" lib test`）同步改映射并保留旧码兼容分类或一次性替换（协议字段不变）。
-- [ ] **D2c** Kotlin JVM 单测：把 handler 逻辑抽成可无 Activity 调用的纯函数/对象（例如 `MediaStoreChannel.handle(call, result, deps)`
+- [x] **D2c** Kotlin JVM 单测：把 handler 逻辑抽成可无 Activity 调用的纯函数/对象（例如 `MediaStoreChannel.handle(call, result, deps)`
       或参数解析器 `ChannelArgs`），用 fake `MethodCall` / `MethodChannel.Result` 覆盖：缺参 → `*_invalid_argument`；非法值；平台异常 → 细分码。
       至少覆盖 mediastore / saf_tree / webprofile 三个 channel 的错误路径。`./gradlew :app:testGithubDebugUnitTest :app:testFdroidDebugUnitTest` 通过。
       提交 `android: uniform channel argument and error handling`。
