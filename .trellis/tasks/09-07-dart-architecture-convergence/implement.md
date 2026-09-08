@@ -60,20 +60,20 @@
       feed/avatar 传 `memCacheWidth`（布局宽 × dpr，上限 1.5× 逻辑像素），detail 按屏宽，viewer 不限；
       13 个调用点切换（recount §D 列表）；`PersonAvatar` 复用 avatar 变体。
       提交 `perf(image): size-aware decode policy for PixivImage variants`。
-- [ ] C3b-2 widget 测试：断言 feed/avatar 变体 `ImageProvider` 带 `memCacheWidth`。
+- [x] C3b-2 widget 测试：断言 feed/avatar 变体 `ImageProvider` 带 `memCacheWidth`。
 
 ## C3c 重建边界（静态规则）
 
-- [ ] C3c-1 共享组件只 `watch` 所需切片（`select`）；`IllustCard` 不 `watch` 整个 feed state；
+- [x] C3c-1 共享组件只 `watch` 所需切片（`select`）；`IllustCard` 不 `watch` 整个 feed state；
       代码走查；layering_test 增加 watch 模式检查（如可能）。
 
 ## C4 repository/controller 归位
 
-- [ ] C4a 5 个 repository 文件迁 `lib/core/<domain>/`（recommended/illust_detail/related_illust/ranking/
+- [x] C4a 5 个 repository 文件迁 `lib/core/<domain>/`（recommended/illust_detail/related_illust/ranking/
       tag_search）；5 个 `*_controller.dart` 迁 core 且与 repository 分文件（recount §B 清单：
       `RecommendedFeedController`、`IllustDetailController`、`IllustDownloadController`、
       `ProfileIllustFeedController`/`ProfileUserFeedController`、`UserDetailController`）。
-- [ ] C4b `startup_gate.dart` 上移 `lib/app/`；`widget_feed_loader.dart` 的 core→features 边自然消除。
+- [x] C4b `startup_gate.dart` 上移 `lib/app/`；`widget_feed_loader.dart` 的 core→features 边自然消除。
 - [ ] C4c 白名单清零（core→features 0、features a≠b 0、app↔onboarding 0，只留 routes.dart 环）。
       提交 `refactor(core): move repositories and controllers under core`。
 
