@@ -47,7 +47,7 @@
 
 ## 阶段 D4：死分支与残留
 
-- [ ] **D4** 删除 12 处死 `SDK_INT` 分支：`MediaStoreChannel.kt:71,154,169`（`< Q`）；`AccountTransferClipboardChannel.kt:134`、
+- [x] **D4** 删除 12 处死 `SDK_INT` 分支（`drawable-v21` 因 AAPT2 拒绝 `?android:colorBackground` 于 unqualified drawable/ 而保留，删的是 unused `drawable/` 副本）：`MediaStoreChannel.kt:71,154,169`（`< Q`）；`AccountTransferClipboardChannel.kt:134`、
       github updater `:103,200,209,217`、fdroid updater `:39,56,64`（`>= P`）；github `:151`（`>= O` 外层，内层
       `canRequestPackageInstalls()` 保留）。保留 3 处 `TIRAMISU`（`AndroidIntentChannel.kt:88`、clipboard `:55,79`）。
       删 `res/drawable-v21/launch_background.xml`；删 debug/profile manifest 冗余 `INTERNET`。`http://pixiv.net` filter 不动。
@@ -56,7 +56,7 @@
 
 ## 阶段 D5：updater 去重与分块核对
 
-- [ ] **D5** 新建 `src/main/kotlin/.../updater/UpdaterPlatformInfo.kt`，承载 `platformInfo` / `packageInfo` / `signerSha256`
+- [x] **D5** 新建 `src/main/kotlin/.../updater/UpdaterPlatformInfo.kt`（`packageInfoFromArchive` 留 github，fdroid 不编译 archive 解析），承载 `platformInfo` / `packageInfo` / `signerSha256`
       （三者两 flavor 逐字相同）；`packageInfoFromArchive` 仅 github 使用，随 github 文件或进 main 均可（记录选择）。
       两份 `DistributionUpdaterChannel.kt` 只保留差异逻辑；`updater_flavor_contract_test.dart` 若断言文件内容需同步
       （`SHA256withECDSA` 与五个错误码仍须在 github 文件可见）。Kotlin 测试通过。
