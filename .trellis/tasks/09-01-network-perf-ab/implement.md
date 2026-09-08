@@ -25,10 +25,14 @@
 ## 阶段 2/3：按 PixEz 方案直接落地（2026-09-03 用户决策，无需真机数据）
 
 - [x] P-NET-1：D4 natural（settings-productization 已交付）。
-- [x] P-NET-2：PixEz 兼容档为所有已知主机的第一候选，无需 cold 探测与 DNS；
-      失败地址冷却 30s 后进入下一档。
+- [x] P-NET-2：冷启动 ECH 优先（CF：`ech → dohRealSni → direct → insecureNoSni`；
+      图片：`ech → noSni → dohRealSni → direct → insecureNoSni`）；host/group memory
+      提升上次成功档；失败地址冷却 30s；`insecureNoSni` 为最后兜底。
 - [x] P-NET-3：业务请求即 attempt（attempt-first），取消独立 probe；GET/HEAD 超时也可换档，
-      POST/一次性 exchange 仅在未送达类失败时换档一次（DNS/connect/reset/TLS 握手）。
+      POST/一次性 exchange 仅在未送达类失败时走完剩余未送达档（DNS/connect/reset/TLS
+      握手），已送达结果永不重发。
+- 注：2026-09-03 草案（PixEz 兼容档为第一候选 / 换档一次）已由 09-03/04 真机探测修订，
+      见 `research/real-device-probe-2026-09-03.md`。
 - [x] P-NET-4：DoH 解析与 ECH config 查询已有 single-flight；图片请求共享 per-host
       route memory，无额外协调层（PixEz 同样无）。
 - [x] P-NET-5：PixEz compatible tier（空 SNI + 无证书校验 + 固定地址）生产恒开启，

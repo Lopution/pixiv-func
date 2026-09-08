@@ -12,6 +12,21 @@
 - 不引入 Cronet、QUIC/HTTP-3、VPNService、系统代理、Private DNS、hosts、root 或远端 relay。
 - API/OAuth/账号接口始终真实 TLS 身份验证；任何 relaxed/no-SNI 候选只能在公开图片 CDN
   内部评估，不能变成全局普通用户开关。
+  （已 superseded，见下方「修订（2026-09-03/04）」。）
+
+### 修订（2026-09-03/04）
+
+以上「API/OAuth 始终 strict、relaxed 仅图片」条文已 superseded。用户确认并经真机探测
+（`research/real-device-probe-2026-09-03.md`）后的生产策略：
+
+- 兼容档（`insecureNoSni`：空 SNI + 无证书校验 + 持久化/内置地址）允许用于全部已知
+  Pixiv 主机，但是**最后兜底**。
+- 冷启动按真机探测排序：CF 主机 `ech → dohRealSni → direct → insecureNoSni`；
+  图片主机 `ech → noSni → dohRealSni → direct → insecureNoSni`。host/group memory
+  提升上次成功档。
+- POST / 一次性请求仅在可证明未送达的失败（dns/connect/reset/tlsHandshake）时前进到
+  下一档，并走完剩余未送达档；已送达结果永不重发。
+- `insecureNoSniEnabled` 生产恒开启（`network_providers.dart:29`），无用户开关。
 
 ## 2. 测量合同
 
@@ -58,6 +73,14 @@ per-host single-flight，并证明取消、失败和不同 destination 不会互
 只在公开 `i.pximg.net` / `s.pximg.net` 比较 strict 与 cached/fixed IP、no-SNI 或 relaxed
 certificate path。报告兼容性、速度和证书风险；API/OAuth 仍 strict。没有显著且可重复收益
 时保留现状，不能因“更像 PixEz”强行加入。
+（已 superseded，见下方「修订（2026-09-03/04）」。）
+
+### 修订（2026-09-03/04）
+
+以上「API/OAuth 仍 strict、relaxed 仅图片 CDN」条文已 superseded。决定策略：兼容档允许
+用于全部已知 Pixiv 主机并作为最后兜底；冷启动 ECH 优先（见真机探测
+`research/real-device-probe-2026-09-03.md`）；POST 仅未送达才换档并走完剩余未送达档；
+`insecureNoSniEnabled` 生产恒开启、无用户开关。
 
 ## 4. 文件责任
 
