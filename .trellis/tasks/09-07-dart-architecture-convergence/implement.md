@@ -88,7 +88,7 @@
 - [x] C5c `lib/core/entity/json_read.dart` 替换 `_map`×5、`_firstString`×3、`_positiveInt`×5、
       `_optionalString`×4、`_requiredString`×2、`_nonNegativeInt`×2、`_nextUrl`×5；容器统一
       `Map<String, Object?>`。
-- [ ] C5d `showAppSnackBar` 替换 44 处；`log()` 替换 23 处 `debugPrint`。
+- [x] C5d `showAppSnackBar` 替换 44 处；`log()` 替换 23 处 `debugPrint`。
 - [ ] C5e HTTP 客户端 provider 化：`thirdPartyHttpClientProvider`（翻译/SauceNAO）、
       `resolverHttpClientProvider`（DoH/probe）；生产代码禁止内联 `http.Client()`/`HttpClient()`。
       理由写 `backend/directory-structure.md`。
