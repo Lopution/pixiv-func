@@ -145,12 +145,13 @@ bug 是什么？」如果答案只是「以后可能」，就不要写。
 
 ### Parent 级
 
-- [ ] 7 个 child 全部完成实现、通过各自 check 并归档。
-- [ ] R5 的跨 child 顺序约束在实际提交顺序中成立（settings 的 D5 先于 cleanup 的 C4/C5/C22）。
-- [ ] R6 禁止清单在最终代码中没有被违反。
-- [ ] 审计第五节的 9 项网络历史修复在最终 HEAD 上仍然成立，没有被任何 child 回退。
-- [ ] `.trellis/spec/` 中沉淀了本轮产生的新约定（至少覆盖：设置项必须有真实消费者、
+- [x] 7 个 child 全部完成实现、通过各自 check 并归档。（`[7/7 done]`；PR #3/#5/#6/#7/#8/#9，ux-correctness 在分支工作流前直接进 main；证据 `research/parent-acceptance-2026-09-08.md` AC1）
+- [x] R5 的跨 child 顺序约束在实际提交顺序中成立（settings 的 D5 先于 cleanup 的 C4/C5/C22）。（以最终状态判定：D5 `DownloadDestination` 与 identity owner 同在 `6d720f2` 落地，其后无人再改这三份文件；HEAD owner 消费 `DownloadDestination.identity`。字面上的「两个先后提交」不存在，见 AC2）
+- [x] R6 禁止清单在最终代码中没有被违反。（点名类型、Cronet/QUIC/VPN、注册表/插件发现、JS 命名、自制文件浏览器 `rg` 均 0；AC3）
+- [x] 审计第五节的 9 项网络历史修复在最终 HEAD 上仍然成立，没有被任何 child 回退。（九项均定位到 HEAD `1186ff2`；网络套件 112/112；N-FIXED-1 为 2026-09-03 决定的 attempt-first 形态；AC4）
+- [x] `.trellis/spec/` 中沉淀了本轮产生的新约定（至少覆盖：设置项必须有真实消费者、
       guard 删除时同步删除固化错误行为的测试）。
+      （设置消费者规则：`spec/frontend/quality-guidelines.md` Forbidden Patterns「A setting without a real consumer」，本 PR 补入；删 guard 测：两份 quality-guidelines；另有 secrets、release-artifacts、merge source、路由阶梯；AC5）
 
 ### 最终真机验收（由用户亲自长期使用执行，不由 agent 代替）
 
