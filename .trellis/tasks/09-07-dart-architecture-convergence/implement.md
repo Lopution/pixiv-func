@@ -83,9 +83,9 @@
       `network_probe_page`、`illust_detail_repository.dart:18` 自建 host 从 `PixivClientIdentity` 派生；
       新增 `PixivHeaders.image()` 供 4 个调用点（download_manager/widget_feed_loader/ugoira_repository/
       pixiv_image）。提交 `refactor(net): derive hosts from PixivClientIdentity`。
-- [ ] C5b `sharedPreferencesProvider` + `PreferenceKeys`（键值不变）替换 7 处直接构造；
+- [x] C5b `sharedPreferencesProvider` + `PreferenceKeys`（键值不变）替换 7 处直接构造；
       测试 19 处 `InMemorySharedPreferencesAsync` 样板收一个 helper。
-- [ ] C5c `lib/core/entity/json_read.dart` 替换 `_map`×5、`_firstString`×3、`_positiveInt`×5、
+- [x] C5c `lib/core/entity/json_read.dart` 替换 `_map`×5、`_firstString`×3、`_positiveInt`×5、
       `_optionalString`×4、`_requiredString`×2、`_nonNegativeInt`×2、`_nextUrl`×5；容器统一
       `Map<String, Object?>`。
 - [ ] C5d `showAppSnackBar` 替换 44 处；`log()` 替换 23 处 `debugPrint`。
