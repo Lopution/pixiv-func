@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 21
+- **Total Sessions**: 22
 - **Last Active**: 2026-09-08
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~632 | Active |
+| `journal-1.md` | ~698 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 22 | 2026-09-08 | 09-01 parent func-1-0-hardening: acceptance on main, settings-consumer spec, archive | `90ab551`, `c4b1f60`, `a2ef1ad` | `task/09-01-func-1-0-hardening` |
 | 21 | 2026-09-08 | 09-01 behavior-correctness-cleanup: guard tests, spec truth, archive | `4d4424f`, `511ad3c`, `82c8783`, `6aeddbe`, `01b28c4` | `task/09-01-behavior-correctness-cleanup` |
 | 20 | 2026-09-08 | 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive | `204f086`, `d4bcd3d`, `88e0eb7`, `59acfb4`, `5ea1e51`, `f7bd03a`, `4e5b6e4`, `7a2b716`, `a61981f` | `task/09-01-reverse-image-saucenao` |
 | 19 | 2026-09-08 | 09-01 network-perf-ab: archive gate, doc sync, probe environment header | `ea6e884`, `5892a11`, `ad6eb7f`, `51098cf` | `task/09-01-network-perf-ab` |
