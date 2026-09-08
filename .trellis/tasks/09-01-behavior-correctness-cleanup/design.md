@@ -50,7 +50,8 @@ comment 的 repository 只通过显式的单次 replay 入口参与，不把通�
 ### 2.5 C14：legacy network ladder
 
 先 repo-wide 查找 `_runLegacyLadder` 和所有兼容入口。调用方完成迁移后删除第二套不同语义的
-production/compat 路径；保留 preflight ladder、route memory 及 N-FIXED-1~9 的现有行为。若
+production/compat 路径。`runLadder` 是 attempt-first，没有 `probe` 参数；保留
+preflight ladder、route memory 及 N-FIXED-1~9 的现有行为。若
 仍有真实调用方，先写出迁移原因，不直接删除导致静默失败。
 
 ### 2.6 C21：history remote outbox
