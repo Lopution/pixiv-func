@@ -549,6 +549,28 @@ Archive gate for the network route work already on main: analyze clean, network 
 
 - NetworkProbeEnvironment header (env/app-version/os/network-mode/doh/ech-front) in toCopyableText, assembled by the probe page
 - state-management.md route contract rewritten to the final tier order with file references; design/implement notes mark the 09-03 PixEz-first draft as revised by the device probe
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ea6e884` | chore(task): start network-perf-ab on its branch |
+| `5892a11` | feat(network): prepend measurement environment to copyable probe reports |
+| `ad6eb7f` | docs(network): describe the shipped route ladder, not the 09-03 draft |
+| `51098cf` | docs(network-perf): record acceptance verdicts, marking decision-superseded items |
+
+### Testing
+
+- [OK] flutter analyze clean; network_probe 18 + restricted_compat_network 27 + network_fast_route 4 + i18n_network_keys 4 passed
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Parent 09-01 acceptance check once behavior-correctness-cleanup and reverse-image-saucenao are archived
+
 ## Session 20: 09-01 reverse-image-saucenao: anonymous policy re-verified, result-page and link fixes, archive
 <!-- trellis-session: v=2 fp=b8265748acec6cbe -->
 
@@ -570,23 +592,15 @@ Re-verified SauceNAO's anonymous HTML route with one synthetic probe (JSON API r
 
 | Hash | Message |
 |------|---------|
-| `ea6e884` | chore(task): start network-perf-ab on its branch |
-| `5892a11` | feat(network): prepend measurement environment to copyable probe reports |
-| `ad6eb7f` | docs(network): describe the shipped route ladder, not the 09-03 draft |
-| `51098cf` | docs(network-perf): record acceptance verdicts, marking decision-superseded items |
-
-### Testing
-
-- [OK] flutter analyze clean; network_probe 18 + restricted_compat_network 27 + network_fast_route 4 + i18n_network_keys 4 passed
-| `465c640` | fix(reverse-image): stop treating real SauceNAO result pages as challenges |
-| `eb19b83` | research(reverse-image): re-verify SauceNAO anonymous policy and tick stage 0 |
-| `48b1f3b` | fix(reverse-image): route SauceNAO's Pixiv links into the app |
-| `4bffc60` | fix(reverse-image): show wait time, daily limit and challenge as distinct outcomes |
-| `664ed1e` | test(reverse-image): keep page tests offline and pin success-path cleanup |
-| `d57bb8c` | test(reverse-image): finish sanitizing the SauceNAO result fixture |
-| `5cee5ee` | docs(reverse-image): tick verified acceptance items; device checks stay with the user |
-| `4c4ac70` | test(reverse-image): cover daily-limit copy and more deny shapes; sync design notes |
-| `b46d64e` | docs(reverse-image): record final full-suite result |
+| `204f086` | fix(reverse-image): stop treating real SauceNAO result pages as challenges |
+| `d4bcd3d` | research(reverse-image): re-verify SauceNAO anonymous policy and tick stage 0 |
+| `88e0eb7` | fix(reverse-image): route SauceNAO's Pixiv links into the app |
+| `59acfb4` | fix(reverse-image): show wait time, daily limit and challenge as distinct outcomes |
+| `5ea1e51` | test(reverse-image): keep page tests offline and pin success-path cleanup |
+| `f7bd03a` | test(reverse-image): finish sanitizing the SauceNAO result fixture |
+| `4e5b6e4` | docs(reverse-image): tick verified acceptance items; device checks stay with the user |
+| `7a2b716` | test(reverse-image): cover daily-limit copy and more deny shapes; sync design notes |
+| `a61981f` | docs(reverse-image): record final full-suite result |
 
 ### Testing
 
@@ -598,6 +612,47 @@ Re-verified SauceNAO's anonymous HTML route with one synthetic probe (JSON API r
 
 ### Next Steps
 
-- Parent 09-01 acceptance check once behavior-correctness-cleanup and reverse-image-saucenao are archived
 - User device: Pixiv screenshot -> in-app detail, non-Pixiv -> browser, rate-limit wait copy, challenge copy, privacy notice
 - Parent 09-01 acceptance once behavior-correctness-cleanup is archived
+
+## Session 21: 09-01 behavior-correctness-cleanup: guard tests, spec truth, archive
+<!-- trellis-session: v=2 fp=4c3004d94feb63e7 -->
+
+**Date**: 2026-09-08
+**Task**: 09-01 behavior-correctness-cleanup: guard tests, spec truth, archive
+**Branch**: `task/09-01-behavior-correctness-cleanup`
+
+### Summary
+
+Closed the behaviour-correctness child on its own branch: 14 guard tests for the C2/C3/C4/C6/C7/C8/C21 fixes that had shipped without tests, state-management.md rewritten to the code on main, the guard-deletion rule added to both quality-guidelines, implement/PRD ticked; device matrix stays with the user.
+
+### Main Changes
+
+- New tests: opt-in auth replay is one refresh + one replay (second 401 surfaces); detail merge overwrites empty caption/tags, visible=false and smaller pageCount while feed merge never regresses them; closed widget gate starts nothing and a false->true recheck starts it; cold start builds only the current tab and visited tabs keep State; UserRoute pushes the user page, UnknownRoute only snackbars; removeAccount clears the remote outbox but not local history; legacy Pictures/PixivFunc destination migrates to builtin
+- spec/frontend/state-management.md: EntityMergeSource, single opt-in replay, accountId + DownloadDestination.identity owner, fetchPageForContext, widget gate, lazy tabs, outbox clearing, exact-owner recovery
+- Guard-deletion rule (delete the tests that froze the wrong behaviour in the same commit, no skip:) in frontend + backend quality-guidelines; widget_feed_loader comments name why credentialRevision stays
+- Kept: feed merge ANDs visible (false sticks once seen) - deliberate, documented; not a C3 violation
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4d4424f` | chore(task): start behavior-correctness-cleanup on its branch |
+| `511ad3c` | test(cleanup): guard the C2/C3/C4/C6/C7/C8/C21 behaviours |
+| `82c8783` | spec(frontend): describe merge sources, replay opt-in, owner identity and lazy tabs as shipped |
+| `6aeddbe` | docs(cleanup): attempt-first wording and current counts |
+| `01b28c4` | docs(cleanup): tick verified items; device matrix stays with the user |
+
+### Testing
+
+- [OK] flutter analyze clean; flutter test 674 passed (660 before + 14 new); git diff --check clean
+- [OK] Check agent (f4d319a3) found no blockers on HEAD; rg skip: in test only skip: false
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- User device: API 29 + modern, with/without widget, kill/restart recovery, bookmark/follow/comment token refresh, user deep link, multi-tab scroll
+- 09-01 parent func-1-0-hardening: AC check and archive via PR once network-perf-ab (PR #7) and saucenao (PR #8) are merged

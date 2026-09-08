@@ -166,23 +166,23 @@ Future<({List<int> ids, String? nextCursor})> fetchPage(String? cursor) {
 
 ## Acceptance Criteria（已核实部分）
 
-- [ ] `credentialRevision` 的引用面显著收缩；每一处保留的引用都能说明它为何关心凭据变更。
-- [ ] 未新增任何 parent R6 禁止的全局版本 / epoch / 权威图基础设施。
-- [ ] download recovery 的 owner 定义消费的是 settings D5 定稿后的 destination 模型。
-- [ ] WidgetCoordinator 在有实例与无实例两种情况下行为都正确。
-- [ ] 冷启动不再同时构建全部 tab 的 feed；切 tab 不丢滚动位置。
-- [ ] 点击 pixiv 用户链接（四种 URL 形态）都能进入该用户页。
-- [ ] 未知深链仍保持「留在当前页」，不导航到未校验的目标。
-- [ ] `fetchPage()` 不再抛 `UnimplementedError`。
-- [ ] C2 的认证拒绝只重放原 mutation 一次，结果未知的 mutation 不自动重放。
-- [ ] C3 的 sparse/feed 与 detail/authoritative merge 语义分离，真实空值/false/减少值可覆盖。
-- [ ] C4 的 recovery owner 不依赖进程内 `credentialRevision`，并消费 D5 destination 模型。
-- [ ] C14 的调用方迁移完成后 legacy ladder 被删除，N-FIXED-1~9 没有回退。
-- [ ] C21 删除账号时清理该账号未发送 remote history outbox，但保留本地 history。
-- [ ] C22 只清理可证明归属的 pending output，且用户对恢复结果有明确出口。
-- [ ] 删除 guard 时，同步删除固化该错误行为的测试
+- [x] `credentialRevision` 的引用面显著收缩；每一处保留的引用都能说明它为何关心凭据变更。（lib 内 16 处活引用 = account_store 12 + widget 4，widget 处均有注释说明「账号显示状态重键」）
+- [x] 未新增任何 parent R6 禁止的全局版本 / epoch / 权威图基础设施。（`rg` 无 GlobalWorldRevision / IdentityEpochManager / AuthorityGraph 等）
+- [x] download recovery 的 owner 定义消费的是 settings D5 定稿后的 destination 模型。（`accountId + DownloadDestination.identity`；旧 `Pictures/PixivFunc` 迁移有测试）
+- [x] WidgetCoordinator 在有实例与无实例两种情况下行为都正确。（`widget_coordinator_test` 3 项：关门无请求、开门契约、resume 重查；真机有/无 widget 留用户）
+- [x] 冷启动不再同时构建全部 tab 的 feed；切 tab 不丢滚动位置。（`home_page_test` C7 两项：只建当前 tab、访问过的 tab 保活且 State 不变；滚动像素真机确认）
+- [x] 点击 pixiv 用户链接（四种 URL 形态）都能进入该用户页。（`intent_router_test` 四种形态 + `home_page_test` C8 UserRoute 推入用户页）
+- [x] 未知深链仍保持「留在当前页」，不导航到未校验的目标。（`home_page_test` C8 UnknownRoute 仅 snackbar）
+- [x] `fetchPage()` 不再抛 `UnimplementedError`。（lib 内仅注释提及）
+- [x] C2 的认证拒绝只重放原 mutation 一次，结果未知的 mutation 不自动重放。（`pixiv_http_client_test` opt-in 单次重放 / 第二次 401 不再重放 / 默认不重放；`restricted_compat_network_test` 超时 POST 不重放）
+- [x] C3 的 sparse/feed 与 detail/authoritative merge 语义分离，真实空值/false/减少值可覆盖。（`illust_store_test` detail 覆盖 / feed 不倒退 / bookmark 归 BookmarkStore；feed 的 `visible=false` 一经出现即保持，属既定策略，spec 已写明）
+- [x] C4 的 recovery owner 不依赖进程内 `credentialRevision`，并消费 D5 destination 模型。
+- [x] C14 的调用方迁移完成后 legacy ladder 被删除，N-FIXED-1~9 没有回退。（`_runLegacyLadder` 已删；N-FIXED 表见 network-perf-ab 归档 check）
+- [x] C21 删除账号时清理该账号未发送 remote history outbox，但保留本地 history。（`account_store_test` removeAccount → clearOutbox、不调 clear）
+- [x] C22 只清理可证明归属的 pending output，且用户对恢复结果有明确出口。（`download_recovery_test` 未知行不清理；retryable/orphaned 在 设置 → 下载器 可见可重试）
+- [x] 删除 guard 时，同步删除固化该错误行为的测试（无 skipped；规则已进 `spec/frontend/quality-guidelines.md`）
       （`.trellis/spec/frontend/quality-guidelines.md` 的 Forbidden Patterns）。
-- [ ] `flutter analyze` 与 `flutter test` 通过。
+- [x] `flutter analyze` 与 `flutter test` 通过。（2026-09-08）
 
 ## Notes
 
