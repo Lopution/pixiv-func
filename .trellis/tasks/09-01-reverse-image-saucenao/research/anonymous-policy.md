@@ -38,10 +38,10 @@ R1 硬前置：实现前必须复核 SauceNAO 当前是否仍允许不带 `api_k
    缩略图按 saucenao.com 解析；`SauceNaoNavigationPolicy` 站内放行、Pixiv 走 `IntentRouter`、
    其它 HTTPS 交外部 launcher、非 HTTPS 拒绝——与观察到的链接形态一致。
 4. 限额数字不进 UI（PRD Open Questions），只透出实际响应的等待信息（429 `retry-after`
-   或超限页文案 → `rateLimited` 可重试）。
+   或超限页文案 → `rateLimited` 可重试，`retryAfter` 透传到 UI；`Daily Search Limit Exceeded` → `dailyLimit` 无倒计时）。
 
 ## 事实有效期
 
 外部事实会变。若 SauceNAO 关闭匿名 HTML 搜索或对表单加挑战，`_classifyHtml` /
-403 分支会把它变成可见的 `providerUnavailable`，不会伪装成空结果；此时回到用户重新决策 D1，
+403 分支会把它变成可见的 `challenge` 失败（实现时由 `providerUnavailable` 改名，避免与「未配置 provider」文案混用），不会伪装成空结果；此时回到用户重新决策 D1，
 不得改成「让用户填 key」。
