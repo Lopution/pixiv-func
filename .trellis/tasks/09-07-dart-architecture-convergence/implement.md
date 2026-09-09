@@ -119,7 +119,7 @@
 
 ## C8 文件拆分（每文件 ≤600 行）
 
-- [ ] C8a `settings_page.dart`（2,088 行/14 页面类）：`features/settings/pages/<name>_page.dart` 每页一文件；
+- [x] C8a `settings_page.dart`（2,088 行/14 页面类）：`features/settings/pages/<name>_page.dart` 每页一文件；
       共享 `SettingsSection/SettingsTile/SettingsControl` 原语；`MePage` 去重（`user_page.dart` 保留定义，
       设置页本地账号卡改名 `AccountCard`）；`settings_test.dart` 只改 import。
 - [ ] C8b `illust_detail_page.dart`（1,388 行）：`_GlobalRectClip` → `motion/hero_rect_clip.dart`
