@@ -109,10 +109,9 @@
   `research/apk-size-breakdown.md`。最终实测为 arm64-v8a `27,981,038 B`、armeabi-v7a `23,805,284 B`，
   arm64 低于 `32,000,000 B`；size report 通过。提交 `ci: recalibrate per-ABI APK budgets after UI modernization`。
 
-- [ ] 更新 README：结束 replica 视觉冻结，说明 Func 组件层、M3 与现代导航；更新
+- [x] 更新 README：结束 replica 视觉冻结，说明 Func 组件层、M3 与现代导航；更新
   `frontend/component-guidelines.md` 的 theme、NavigationBar、route restoration、Predictive Back、Hero drag 契约，
-  修正仍指向 `backend/release-pipeline.md` 的 active 文档链接。
-  提交 `docs: retire replica visual freeze`。
+  并将 active 文档中的体积规范链接统一到 `backend/release-artifacts.md`。提交 `docs: retire replica visual freeze`。
 
 ## 阶段验证
 
