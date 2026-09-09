@@ -65,11 +65,13 @@
 
 ## F4：route 与滚动恢复
 
-- [ ] 设置 app/router/shell/branch/page 的稳定 restoration scope；ranking mode、search query/filter、viewer page
+- [x] 设置 app/router/shell/branch/page 的稳定 restoration scope；ranking mode、search query/filter、viewer page
   写入 path/query 并在交互变化时 replace 当前 location。给 recommended/ranking/new/search/profile/history 等 feed
   的 ScrollView 增加稳定 `PageStorageKey` 与 `restorationId`，search input 增加 text-field restoration id。
   新增 `test/navigation_restoration_test.dart`，用 `restartAndRestore()` 覆盖当前 tab、branch stack、搜索词、viewer
-  页码和代表性 feed offset。
+  页码和代表性 feed offset。`flutter analyze --no-pub`、F4 restoration/导航相关测试、layering test 与
+  `git diff --check` 通过；全量测试为 `705 passed, 1 failed`，唯一失败是已知
+  `tls_sni_behaviour_test.dart` 真实 socket 超时，未见 F4 相关失败。
   提交 `nav: restore shell routes and scroll positions`。
 
 ## F5：Predictive Back
