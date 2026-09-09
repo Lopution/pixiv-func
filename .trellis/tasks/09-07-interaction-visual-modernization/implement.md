@@ -57,10 +57,11 @@
   `ReplicaPageRoute`，并让 `rg 'ReplicaPageRoute\(' lib`、app page 的直接 push 为 0。
   提交 `nav: converge page navigation on typed routes`。`flutter analyze --no-pub`、相关测试及全量测试（696 passed）通过。
 
-- [ ] 把 Android initial intent/onNewIntent subscription 从 `HomePage` 移到 app-level bridge；继续使用现有
+- [x] 把 Android initial intent/onNewIntent subscription 从 `HomePage` 移到 app-level bridge；继续使用现有
   `IntentRouter` 解析结果：illust/user 进入 recommended branch，ACTION_SEND push root reverse-image route，account
   callback 交给 login flow。覆盖冷启动与运行中 pixiv/pixivfunc/web link、分享图片及 rejection UI。
-  提交 `nav: route external intents through go_router`。
+  `flutter analyze --no-pub`、intent/navigation/login 相关测试、全量测试（702 passed）、layering test 与
+  `git diff --check` 通过。提交 `nav: route external intents through go_router`。
 
 ## F4：route 与滚动恢复
 
