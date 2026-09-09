@@ -24,17 +24,18 @@
   `backend/database-guidelines.md`（单 DB `history.db` schema v2、工厂注入、Android 用平台 SQLite、桌面/测试用 FFI）、
   `frontend/type-safety.md`（`Map<String, Object?>` + `json_read.dart`、`strict-*` 下的写法、`!` 使用边界）、
   `backend/logging-guidelines.md`（`log()` 出口与 tag）。
-- 新增 `backend/android-channels.md`、`backend/rust-plugin.md`（由 D 填实）、`backend/release-pipeline.md`（由 B 填实：per-ABI、
+- 新增 `backend/android-channels.md`、`backend/rust-plugin.md`（由 D 填实）、`backend/release-artifacts.md`（由 B 填实：per-ABI、
   versionCode、manifest schema 2、符号归档、体积门禁）；本 child 负责骨架、索引与最终一致性检查。
 - `lib/core/<domain>/` 每个目录一段 `library` 级 `///` 文档：职责、owner 契约、对应 spec 段落。
 - 增加升级策略段：跟随 Flutter stable 的官方 Android 验证矩阵；`material_ui` 系依赖与 app 整体迁移绑定。
 
 ### R2. 测试收敛（E2）
 
-- `test/helpers/fake_account.dart`（凭据/元数据/账号 store 假实现 + 标准 `overrides` 列表）、`test/helpers/test_prefs.dart`
-  （`InMemorySharedPreferencesAsync` 初始化）替换 17 个文件的重复假实现与 19 处 prefs 样板。只合并，不删测试。
-- 去除类名字符串断言：`hero_transition_test.dart` 6 处 `'_GlobalRectClip'`（C 已公开该类型）、`illust_detail_page_test.dart:547`、
-  `related_illust_repository_test.dart:121`；`updater_flavor_contract_test.dart` 的源文本断言改为构建/行为断言或明确保留理由。
+- `test/helpers/fake_account.dart`（凭据/元数据/账号 store 假实现 + 标准 `overrides` 列表）、复用现有
+  `test/helpers/test_preferences.dart`（`InMemorySharedPreferencesAsync` 初始化），按 E0 重算结果收敛重复假实现与
+  prefs 样板。只合并，不删测试。
+- 去除类名字符串断言：C/F 后仍存在的 `illust_detail_page_test.dart` 与
+  `related_illust_repository_test.dart` 两处；`updater_flavor_contract_test.dart` 的源文本断言改为构建/行为断言或明确保留理由。
 - 删除 `test/zz_diag_tabbar_geometry_test.dart`（自述 one-off）；`.gitignore` 加 `test/failures/`。
 - 测试目录按 `core/`/`features/` 镜像分层为可选项，不作为验收。
 
@@ -47,7 +48,7 @@
 ### R2c. 静态性能约束的最终核对（parent R9，D-9 不做基线）
 
 - 确认 C/D/F 落地的约束测试都存在并通过：变体 `memCacheWidth` 断言、`startup_gate_test` 首帧等待项、history 查询计划、
-  通道分块；`backend/release-pipeline.md` 记录 B 的体积阈值（F 更新后的值）。
+  通道分块；`backend/release-artifacts.md` 记录 B 的体积阈值（F 更新后的值）。
 
 ### R3. 格式与 lint（E3，D-7）
 
@@ -69,7 +70,7 @@
 - [ ] CI 的 `dart format` 检查通过；两批 lint 在 `analysis_options.yaml` 生效且 `flutter analyze` 0 问题。
 - [ ] `flutter test` 全绿。
 - [ ] 共享组件 semantics 测试存在并通过；layering_test 含私有 widget 名称检查。
-- [ ] R2c 的约束测试全部存在并通过；`release-pipeline.md` 的体积阈值与 CI 一致。
+- [ ] R2c 的约束测试全部存在并通过；`release-artifacts.md` 的体积阈值与 CI 一致。
 
 ## Notes
 
