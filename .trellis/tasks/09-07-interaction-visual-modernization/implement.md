@@ -84,9 +84,10 @@
 
 ## F6：Hero 拖拽关闭
 
-- [ ] 新增 `app/motion/drag_to_dismiss.dart`；still viewer 在 1x 时接入下拉关闭，取消时回位，完成时 pop 并走
+- [x] 新增 `app/motion/drag_to_dismiss.dart`；still viewer 在 1x 时接入下拉关闭，取消时回位，完成时 pop 并走
   现有 Hero reverse/`HeroRectClip`；多页横滑和 zoom pan 保持。Ugoira detail surface 接同一 wrapper。扩展
-  `hero_transition_test.dart`、viewer 与 `ugoira_viewer_test.dart`。
+  `hero_transition_test.dart`、viewer 与 `ugoira_viewer_test.dart`。`flutter analyze --no-pub` 与上述三个聚焦测试
+  均通过。
   提交 `ui: drag-to-dismiss viewer`。
 
 ## F7：其余 M3 控件
