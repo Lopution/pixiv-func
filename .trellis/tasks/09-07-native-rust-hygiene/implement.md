@@ -61,7 +61,7 @@
       两份 `DistributionUpdaterChannel.kt` 只保留差异逻辑；`updater_flavor_contract_test.dart` 若断言文件内容需同步
       （`SHA256withECDSA` 与五个错误码仍须在 github 文件可见）。Kotlin 测试通过。
       提交 `android(updater): share platform info helpers`。
-- [ ] **D5b** 分块核对结论（不改协议）：Dart `media_store_channel.dart:123-126` / `saf_tree.dart:80-83` 无分块循环，块长即 rhttp
+- [x] **D5b** 分块核对结论（不改协议）：Dart `media_store_channel.dart:123-126` / `saf_tree.dart:80-83` 无分块循环，块长即 rhttp
       `bytes_stream` 帧（reqwest/hyper 决定，无 256 KiB 常量）。**决定**：在 `DownloadSink` → `write` 路径加最小聚合（≥ 256 KiB 或流结束再
       `invokeMethod`），减少每帧一次 channel 往返；协议字段不变；单测断言聚合边界（小于阈值累积、跨阈值切分、结束冲刷、取消不写）。
       若实现风险大于收益（例如内存峰值），改为在本条记录「不做」及理由。启动路径复核已满足（`configureFlutterEngine` 仅注册 channel，
