@@ -40,9 +40,9 @@
 
 ## F3：shell 与 go_router
 
-- [ ] 先把 `HomePage` 底部 `BottomAppBar + TabBar` 替换为 `NavigationBar`，仍沿用当前 TabController、lazy
-  visited set 和 `homeShellMetricsProvider`；补四语言 destination label，更新 home test/golden。
-  提交 `ui: replace home tabs with NavigationBar`。
+- [x] 先把 `HomePage` 底部 `BottomAppBar + TabBar` 替换为 `NavigationBar`，仍沿用当前 TabController、lazy
+  visited set 和 `homeShellMetricsProvider`；补齐四语言 destination label，更新 home/icon test 与受影响 golden。
+  `flutter analyze --no-pub`、相关测试及全量测试（695 passed）通过。提交 `ui: replace home tabs with NavigationBar`。
 
 - [ ] 在 `app/navigation/routes.dart` 建 root key、五个 branch key、`StatefulShellRoute.indexedStack` 和完整 route
   table；`preload: false`。`PixivFuncApp` 改稳定的 `MaterialApp.router`，`StartupGate` 改 app-level gate；
