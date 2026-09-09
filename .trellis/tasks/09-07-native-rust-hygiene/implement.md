@@ -73,7 +73,7 @@
       `rust/tests/ech_config_test.rs` / `ech_live_handshake.rs`、`rust/examples/ech_reqwest_probe.rs`、`opt-level = "s"` 实验
       （已测 −1,539,000 / −884,944，未采用，见 `release-artifacts.md`）；Sync guide 扩为七步（diff 上游 → 重打 ECH → 重打构建配置差异 →
       `tool/frb_check.sh` → 必要时 codegen → 插件 `flutter test` + `cargo test` → 更新记录）。
-- [ ] **D6b** 新建 `.trellis/spec/backend/rust-plugin.md`：fork 策略、FRB 三元组（全 2.12.0，`frb_check.sh`，`forceSameCodegenVersion: false` 保留）、
+- [x] **D6b** 新建 `.trellis/spec/backend/rust-plugin.md`：fork 策略、FRB 三元组（全 2.12.0，`frb_check.sh`，`forceSameCodegenVersion: false` 保留）、
       再生成命令、cargokit ABI / 输出目录行为（`jniLibs/<buildType>` 清理）、插件 AGP 8.11.2 / Kotlin 2.2.20 / compileSdk 36 / minSdk 24 与
       app AGP 9.1.1 / Kotlin 2.4.0 / compileSdk 37 / minSdk 29 的差异与原因。`backend/index.md` 加行。
       `login_webview_intercept` 残留：两侧已 0，本条无事可做（记录）。
