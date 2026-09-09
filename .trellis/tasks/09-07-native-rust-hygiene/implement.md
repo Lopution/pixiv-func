@@ -83,7 +83,7 @@
 ## 最终验证
 
 - [x] `flutter analyze`（2026-09-09：No issues found）
-- [x] `flutter test`（2026-09-09：全量 662 passed，含 `updater_flavor_contract_test`、下载相关）
+- [x] `flutter test`（2026-09-09：当前 HEAD 全量 692 passed，含 `updater_flavor_contract_test`、下载相关）
 - [x] `(cd android && ./gradlew :app:testGithubDebugUnitTest :app:testFdroidDebugUnitTest)`（2026-09-09：BUILD SUCCESSFUL）
 - [x] `(cd plugins/rhttp/rhttp && flutter test)`；`(cd plugins/rhttp/rhttp/rust && cargo test)`（2026-09-09：插件 33 passed；Rust 2 passed、1 ignored；`cargo fmt --check` 通过）
 - [x] 双 flavor split release 构建（2026-09-09：fdroid 与 github 均成功；github 带 `-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`，仅 debug 签名）
