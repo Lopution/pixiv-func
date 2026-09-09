@@ -775,3 +775,58 @@ Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acce
 
 - 推送 task/09-07-dart-architecture-convergence，创建 PR，等待 CI 通过后以 merge commit 合并。
 - 合并后由后续任务处理 D/E/F 与父任务。
+
+
+## Session 24: Child D 原生层与 Rust 插件整理完成
+<!-- trellis-session: v=2 fp=59ea654e55da0ed7 -->
+
+**Date**: 2026-09-09
+**Task**: Child D 原生层与 Rust 插件整理完成
+**Branch**: `task/09-07-native-rust-hygiene`
+
+### Summary
+
+完成 Android channel 契约与线程整理、updater 去重、MediaStore/SAF 写块聚合、rhttp fork 文档与 backend spec；全量验证通过，API 29 真机四项回归留待用户设备。
+
+### Main Changes
+
+- 统一 Android channel 参数校验与错误码，移出四类同步 IO，并清理 API 29 下的死分支与模板残留。
+- 抽取 updater 平台信息 helper，补充下载写块聚合测试与 rhttp 七步同步记录。
+- 归档 D 任务并更新 Android channel、Rust plugin 与任务验证规范。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3afecf5` | chore(task): start native-rust-hygiene with D0 recount and plan |
+| `181147a` | chore(task): curate context and start native-rust-hygiene on its branch |
+| `d1817b0` | docs(spec): record the Android channel contracts as shipped |
+| `9d3dd8e` | android: uniform channel argument and error handling |
+| `5eebef7` | docs(task): tick D1 and D2 |
+| `7bc2f98` | android: move channel IO off the main thread |
+| `e5230b9` | docs(task): tick D3 |
+| `bb95212` | android: remove pre-API29 branches and template residue |
+| `f881440` | android(updater): share platform info helpers |
+| `47bb70c` | docs(task): tick D4 and D5 |
+| `72e1f4f` | download: coalesce channel writes to 256 KiB |
+| `86f2237` | docs(rhttp): complete fork record and seven-step sync |
+| `3a3ff67` | docs(rhttp): add rust-plugin spec |
+| `9459776` | docs(spec): channel contracts after D2-D5 |
+| `334f464` | docs(task): record D final verification |
+| `bca740b` | fix(rebase): preserve SAF picker interface |
+| `3af1680` | docs(task): refresh D verification count |
+
+### Testing
+
+- [OK] flutter analyze --no-pub：No issues found。
+- [OK] flutter test -j 4 --no-pub：692 passed。
+- [OK] Kotlin 双 flavor、插件 Flutter、FRB、cargo fmt、cargo test --locked 与双 flavor split release 均通过。
+- [OK] APK size/ABI 检查通过；github 本地构建仅使用显式 debug signing，apksigner v2 验证通过。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 推送 task/09-07-native-rust-hygiene，创建 PR，等待 CI 后以 merge commit 合并；用户设备补做 API 29 四项真机回归。
