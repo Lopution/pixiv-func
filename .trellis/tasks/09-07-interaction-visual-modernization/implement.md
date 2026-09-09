@@ -92,8 +92,9 @@
 
 ## F7：其余 M3 控件
 
-- [ ] 搜索首页改 `SearchBar`，输入/建议面改 `SearchAnchor`，suggestion 仍只读取
+- [x] 搜索首页改 `SearchBar`，输入/建议面改 `SearchAnchor`，suggestion 仍只读取
   `searchAutocompleteProvider`，submit/filter 仍构造现有 typed `SearchQuery`；更新 search tests 与 golden（若覆盖）。
+  `flutter analyze --no-pub`、`search_catalog_test.dart` 与 `navigation_restoration_test.dart` 均通过。
   提交 `ui: use Material 3 search surfaces`。
 
 - [ ] `BrowseSettingsPage` 的 preview/detail/view 三组 quality 列表改为各自 typed `SegmentedButton<T>`，调用现有
