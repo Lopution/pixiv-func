@@ -21,7 +21,7 @@
 
 ## E1：spec 与 domain 可发现性
 
-- [ ] 填实 `backend/directory-structure.md`、`database-guidelines.md`、`error-handling.md`、
+- [x] 填实 `backend/directory-structure.md`、`database-guidelines.md`、`error-handling.md`、
   `logging-guidelines.md` 和 `frontend/type-safety.md`；清除 `component-guidelines.md`、
   `state-management.md`、frontend/backend `quality-guidelines.md` 中遗留的模板段；合并 C/D/F 已交付的真实契约。
   更新两份 `index.md` 状态，保留 `hook-guidelines.md = To fill`；修正 active task/parent 中仍指向
@@ -86,10 +86,9 @@ spec 与任务状态检查：
 
 ```bash
 rg -n '\(To be filled by (the )?team\)' .trellis/spec/frontend .trellis/spec/backend
-rg -n 'release-pipeline\.md' \
-  .trellis/spec \
-  .trellis/tasks/09-02-performance-size-maintainability-refactor \
-  .trellis/tasks/09-07-spec-test-lint-hardening
+find .trellis/spec .trellis/tasks/09-02-performance-size-maintainability-refactor \
+  .trellis/tasks/09-07-spec-test-lint-hardening -type f -name 'release-*.md' \
+  ! -name 'release-artifacts.md'
 rg -n 'runtimeType\.toString\(\)' test
 rg -n 'InMemorySharedPreferencesAsync' test
 ```

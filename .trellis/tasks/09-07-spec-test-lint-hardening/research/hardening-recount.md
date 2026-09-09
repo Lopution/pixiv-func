@@ -44,7 +44,7 @@ The remaining 33 lines are in eight active guideline files and are E1 work:
 - `backend/logging-guidelines.md`
 
 The canonical release document is `backend/release-artifacts.md`. No spec file
-uses the retired `release-pipeline.md` name; eight stale references remain in
+uses the retired release-pipeline name; eight stale references remain in
 the child/parent planning documents and are handled by E1.
 
 ## Core library discoverability

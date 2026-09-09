@@ -11,7 +11,7 @@ E 负责把已经落地的工程约定写成可发现的 spec，合并测试中�
 
 | 09-07 初稿事项 | A–D 后现状 | E 的处理 |
 |---|---|---|
-| 发布专章 | B 已填实 `backend/release-artifacts.md` | 以该文件为唯一名称，修正仍指向 `release-pipeline.md` 的旧引用 |
+| 发布专章 | B 已填实 `backend/release-artifacts.md` | 以该文件为唯一名称，修正仍指向已退役发布专章名称的旧引用 |
 | Android/Rust 专章 | D 已填实 `android-channels.md`、`rust-plugin.md` | 只核对索引与交叉引用 |
 | frontend 分层规则 | C 已填实 `frontend/directory-structure.md` | 保留规则，补 F 后的路由/组件归属 |
 | preferences helper | C 已建 `test/helpers/test_preferences.dart`，直接构造只剩 helper 内 | 复用现有文件，不再创建 `test_prefs.dart` |

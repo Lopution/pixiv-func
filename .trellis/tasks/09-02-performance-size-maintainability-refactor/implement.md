@@ -189,7 +189,7 @@ gate：C 归档（组件层、`motion_tokens`、以 id 为形参的门面）；B
 - [ ] F6 Hero 手势返回：`motion/drag_to_dismiss.dart`；viewer 拖拽关闭驱动 Hero 反向转场。提交 `ui: drag-to-dismiss viewer`。
 - [ ] F7 M3 组件：`NavigationBar`、`SearchBar`/`SearchAnchor`、`SegmentedButton`（三档枚举）。每项一个提交。
 - [ ] F8 文档：README 原则改写（视觉冻结终止、Func 组件层）；`component-guidelines.md` 记录新交互契约；
-      `backend/release-pipeline.md` 更新体积阈值。提交 `docs: retire replica visual freeze`。
+      `backend/release-artifacts.md` 更新体积阈值。提交 `docs: retire replica visual freeze`。
 - [ ] 退出条件：`rg "package:flutter/material.dart" lib` 为 0；`rg "ReplicaPageRoute\(" lib/features` 为 0；深链、恢复、
       预测性返回真机通过；golden 全绿；per-ABI 体积已更新到 B 的门禁；`flutter analyze`/`flutter test` 全绿。
 
@@ -200,12 +200,12 @@ go_router 恢复与 `PagedFeedController` 生命周期冲突 → 停在 F4，先
 
 gate：E0 随 A 开始；E1–E3 在 C、D、F 之后。
 
-- [ ] E0 文档（可提前）：两份 `index.md` 状态列修正；`backend/release-pipeline.md`（随 B 更新）；
+- [ ] E0 文档（可提前）：两份 `index.md` 状态列修正；`backend/release-artifacts.md`（随 B 更新）；
       `backend/rust-plugin.md`、`backend/android-channels.md` 骨架（随 D 填实）。
 - [ ] E1 spec 填写：`directory-structure`×2（C 的规则）、`error-handling`、`database-guidelines`、
       `type-safety`、`logging-guidelines`；`lib/core/<domain>/` library 文档。
 - [ ] E2 测试：`test/helpers/fake_account.dart`（凭据/元数据/账号 store + 标准 overrides）、
-      `test/helpers/test_prefs.dart`；替换 17 个文件的重复假实现；去除类名字符串断言；删除
+      `test/helpers/test_preferences.dart`；替换重复假实现；去除类名字符串断言；删除
       `zz_diag_tabbar_geometry_test.dart`；`.gitignore` 加 `test/failures/`。测试数不减少。
 - [ ] E2b 无障碍与组件层校验：共享组件（`IllustCard`、`FeedTail/Empty/Error`、`showAppSnackBar`、settings 原语、
       收藏/关注按钮）的 semantics 测试（`SemanticsTester`/`find.bySemanticsLabel`）；layering_test 增加"`features/`

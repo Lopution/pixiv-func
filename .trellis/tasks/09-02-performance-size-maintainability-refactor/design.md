@@ -235,7 +235,7 @@ CI 目标形态：
 | `backend/logging-guidelines.md` | `log()` 出口与 tag 约定 |
 | `backend/android-channels.md`（新） | §5.1 契约表 |
 | `backend/rust-plugin.md`（新） | fork 策略、构建配置差异、再生成、三元组、cargokit ABI 行为 |
-| `backend/release-pipeline.md`（新） | per-ABI 构建、versionCode、manifest schema 2、符号归档、体积门禁 |
+| `backend/release-artifacts.md` | per-ABI 构建、versionCode、manifest schema 2、符号归档、体积门禁 |
 | 两份 `index.md` | 状态列改为真实状态 |
 | `lib/core/<domain>/<domain>.dart` 或目录首文件 | `library` 级 `///` 说明职责、owner 契约、对应 spec 段落 |
 
