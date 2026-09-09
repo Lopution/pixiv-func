@@ -39,7 +39,7 @@
   `test/helpers/test_preferences.dart`，并确认 `InMemorySharedPreferencesAsync` 只在该 helper 内出现。
   提交 `test: share account and preferences fixtures`。
 
-- [ ] 两处类名字符串断言改强类型 matcher；删除 `test/zz_diag_tabbar_geometry_test.dart`；在
+- [x] 两处类名字符串断言改强类型 matcher；删除 `test/zz_diag_tabbar_geometry_test.dart`；在
   `updater_flavor_contract_test.dart` 顶部记录其跨 flavor/source-set 构建合同范围，并删掉与 Dart/Kotlin 行为测试
   重复的断言（若 E0 仍发现）。运行对应 illust、updater 和 home 测试。
   提交 `test: replace brittle type checks and remove diagnostic case`。
