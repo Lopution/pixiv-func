@@ -82,15 +82,15 @@
 
 ## 最终验证
 
-- [ ] `flutter analyze`
-- [ ] `flutter test`（全量；含 `updater_flavor_contract_test`、下载相关）
-- [ ] `(cd android && ./gradlew :app:testGithubDebugUnitTest :app:testFdroidDebugUnitTest)`
-- [ ] `(cd plugins/rhttp/rhttp && flutter test)`；`(cd plugins/rhttp/rhttp/rust && cargo test)`
-- [ ] 双 flavor split release 构建（fdroid；github 带 `-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`）
-- [ ] `rg '!!' android/app/src/main/kotlin` 与 `call.argument` 相关为 0；`rg "SDK_INT" android/app/src` 只剩 3 处 `TIRAMISU`；
+- [x] `flutter analyze`（2026-09-09：No issues found）
+- [x] `flutter test`（2026-09-09：全量 662 passed，含 `updater_flavor_contract_test`、下载相关）
+- [x] `(cd android && ./gradlew :app:testGithubDebugUnitTest :app:testFdroidDebugUnitTest)`（2026-09-09：BUILD SUCCESSFUL）
+- [x] `(cd plugins/rhttp/rhttp && flutter test)`；`(cd plugins/rhttp/rhttp/rust && cargo test)`（2026-09-09：插件 33 passed；Rust 2 passed、1 ignored；`cargo fmt --check` 通过）
+- [x] 双 flavor split release 构建（2026-09-09：fdroid 与 github 均成功；github 带 `-PPIXIV_ALLOW_DEBUG_RELEASE_SIGNING=true`，仅 debug 签名）
+- [x] `rg '!!' android/app/src/main/kotlin` 与 `call.argument` 相关为 0；`rg "SDK_INT" android/app/src` 只剩 3 处 `TIRAMISU`；
       `rg -n "mediastore_error|saf_error|webprofile_error" android lib` 为 0
-- [ ] `git diff --check`
-- [ ] 用户真机（API 29）：下载到 MediaStore、SAF 目录写入、反查复制、自更新解析各一次
+- [x] `git diff --check`
+- [ ] 用户真机（API 29）：下载到 MediaStore、SAF 目录写入、反查复制、自更新解析各一次（当前环境 `adb devices -l` 无 API 29 设备，留用户真机回归）
 
 ## 回滚点
 
