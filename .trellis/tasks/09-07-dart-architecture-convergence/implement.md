@@ -135,8 +135,8 @@
 
 ## C9 颜色与私有化
 
-- [ ] C9a 颜色收敛到 `FuncTokens`/主题（37 处 `Colors.*`；replica 视觉决定的保留并注明）。
-- [ ] C9b 141 个仅本文件使用的公共声明按需私有化（随 C8 顺带）；`unreachable_from_main` 0 问题保持。
+- [x] C9a 颜色收敛到 `FuncTokens`/主题（37 处 `Colors.*`；replica 视觉决定的保留并注明）。
+- [x] C9b 141 个仅本文件使用的公共声明按需私有化（随 C8 顺带）；`unreachable_from_main` 0 问题保持。
       提交 `refactor: consolidate colors and privatize local declarations`。
 
 ## 验证命令（每阶段后）
