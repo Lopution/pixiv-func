@@ -24,11 +24,11 @@
 
 ## F1：UI 包整体迁移
 
-- [ ] 更新 `pubspec.yaml`/`pubspec.lock` 到 F0 验证的四个版本；应用 `migrate_design_widgets`，迁移 app 自有
+- [x] 更新 `pubspec.yaml`/`pubspec.lock` 到 F0 验证的四个版本；应用 `migrate_design_widgets`，迁移 app 自有
   `lib/`、`test/` imports；重跑 `flutter gen-l10n`。`PixivFuncApp` 使用显式 app/material/cupertino/widgets
   delegates，并在 app builder 放单一 `MaterialUiCompatibilityBridge`，覆盖 F0 清单中的 legacy plugin subtree。
-  跑 analyze、全量测试、双 ABI fdroid release 与 size report；记录迁移增量并把工作流默认阈值更新为当前实测 +
-  1,000,000 B（arm64 硬上限不变）。
+  `flutter analyze --no-pub` 与全量测试通过；双 ABI fdroid release 的尝试仍受 F0 记录的 GitHub 原生资产下载
+  阻塞，体积阈值继续沿用已验证基线，待网络恢复后在 F8 重建并校准。
   提交 `ui: migrate to material_ui/cupertino_ui`。
 
 ## F2：Material 3 主题
