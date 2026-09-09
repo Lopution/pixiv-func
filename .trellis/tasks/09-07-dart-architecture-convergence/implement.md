@@ -96,10 +96,10 @@
 
 ## C6 i18n（gen-l10n）
 
-- [ ] C6a `tool/migrate_i18n.py`：从 `ReplicaStrings._values` 生成四语言 ARB（zh 模板）；`{0}` → 占位符；
+- [x] C6a `tool/migrate_i18n.py`：从 `ReplicaStrings._values` 生成四语言 ARB（zh 模板）；`{0}` → 占位符；
       ru 补 `detailQuality`；修 `networkDohEndpointsInvalid`。
-- [ ] C6b `l10n.yaml`；`flutter gen-l10n` 成功；四语言 key 集合一致。
-- [ ] C6c 调用点替换：27 个包装与 `ReplicaStrings` 删除；`ReplicaLanguage` 保留为设置枚举；
+- [x] C6b `l10n.yaml`；`flutter gen-l10n` 成功；四语言 key 集合一致。
+- [x] C6c 调用点替换：27 个包装与 `ReplicaStrings` 删除；`ReplicaLanguage` 保留为设置枚举；
       `MaterialApp.locale` 由设置驱动（现有行为）；删 `i18n_network_keys_test.dart` 手写 key 列表。
       提交 `i18n: migrate to gen-l10n`（可拆 2–3 个提交：脚本+ARB、调用点、删除）。
 
