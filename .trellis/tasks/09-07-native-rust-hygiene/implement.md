@@ -78,7 +78,7 @@
       app AGP 9.1.1 / Kotlin 2.4.0 / compileSdk 37 / minSdk 29 的差异与原因。`backend/index.md` 加行。
       `login_webview_intercept` 残留：两侧已 0，本条无事可做（记录）。
       提交 `docs(rhttp): complete fork record and seven-step sync; add rust-plugin spec`。
-- [ ] **D6c** D1 的 `android-channels.md` 更新为目标状态（错误码表、线程列、参数校验）。提交 `docs(spec): channel contracts after D2-D5`。
+- [x] **D6c** D1 的 `android-channels.md` 更新为目标状态（错误码表、线程列、参数校验）。提交 `docs(spec): channel contracts after D2-D5`。
 
 ## 最终验证
 
