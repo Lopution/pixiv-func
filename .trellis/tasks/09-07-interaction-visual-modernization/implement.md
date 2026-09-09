@@ -97,8 +97,9 @@
   `flutter analyze --no-pub`、`search_catalog_test.dart` 与 `navigation_restoration_test.dart` 均通过。
   提交 `ui: use Material 3 search surfaces`。
 
-- [ ] `BrowseSettingsPage` 的 preview/detail/view 三组 quality 列表改为各自 typed `SegmentedButton<T>`，调用现有
-  settings notifier；`FollowSwitchButton` 保持现有实现。更新 settings tests。
+- [x] `BrowseSettingsPage` 的 preview/detail/view 三组 quality 列表改为各自 typed `SegmentedButton<T>`，调用现有
+  settings notifier；`FollowSwitchButton` 保持现有实现。更新 settings tests。`flutter analyze --no-pub` 与
+  `settings_test.dart` 均通过。
   提交 `ui: use segmented quality settings`。
 
 ## F8：体积与文档收尾
