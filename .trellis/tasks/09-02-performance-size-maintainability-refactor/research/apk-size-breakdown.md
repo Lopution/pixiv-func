@@ -692,3 +692,27 @@ A8–A10 不改产物，fdroid release 复测为 88,181,654 B（与 A7 相同）
 
 child A 全程：A0 基线 → 收尾，fdroid release 净变化见各小节；`cupertino_icons` 字体已从包内移除，
 其余体积工作留给 child B（per-ABI 拆分、`libsqlite3.so`、`librhttp.so` 特性裁剪）。
+
+### F8 最终复测（child F，2026-09-10）
+
+测量环境：工作树 `/root/Pixiv-func-F`，`task/09-07-interaction-visual-modernization` @ `75b870b`；
+Flutter 3.47.2，fdroid split，带 `--obfuscate --split-debug-info`。命令：
+
+```bash
+flutter build apk --release --flavor fdroid \
+  --split-per-abi --target-platform android-arm64,android-arm \
+  --obfuscate --split-debug-info=build/symbols/fdroid
+```
+
+`tool/apk_size_report.py` 的精确结果（`file_bytes` 是 APK 下载文件字节，桶为 ZIP
+`compress_size`）：
+
+| ABI | APK 文件 | `lib/<abi>` | `classes.dex` | `assets` | F8 默认阈值 |
+|---|---:|---:|---:|---:|---:|
+| arm64-v8a | 27,981,038 | 25,776,488 | 1,313,356 | 518,544 | 28,981,038 |
+| armeabi-v7a | 23,805,284 | 21,627,200 | 1,313,356 | 518,544 | 24,805,284 |
+
+相对 B7，arm64-v8a 增加 545,717 B，armeabi-v7a 增加 578,489 B；arm64 仍低于
+32,000,000 B 硬上限。两个 split 均只有自己的 `lib/<abi>` 目录，未生成 universal 或
+x86_64 release APK。使用 F8 默认阈值运行 size report 退出码为 0；默认值为各 ABI
+实测值加 1,000,000 B。

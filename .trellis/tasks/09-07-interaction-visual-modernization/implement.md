@@ -104,10 +104,10 @@
 
 ## F8：体积与文档收尾
 
-- [ ] 对最终 HEAD 重建 fdroid 两个 split APK，运行 B 的 size report，把 workflow 默认阈值重置为各 ABI 最终
+- [x] 对最终 HEAD 重建 fdroid 两个 split APK，运行 B 的 size report，把 workflow 默认阈值重置为各 ABI 最终
   实测 + 1,000,000 B，并把精确数字写入 `backend/release-artifacts.md` 与 parent
-  `research/apk-size-breakdown.md`。若 arm64 超过 32,000,000 B，先处理依赖/资源增量，硬上限不提高。
-  提交 `ci: recalibrate per-ABI APK budgets after UI modernization`。
+  `research/apk-size-breakdown.md`。最终实测为 arm64-v8a `27,981,038 B`、armeabi-v7a `23,805,284 B`，
+  arm64 低于 `32,000,000 B`；size report 通过。提交 `ci: recalibrate per-ABI APK budgets after UI modernization`。
 
 - [ ] 更新 README：结束 replica 视觉冻结，说明 Func 组件层、M3 与现代导航；更新
   `frontend/component-guidelines.md` 的 theme、NavigationBar、route restoration、Predictive Back、Hero drag 契约，
