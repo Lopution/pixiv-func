@@ -34,7 +34,7 @@
 
 ## E2：测试收敛
 
-- [ ] 新增 `test/helpers/fake_account.dart`，提供常用的内存 credential/metadata 实现和 provider overrides；
+- [x] 新增 `test/helpers/fake_account.dart`，提供常用的内存 credential/metadata 实现和 provider overrides；
   替换 E0 确认等价的重复类。带失败脚本、调用记录、并发控制的 test double 保持本地。继续复用
   `test/helpers/test_preferences.dart`，并确认 `InMemorySharedPreferencesAsync` 只在该 helper 内出现。
   提交 `test: share account and preferences fixtures`。
