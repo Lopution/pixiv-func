@@ -696,3 +696,82 @@ Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acce
 - User: parent 最终真机验收 (API 29 + modern, mainland networks with/without proxy, OAuth, full feature pass, kill/restart recovery, updater install x2 with secrets) plus each child's device list in research/parent-acceptance-2026-09-08.md
 - User decisions still open: settings R3 three vs two quality groups; Tencent translation provider
 - 09-02: child D stages 3-4, child C plan from the recount, then F and E
+
+
+## Session 23: Dart 架构收敛 C 阶段完成
+<!-- trellis-session: v=2 fp=5a5ca1ae0631340a -->
+
+**Date**: 2026-09-09
+**Task**: Dart 架构收敛 C 阶段完成
+**Branch**: `task/09-07-dart-architecture-convergence`
+
+### Summary
+
+完成 C0-C9：分层清零、组件与大文件拆分、core owner 收敛、ChangeNotifier 迁移、下载恢复上限、查询计划测试、颜色 token 化与局部声明私有化；同步 frontend spec。
+
+### Main Changes
+
+- 完成 C0-C9 全部实现与 implement.md 勾选，保留现有交互语义。
+- 将跨 feature 的 FollowSwitchButton 归属 app/widgets，并清零 layering allowlist。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `9f8fb0a9a988193154ac59d325345aa4659125cd` | docs(frontend): record architecture and component contracts |
+| `010de7a32c5d5ed632f6cf83f645712679aeb7eb` | refactor(core): move repositories and controllers under core |
+| `dc3dce207919abd790f90591c8242d9831e3aef7` | refactor: consolidate colors and privatize local declarations |
+| `37d8ad81cdc7712612201acd03492a4eb755d36c` | refactor: split large methods |
+| `3c0f7513afa416c99cbf57ec9b0d8a6ce197dfaa` | refactor(network): split policy factory and image cache |
+| `b66099220699a7d66d89d4851f7ec8226f8c8da0` | refactor(profile): split profile feed widgets |
+| `cc4406c9737c122ae4c9d7251e547a5a30a0bcfb` | refactor(illust): split detail page widgets |
+| `a310cc205f6c14b2fe614b23b94987b408fdf026` | refactor(settings): split settings pages into focused files |
+| `772d2ea34229c8385e23ab1157e39da30c25b533` | test(history): verify indexed read query plans |
+| `5bcd89541d59db93e44475f88743dfd59d07b1b7` | perf(download): cap DownloadRecoveryStore growth |
+| `a36620d85c3e7d83a17d8ad2a583e1204fd3fecf` | refactor(novel): NovelReaderController becomes a plain view-model |
+| `37e917df034fde3aa33cde3fbd938ae28affe143` | refactor(history): HistoryFeedController over the paged-feed base |
+| `606ccc5fc042cf9dc3f78cdcb2a69d1254c824f7` | refactor(state): ReverseImageSearchController becomes a Riverpod Notifier |
+| `ac8423084607403366b744aae8b99e302399e62b` | refactor(profile): ProfileEditController becomes a Riverpod Notifier |
+| `6a9b75364891cfcc777b12761648e7c43a11f854` | docs(trellis): tick C6 in implement.md |
+| `cc1714074e525efd570992ce54a98ec3297d9264` | refactor(i18): delete the ReplicaStrings table |
+| `c451dcf05c2cc0efa90cc3d2b8f7752e94a57b1a` | refactor(i18n): migrate all call sites to context.l10n (gen-l10n) |
+| `ad0ce3e25aae29a4adf4ee2cd71acc6ca702cbcb` | feat(i18n): generate AppLocalizations from ARB (gen-l10n) |
+| `dfa0c10670978c22a8541fc7251ae49224b8c86d` | docs(trellis): tick C5e in implement.md |
+| `b2e80133627172e63e7fa2260bb59bbab437cef2` | refactor(net): provider-owned HTTP clients for third-party traffic |
+| `215cd5d88d7aac56fbd6bb2f5dea767101ee0397` | docs(trellis): tick C5d in implement.md |
+| `0d5d0e2dc92f8322212bd6a3ff8a2c2a65c8b60d` | refactor(ui): single owner for SnackBar and debug logging |
+| `1f20c311c01cdf75908034ce178058261f73c720` | docs(trellis): tick C5c in implement.md |
+| `9ac0e6e38e041321631426be2709e3ff32cf5ebc` | refactor(entity): shared JSON field readers in core/entity/json_read.dart |
+| `11ab06fd3876ce6b264967e5c343c550b1651239` | refactor(settings): single owner for SharedPreferences and keys |
+| `b6f7314142237bafcab57723413a77c0888530c3` | refactor(net): derive hosts from PixivClientIdentity |
+| `a9fa23fd2c313703e80beb34779c1b9e84872924` | docs(trellis): tick C3b-2/C3c-1/C4a/C4b in implement.md |
+| `3effa47e94bc946a6b11284673ac949fd9ee1e2b` | refactor(app): move startup_gate into lib/app behind the routes facade |
+| `d57a05fa360e5f70cc485ead136e79a9f71c2c20` | refactor(core): relocate remaining data-layer files into lib/core |
+| `c68cd7f8725893ca60ffb6112426b19200f21b5d` | perf(image): size-aware decode policy for PixivImage variants |
+| `b883a18b4a99c6e1bba4b98049f920d9bbdfbc6a` | docs(task): tick child C0-C3 in implement.md |
+| `96fee882e26adaef6cc436b3df6634a84656fc65` | refactor(ui): MotionTokens single source; ReplicaPageRoute under app/motion |
+| `22a63246b493c13ddf1b89d9b0f22667c5cc4f0a` | chore: ignore flutter_test golden failure artifacts (test/failures/) |
+| `b109d28ac4e5fa266da86c5fad440c12ff774013` | refactor(ui): converge remaining feed states on FeedTail/FeedEmpty/FeedError |
+| `c4c8dbfbd1d4a5b720eca136c2d5a6e09006ff71` | refactor(ui): shared FeedTail/FeedEmpty/FeedError in feed_states.dart |
+| `1b466578ea95c159349c936dbddc5b697286d035` | refactor(ui): IllustCard, BookmarkSwitchButton, feed grid and hero motion under app |
+| `1fe644586726706c25f1054d8625850a4bab93a6` | refactor(nav): routes.dart facade and shell metrics provider |
+| `949e5dff23c5b587093c8e1c2cfa0c5204e9115f` | refactor(nav): merge navigation into lib/app/navigation, drop replicaRoute() |
+| `d4664bbbaedc8fdd62b28f4e5a39fb93f1ce3655` | refactor: drop unused declarations and icon glyphs; enable unreachable_from_main |
+| `b3636f50ba3d8dd9419d0a570cf1b2c42176aa77` | refactor: remove zero-reference barrels and tag search adapter |
+| `3cd23f27568c5baa851fe4239b8d77e77ba968ac` | test(arch): layering rules with current violations allow-listed |
+| `1830d1727627e5069715e545a4aae1d057a53526` | docs(task): child C planning — recount, design, implement derived from parent |
+
+### Testing
+
+- [OK] flutter analyze --no-pub：No issues found。
+- [OK] flutter test -j 4 --no-pub：00:34 +690，All tests passed。
+- [OK] flutter test test/architecture/layering_test.dart --no-pub：0 edges、0 data files、0 widget files。
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 推送 task/09-07-dart-architecture-convergence，创建 PR，等待 CI 通过后以 merge commit 合并。
+- 合并后由后续任务处理 D/E/F 与父任务。
