@@ -56,7 +56,7 @@
 
 ## C3b PixivImage 变体与 decode 策略
 
-- [ ] C3b-1 `PixivImageSize.feed/detail/viewer/avatar` + 命名构造器（含 `.hero(tag:)`）；
+- [x] C3b-1 `PixivImageSize.feed/detail/viewer/avatar` + 命名构造器（含 `.hero(tag:)`）；
       feed/avatar 传 `memCacheWidth`（布局宽 × dpr，上限 1.5× 逻辑像素），detail 按屏宽，viewer 不限；
       13 个调用点切换（recount §D 列表）；`PersonAvatar` 复用 avatar 变体。
       提交 `perf(image): size-aware decode policy for PixivImage variants`。
@@ -79,7 +79,7 @@
 
 ## C5 单一 owner
 
-- [ ] C5a 主机/头：`PixivDestinationRegistry._allows`、预热列表、`PixivFastRouteStore._bootstrap`、
+- [x] C5a 主机/头：`PixivDestinationRegistry._allows`、预热列表、`PixivFastRouteStore._bootstrap`、
       `network_probe_page`、`illust_detail_repository.dart:18` 自建 host 从 `PixivClientIdentity` 派生；
       新增 `PixivHeaders.image()` 供 4 个调用点（download_manager/widget_feed_loader/ugoira_repository/
       pixiv_image）。提交 `refactor(net): derive hosts from PixivClientIdentity`。
