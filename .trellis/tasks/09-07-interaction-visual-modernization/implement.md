@@ -51,11 +51,11 @@
   `flutter analyze --no-pub`、相关测试及全量测试（696 passed）通过。
   提交 `nav: go_router StatefulShellRoute with per-tab stacks`。
 
-- [ ] 把 `routes.dart` 全部 `open*` 门面改为 go/push/replace；settings、onboarding、login WebView、search
+- [x] 把 `routes.dart` 全部 `open*` 门面改为 go/push/replace；settings、onboarding、login WebView、search
   replacement、novel previous/next、comments 和 image viewer 的直接 push 改 typed path。viewer route 使用
   `illustId/page/quality`，comment replies 使用 `illustId/rootCommentId`；实体只作可选 extra。删除已无引用的
   `ReplicaPageRoute`，并让 `rg 'ReplicaPageRoute\(' lib`、app page 的直接 push 为 0。
-  提交 `nav: converge page navigation on typed routes`。
+  提交 `nav: converge page navigation on typed routes`。`flutter analyze --no-pub`、相关测试及全量测试（696 passed）通过。
 
 - [ ] 把 Android initial intent/onNewIntent subscription 从 `HomePage` 移到 app-level bridge；继续使用现有
   `IntentRouter` 解析结果：illust/user 进入 recommended branch，ACTION_SEND push root reverse-image route，account
