@@ -129,7 +129,7 @@
 - [x] C8d `network_policy.dart`（1,198 行）：`network_policy.dart`（策略）+ `pixiv_network_factory.dart` +
       `image_cache.dart`（CacheManager 所有权 + 3.4.x 关闭 bug 绕行注释）；
       `restricted_compat_network_test.dart` 回归。
-- [ ] C8e 5 个 >150 行方法拆分（`update_service._checkOnce`、`download_manager._run`、`login_page.build`、
+- [x] C8e 5 个 >150 行方法拆分（`update_service._checkOnce`、`download_manager._run`、`login_page.build`、
       `IllustCard.build`、`profile_edit_controller.submit`）。
       提交：每文件一个提交。
 
