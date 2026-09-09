@@ -74,7 +74,7 @@
       `RecommendedFeedController`、`IllustDetailController`、`IllustDownloadController`、
       `ProfileIllustFeedController`/`ProfileUserFeedController`、`UserDetailController`）。
 - [x] C4b `startup_gate.dart` 上移 `lib/app/`；`widget_feed_loader.dart` 的 core→features 边自然消除。
-- [ ] C4c 白名单清零（core→features 0、features a≠b 0、app↔onboarding 0，只留 routes.dart 环）。
+- [x] C4c 白名单清零（core→features 0、features a≠b 0、app↔onboarding 0，只留 routes.dart 环）。
       提交 `refactor(core): move repositories and controllers under core`。
 
 ## C5 单一 owner
