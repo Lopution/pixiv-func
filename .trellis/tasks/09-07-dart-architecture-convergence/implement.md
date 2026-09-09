@@ -115,7 +115,7 @@
 
 - [x] C7b-1 `DownloadRecoveryStore` 记录上限（如 200，淘汰已完成项）或增量写入（code review 决定）；
       单测覆盖。提交 `perf(download): cap DownloadRecoveryStore growth`。
-- [ ] C7b-2 history 三条查询 `EXPLAIN QUERY PLAN` 单测断言无 `SCAN TABLE`。
+- [x] C7b-2 history 三条查询 `EXPLAIN QUERY PLAN` 单测断言无 `SCAN TABLE`。
 
 ## C8 文件拆分（每文件 ≤600 行）
 
