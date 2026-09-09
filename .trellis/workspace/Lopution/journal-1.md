@@ -830,3 +830,26 @@ Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acce
 ### Next Steps
 
 - 推送 task/09-07-native-rust-hygiene，创建 PR，等待 CI 后以 merge commit 合并；用户设备补做 API 29 四项真机回归。
+
+
+## Session 25: 完成 F8 体积校准与视觉现代化收尾
+<!-- trellis-session: v=2 fp=d238d4f949f69eca -->
+
+**Date**: 2026-09-10
+**Task**: 完成 F8 体积校准与视觉现代化收尾
+**Branch**: `task/09-07-interaction-visual-modernization`
+
+### Summary
+
+完成最终 fdroid split APK 复测并将 arm64-v8a/armeabi-v7a 门槛更新为 28,981,038/24,805,284 B；补全 README 与 frontend component guidelines，归档 F。flutter analyze 通过，全量测试 713 passed，size report 与 git diff --check 通过。排查出 WSL Meta TUN fake-IP 到 pub.dev 的 TLS 转发不回包，显式使用 Windows Clash 127.0.0.1:7897 后 pub get 与构建成功。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6d178ae` | ci: recalibrate per-ABI APK budgets after UI modernization |
+| `7c1fd8b` | docs: retire replica visual freeze |
+
+### Status
+
+[OK] **Completed**
