@@ -76,9 +76,10 @@
 
 ## F5：Predictive Back
 
-- [ ] main manifest 开启 `android:enableOnBackInvokedCallback="true"`；审计两处 `PopScope` 和 go_router back
+- [x] main manifest 开启 `android:enableOnBackInvokedCallback="true"`；审计两处 `PopScope` 和 go_router back
   分派：先 pop 当前 branch，branch 根才进入 `RootBackCoordinator`，ProfileEdit 未保存确认仍生效。扩展 router、
-  root-back、profile-edit tests。
+  root-back、profile-edit tests。`flutter analyze --no-pub`、navigation router、root-back、profile-edit tests、
+  `git diff --check` 与 Dart format 检查通过。
   提交 `nav: enable predictive back`。
 
 ## F6：Hero 拖拽关闭
