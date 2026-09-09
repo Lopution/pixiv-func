@@ -105,11 +105,11 @@
 
 ## C7 状态范式
 
-- [ ] C7a `ProfileEditController`/`ReverseImageSearchController` → Riverpod `Notifier`；
+- [x] C7a `ProfileEditController`/`ReverseImageSearchController` → Riverpod `Notifier`；
       `NovelReaderController` → `Notifier`/`AsyncNotifier`（.autoDispose/.family 按需）；
       页面 `ref.watch`；3 页 4 处平台适配器经 provider 注入。每项一个提交。
 - [x] C7b `history_page` → `HistoryFeedController extends PagedFeedController`；保持 account 切换/outbox。
-- [ ] C7c `rg "ChangeNotifier" lib` 为 0。
+- [x] C7c `rg "ChangeNotifier" lib` 为 0。
 
 ## C7b 持久化增长
 
