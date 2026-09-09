@@ -33,10 +33,10 @@
 
 ## F2：Material 3 主题
 
-- [ ] 按 `design.md` §3 更新 `replica_theme.dart`：移除 M2 开关，集中 AppBar/NavigationBar/TabBar/Card/Chip/
-  Dialog/BottomSheet/SnackBar theme；`ReplicaSwitchTile` 改 M3 `Switch`。更新 theme/widget tests 和受影响 golden，
-  核对 light/dark 与四语言布局。
-  提交 `ui: adopt Material 3 theme`。
+- [x] 按 `design.md` §3 更新 `replica_theme.dart`：移除 M2 开关，集中 AppBar/NavigationBar/TabBar/Card/Chip/
+  Dialog/BottomSheet/SnackBar theme；`ReplicaSwitchTile` 改 M3 `Switch`。新增 theme/widget 回归测试；本阶段无受影响
+  golden，light/dark 主题与现有本地化页面测试通过。`flutter analyze --no-pub`、代表性测试及全量测试（694 passed）
+  通过。提交 `ui: adopt Material 3 theme`。
 
 ## F3：shell 与 go_router
 
