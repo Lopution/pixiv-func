@@ -126,7 +126,7 @@
       （`HeroRectClip`，`hero_transition_test` 改 `find.byType`）；`_CaptionRichText` → `caption_rich_text.dart`；
       `_InfoBlock` 等 → `widgets/`。
 - [x] C8c `user_page.dart`（959 行）：3 种 tab feed 各自成文件。
-- [ ] C8d `network_policy.dart`（1,198 行）：`network_policy.dart`（策略）+ `pixiv_network_factory.dart` +
+- [x] C8d `network_policy.dart`（1,198 行）：`network_policy.dart`（策略）+ `pixiv_network_factory.dart` +
       `image_cache.dart`（CacheManager 所有权 + 3.4.x 关闭 bug 绕行注释）；
       `restricted_compat_network_test.dart` 回归。
 - [ ] C8e 5 个 >150 行方法拆分（`update_service._checkOnce`、`download_manager._run`、`login_page.build`、
