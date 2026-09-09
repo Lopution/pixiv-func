@@ -69,7 +69,7 @@
 
 ## 阶段 D6：rhttp fork 文档与 spec
 
-- [ ] **D6a** `plugins/rhttp/UPSTREAM.md`：「Build configuration diffs」补 `android/build.gradle.kts` AGP 9 适配（`:38-41`）、
+- [x] **D6a** `plugins/rhttp/UPSTREAM.md`：「Build configuration diffs」补 `android/build.gradle.kts` AGP 9 适配（`:38-41`）、
       `rust/tests/ech_config_test.rs` / `ech_live_handshake.rs`、`rust/examples/ech_reqwest_probe.rs`、`opt-level = "s"` 实验
       （已测 −1,539,000 / −884,944，未采用，见 `release-artifacts.md`）；Sync guide 扩为七步（diff 上游 → 重打 ECH → 重打构建配置差异 →
       `tool/frb_check.sh` → 必要时 codegen → 插件 `flutter test` + `cargo test` → 更新记录）。
