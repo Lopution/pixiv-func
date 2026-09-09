@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-07-dart-architecture-convergence/research/architecture-recount.md", "reason": "HEAD 1186ff2 recount: allow-list edges, C1 shrink, test baseline 686"}
+{"file": ".trellis/tasks/09-07-dart-architecture-convergence/prd.md", "reason": "child C requirements R1-R8"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/design.md", "reason": "parent §2-§3 §13-§14 layering and component design"}
+{"file": ".trellis/tasks/09-02-performance-size-maintainability-refactor/implement.md", "reason": "parent Child C C0-C9 commit messages"}
