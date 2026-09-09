@@ -122,7 +122,7 @@
 - [x] C8a `settings_page.dart`（2,088 行/14 页面类）：`features/settings/pages/<name>_page.dart` 每页一文件；
       共享 `SettingsSection/SettingsTile/SettingsControl` 原语；`MePage` 去重（`user_page.dart` 保留定义，
       设置页本地账号卡改名 `AccountCard`）；`settings_test.dart` 只改 import。
-- [ ] C8b `illust_detail_page.dart`（1,388 行）：`_GlobalRectClip` → `motion/hero_rect_clip.dart`
+- [x] C8b `illust_detail_page.dart`（1,388 行）：`_GlobalRectClip` → `motion/hero_rect_clip.dart`
       （`HeroRectClip`，`hero_transition_test` 改 `find.byType`）；`_CaptionRichText` → `caption_rich_text.dart`；
       `_InfoBlock` 等 → `widgets/`。
 - [ ] C8c `user_page.dart`（959 行）：3 种 tab feed 各自成文件。
