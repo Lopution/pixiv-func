@@ -28,7 +28,7 @@
   `backend/release-artifacts.md` 的链接为 canonical path。
   提交 `docs(spec): replace templates with shipped contracts`。
 
-- [ ] 按 `design.md` §3 给 E0 重算出的每个 `lib/core/<domain>/` 选择一个现有入口，增加 library 级职责、owner、
+- [x] 按 `design.md` §3 给 E0 重算出的每个 `lib/core/<domain>/` 选择一个现有入口，增加 library 级职责、owner、
   spec 链接；`backend/directory-structure.md` 增加 domain 索引。运行 analyzer 确认匿名 `library;` 指令合法。
   提交 `docs(core): document domain ownership`。
 
