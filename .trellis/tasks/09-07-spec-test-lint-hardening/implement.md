@@ -50,7 +50,7 @@
 
 ## E3：一次性格式化
 
-- [ ] 运行 `dart format lib test`，本提交只含格式差异；在 `.github/workflows/ci.yml` 的
+- [x] 运行 `dart format lib test`，本提交只含格式差异；在 `.github/workflows/ci.yml` 的
   `analyze-and-test` job 中把 `dart format --output=none --set-exit-if-changed lib test` 放在 analyze 前。
   提交 `style: format Dart sources and enforce CI check`。
 
