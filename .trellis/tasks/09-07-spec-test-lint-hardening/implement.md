@@ -56,7 +56,7 @@
 
 ## E4：第一批 lint
 
-- [ ] 在 `analysis_options.yaml` 保留 `unreachable_from_main: true`，启用 `sort_pub_dependencies`、
+- [x] 在 `analysis_options.yaml` 保留 `unreachable_from_main: true`，启用 `sort_pub_dependencies`、
   `prefer_single_quotes`、`prefer_final_locals`；先看 `dart fix --dry-run`，再只应用这三条规则的 fix，处理剩余
   analyzer 报告。同步 `frontend/quality-guidelines.md`。
   提交 `lint: enable dependency order, quotes and final locals`。
