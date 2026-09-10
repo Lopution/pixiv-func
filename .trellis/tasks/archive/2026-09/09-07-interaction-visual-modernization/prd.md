@@ -70,7 +70,7 @@
 ### R8. 文档
 
 - README 项目原则改写：视觉冻结终止，改为"Func 组件层 + 现代交互模型"；`.trellis/spec/frontend/component-guidelines.md`
-  记录导航、恢复、转场、组件的新契约；`backend/release-pipeline.md` 更新体积阈值。
+  记录导航、恢复、转场、组件的新契约；`backend/release-artifacts.md` 更新体积阈值。
 
 ### R9. 不做
 
