@@ -44,7 +44,7 @@
   重复的断言（若 E0 仍发现）。运行对应 illust、updater 和 home 测试。
   提交 `test: replace brittle type checks and remove diagnostic case`。
 
-- [ ] 给 `IllustCard`、`FeedTail/FeedEmpty/FeedError`、SnackBar、settings 原语、收藏/关注按钮补关键 semantics，
+- [x] 给 `IllustCard`、`FeedTail/FeedEmpty/FeedError`、SnackBar、settings 原语、收藏/关注按钮补关键 semantics，
   扩展最近的现有测试并新增一个共享组件 semantics 测试；核对 `layering_test.dart` 对 F 后共享组件名称的覆盖。
   提交 `test(ui): cover shared component semantics`。
 
