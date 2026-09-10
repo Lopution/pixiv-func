@@ -853,3 +853,33 @@ Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acce
 ### Status
 
 [OK] **Completed**
+
+
+## Session 26: 完成 E5 strict/async lint 并收尾 child E
+<!-- trellis-session: v=2 fp=8091be2e9fa8e61b -->
+
+**Date**: 2026-09-10
+**Task**: 完成 E5 strict/async lint 并收尾 child E
+**Branch**: `task/09-07-spec-test-lint-hardening`
+
+### Summary
+
+启用 analyzer strict-casts/strict-raw-types/strict-inference 与 unawaited_futures/avoid_dynamic_calls,按报告把 dynamic 响应参数改为 http.Response 等类型化写法并显式 unawaited;flutter analyze 0 问题,全量 716 test 通过(高于 E0 基线 713),dart format 与 git diff --check 干净。spec 的 quality/type-safety 已随 E1/E4 提交覆盖两批 lint 契约。前置:PR #13(F interaction-visual-modernization)合并后本分支 rebase 至 8cdb13a,重放 9 个提交内容不变。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8374a88` | docs(test): recount spec and test hardening baseline |
+| `bd27035` | docs(spec): replace templates with shipped contracts |
+| `52ae7d0` | docs(core): document domain ownership |
+| `3cabe5b` | test: share account and preferences fixtures |
+| `8388807` | test: replace brittle type checks and remove diagnostic case |
+| `2568f8f` | test(ui): cover shared component semantics |
+| `5cf021d` | style: format Dart sources and enforce CI check |
+| `3dd4a01` | lint: enable dependency order, quotes and final locals |
+| `db696e4` | lint: enable strict types and async checks |
+
+### Status
+
+[OK] **Completed**
