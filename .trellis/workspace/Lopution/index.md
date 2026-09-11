@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 26
-- **Last Active**: 2026-09-10
+- **Total Sessions**: 27
+- **Last Active**: 2026-09-11
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~885 | Active |
+| `journal-1.md` | ~917 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 27 | 2026-09-11 | UI redesign: tokens, IA, shared components, responsive/a11y matrix | - | `task/09-11-ui-redesign` |
 | 26 | 2026-09-10 | 完成 E5 strict/async lint 并收尾 child E | `8374a88`, `bd27035`, `52ae7d0`, `3cabe5b`, `8388807`, `2568f8f`, `5cf021d`, `3dd4a01`, `db696e4` | `task/09-07-spec-test-lint-hardening` |
 | 25 | 2026-09-10 | 完成 F8 体积校准与视觉现代化收尾 | `6d178ae`, `7c1fd8b` | `task/09-07-interaction-visual-modernization` |
 | 24 | 2026-09-09 | Child D 原生层与 Rust 插件整理完成 | `3afecf5`, `181147a`, `d1817b0`, `9d3dd8e`, `5eebef7`, `7bc2f98`, `e5230b9`, `bb95212`, `f881440`, `47bb70c`, `72e1f4f`, `86f2237`, `3a3ff67`, `9459776`, `334f464`, `bca740b`, `3af1680` | `task/09-07-native-rust-hygiene` |
