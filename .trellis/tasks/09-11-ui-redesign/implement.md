@@ -5,29 +5,29 @@
 ## 阶段 0：基线与约束冻结
 
 - [x] 前置修正已随首个 PR 合入 main（nav 栈本地化、底栏间距、Ugoira 拖拽、搜索内联建议），记为 merged prerequisites，不计入任何阶段完成度。
-- [ ] 记录当前 `flutter analyze --no-pub`、`flutter test`、golden 清单、关键页面截图和现有路由/恢复行为，以任务 HEAD 落盘为准（`baseline-2026-09-07` tag 仅历史参照）。
-- [ ] 盘点 `lib/app/theme`、shell、feed/detail/profile/settings 共享组件和重复变体（清单见 design.md §0），标注高风险业务消费者。
-- [ ] 建立视觉矩阵目录与命名规则；确认本阶段不触碰 API、OAuth、网络策略、下载恢复和阅读位置。
-- [ ] 提交：`docs(ui): capture redesign baseline and constraints`。
+- [x] 记录当前 `flutter analyze --no-pub`、`flutter test`、golden 清单、关键页面截图和现有路由/恢复行为，以任务 HEAD 落盘为准（`baseline-2026-09-07` tag 仅历史参照）。
+- [x] 盘点 `lib/app/theme`、shell、feed/detail/profile/settings 共享组件和重复变体（清单见 design.md §0），标注高风险业务消费者。
+- [x] 建立视觉矩阵目录与命名规则；确认本阶段不触碰 API、OAuth、网络策略、下载恢复和阅读位置。
+- [x] 提交：`docs(ui): capture redesign baseline and constraints`。
 
 依赖：无。退出条件：基线命令与未执行项均有记录，用户数据/业务契约清单已确认。
 
 ## 阶段 1：设计 tokens 与基础组件
 
-- [ ] `FuncTokens` 保留为基础常量 owner；新增语义化 `ThemeExtension`（引用常量、不复制色值）与亮/暗映射，完成排版/间距/形状/动效语义；删除扁平 `surfaceContainer*` 的直接使用。
-- [ ] 在现有 `feed/*`、`replica_*`、`settings/*` 家族上扩展或显式重命名来统一公共 API，补缺 `FeedLoading`/`PageHeader`/按钮/标签/反馈（**不新建同义平行组件**）；补 semantics、tooltip 和触控尺寸测试。
+- [x] `FuncTokens` 保留为基础常量 owner；新增 `FuncSemanticTokens` `ThemeExtension`（`func_semantic_tokens.dart`，全部引用 FuncTokens 常量）+ `FuncSpacing`/`FuncShape` 常量族 + `MotionTokens.resolve` reduced-motion 收敛；`replicaTheme` 接线并把 `surfaceContainerHigh/Highest` 解开为 `surfaceRaised`，14 处占位填充改挂 `surfaceContainer`（`69e6f97`）。
+- [ ] 在现有 `feed/*`、`replica_*`、`settings/*` 家族上扩展或显式重命名来统一公共 API，补缺 `FeedLoading`/`PageHeader`/按钮/标签/反馈（**不新建同义平行组件**）；补 semantics、tooltip 和触控尺寸测试。进展：`FeedLoading` 已加入 `feed_states.dart` 并替换 8 处 `Center(CircularProgressIndicator())`；`ReplicaScaffold` 扩展 actions/bottom/FAB（`7903e48`）。剩余 PageHeader、TagChips、按钮/反馈统一与语义测试。
 - [ ] 为 `IllustCard`、`MediaPreview`、`AuthorSummary`、`ActionBar` 定义最小变体矩阵（落到现有家族或显式重命名），禁止新增页面私有近似组件。
-- [ ] 提交边界：tokens、基础组件、组件测试分开提交；每次提交都跑 `dart format`、`flutter analyze --no-pub` 和聚焦 widget 测试。
+- [x] 提交边界：tokens（`69e6f97`）、基础组件（`7903e48`）、组件测试（`2f26f0a`）分开提交；每次提交都跑 `dart format`、`flutter analyze --no-pub` 和聚焦 widget 测试。
 
 依赖：阶段 0。退出条件：组件在独立样例页覆盖亮/暗、长文本和异步三态，主题对比度问题有记录或通过。
 
 ## 阶段 2：应用壳层与信息架构
 
-- [ ] `/me` 升为第 5 个 branch：从 `_commonBranchRoutes` 移除 `me`、`openMe` 改 branch 切换、`_stackRoots` 加 `/me`、底栏第 5 项换"我的"图标与 l10n key（4 个 arb 同步）。
-- [ ] `/settings` 整树改挂 root-level route（URL 空间、`settingsNavigatorKey`/`includeHistory:false` 语义、深链与恢复不变）；`routeExternalIntent` 落点回归。
-- [ ] 窄屏在五个 tab 页 AppBar actions 注入同一个共享 settings action（不加 shell chrome）；宽屏 `NavigationRail`/Drawer 同级设置入口；`home_shell_metrics` 无底栏时如实上报。
-- [ ] 路由门面只传 id/query 等稳定参数；为分支栈、深链接、恢复和预测性返回补测试；`navigation_router_test`/`navigation_restoration_test`/`home_bar` golden 同步更新。
-- [ ] 提交：`nav(ui): promote my and separate app settings`。
+- [x] `/me` 升为第 5 个 branch：`_commonBranchRoutes` 移除 `me`、`openMe` 改 `context.go('/me')`、`_stackRoots` 加 `/me`、第 5 项换 `Icons.person_outline` + 新增 `homeMe` l10n（4 个 arb 同步并重新生成）。
+- [x] `/settings` 整树改挂 root-level route（URL 空间、深链、恢复、`includeHistory:false` 语义不变；branch key 随分支移除，`settingsRouteObserver` 合并入 root observer）；`routeExternalIntent` 落点测试通过。
+- [x] 窄屏四个内容 tab 页 AppBar actions 注入共享 `SettingsActionButton`（`MePage` 按 spec 契约不加 settings 入口）；宽屏 `NavigationRail`（≥600，trailing 齿轮同级入口）；`home_shell_metrics.publish` 改 nullable，无底栏时上报 `(null, 0)`，Hero 兜底到视口边。
+- [x] 路由门面只传 id/query 等稳定参数；新增 settings 推入/返回、`/settings/theme` 深链、rail trailing 入口测试；bar 相关测试 pin 390×844 窄画布；`home_bar` golden 重生成。
+- [x] 提交：`nav(ui): promote my and separate app settings`（`18bd872`）。
 
 依赖：阶段 1 的 tokens、壳层基础组件。退出条件：手机/宽屏导航与路由聚焦测试通过，设置不再藏在“我的”账户菜单内。
 
