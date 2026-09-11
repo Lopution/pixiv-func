@@ -4,8 +4,9 @@
 
 ## 阶段 0：基线与约束冻结
 
-- [ ] 记录当前 `flutter analyze --no-pub`、`flutter test`、golden 清单、关键页面截图和现有路由/恢复行为。
-- [ ] 盘点 `lib/app/theme`、shell、feed/detail/profile/settings 共享组件和重复变体，标注高风险业务消费者。
+- [x] 前置修正已随首个 PR 合入 main（nav 栈本地化、底栏间距、Ugoira 拖拽、搜索内联建议），记为 merged prerequisites，不计入任何阶段完成度。
+- [ ] 记录当前 `flutter analyze --no-pub`、`flutter test`、golden 清单、关键页面截图和现有路由/恢复行为，以任务 HEAD 落盘为准（`baseline-2026-09-07` tag 仅历史参照）。
+- [ ] 盘点 `lib/app/theme`、shell、feed/detail/profile/settings 共享组件和重复变体（清单见 design.md §0），标注高风险业务消费者。
 - [ ] 建立视觉矩阵目录与命名规则；确认本阶段不触碰 API、OAuth、网络策略、下载恢复和阅读位置。
 - [ ] 提交：`docs(ui): capture redesign baseline and constraints`。
 
@@ -13,19 +14,19 @@
 
 ## 阶段 1：设计 tokens 与基础组件
 
-- [ ] 实现 `FuncTokens`、亮/暗主题映射、排版/间距/形状/动效语义；删除扁平 `surfaceContainer*` 的直接使用。
-- [ ] 统一 `AppScaffold`、`PageHeader`、按钮/标签/反馈、加载/空/错状态的公共 API；补 semantics、tooltip 和触控尺寸测试。
-- [ ] 为 `IllustCard`、`MediaPreview`、`AuthorSummary`、`ActionBar` 定义最小变体矩阵，禁止新增页面私有近似组件。
+- [ ] `FuncTokens` 保留为基础常量 owner；新增语义化 `ThemeExtension`（引用常量、不复制色值）与亮/暗映射，完成排版/间距/形状/动效语义；删除扁平 `surfaceContainer*` 的直接使用。
+- [ ] 在现有 `feed/*`、`replica_*`、`settings/*` 家族上扩展或显式重命名来统一公共 API，补缺 `FeedLoading`/`PageHeader`/按钮/标签/反馈（**不新建同义平行组件**）；补 semantics、tooltip 和触控尺寸测试。
+- [ ] 为 `IllustCard`、`MediaPreview`、`AuthorSummary`、`ActionBar` 定义最小变体矩阵（落到现有家族或显式重命名），禁止新增页面私有近似组件。
 - [ ] 提交边界：tokens、基础组件、组件测试分开提交；每次提交都跑 `dart format`、`flutter analyze --no-pub` 和聚焦 widget 测试。
 
 依赖：阶段 0。退出条件：组件在独立样例页覆盖亮/暗、长文本和异步三态，主题对比度问题有记录或通过。
 
 ## 阶段 2：应用壳层与信息架构
 
-- [ ] 将 shell 一级目的地收敛为 `推荐/排行/最新/搜索/我的`，为 `/me` 建立独立 branch。
-- [ ] 将 `/settings` 作为 shell-level app action 和 root-level route；设置子路由、旧深链接、返回和状态恢复保持兼容。
-- [ ] 窄屏使用底栏 + 齿轮/应用菜单，宽屏使用 rail/drawer 同级入口；导航标签、选中态、键盘焦点和语义一致。
-- [ ] 路由门面只传 id/query 等稳定参数；为分支栈、深链接、恢复和预测性返回补测试。
+- [ ] `/me` 升为第 5 个 branch：从 `_commonBranchRoutes` 移除 `me`、`openMe` 改 branch 切换、`_stackRoots` 加 `/me`、底栏第 5 项换"我的"图标与 l10n key（4 个 arb 同步）。
+- [ ] `/settings` 整树改挂 root-level route（URL 空间、`settingsNavigatorKey`/`includeHistory:false` 语义、深链与恢复不变）；`routeExternalIntent` 落点回归。
+- [ ] 窄屏在五个 tab 页 AppBar actions 注入同一个共享 settings action（不加 shell chrome）；宽屏 `NavigationRail`/Drawer 同级设置入口；`home_shell_metrics` 无底栏时如实上报。
+- [ ] 路由门面只传 id/query 等稳定参数；为分支栈、深链接、恢复和预测性返回补测试；`navigation_router_test`/`navigation_restoration_test`/`home_bar` golden 同步更新。
 - [ ] 提交：`nav(ui): promote my and separate app settings`。
 
 依赖：阶段 1 的 tokens、壳层基础组件。退出条件：手机/宽屏导航与路由聚焦测试通过，设置不再藏在“我的”账户菜单内。
@@ -51,9 +52,9 @@
 
 ## 阶段 5：响应式、可访问性与视觉证据
 
-- [ ] 固化基于可用宽度的列数/最大内容宽度/导航形态纯函数和测试；覆盖 320/390/600/840/1200dp 与横屏。
+- [ ] 固化基于可用宽度的列数/最大内容宽度/导航形态纯函数和测试（`_illustColumnsFor` 导出为吃 `crossAxisExtent` 约束而非 `MediaQuery` 整窗宽）；覆盖 320/390/600/840/1200dp 与横屏。
 - [ ] 完成大字号、键盘/遥控焦点、语义标签、最小触控目标和 reduced-motion 验证；修复溢出、遮挡和不可达操作。
-- [ ] 生成亮/暗 × 四语言 × 关键状态的 golden/screenshot 矩阵，记录设备与人工复核结果。
+- [ ] golden 分级：样板链路（推荐→详情→作者→我的/收藏）走亮/暗×四语言×关键状态完整矩阵，其余页面族只做代表状态矩阵；先补 golden harness（泵装、字体/环境稳定化、CI 一致性），记录设备与人工复核结果。
 - [ ] 提交：`test(ui): add responsive accessibility and visual matrix`。
 
 依赖：阶段 4。退出条件：自动测试、人工视觉审阅、真实设备验证三类结果分栏记录，失败项有明确回滚或后续任务。
@@ -63,7 +64,7 @@
 - [ ] 运行 `dart format --set-exit-if-changed .`、`flutter analyze --no-pub`、聚焦测试、全量 `flutter test`，必要时运行 Android/Kotlin 测试。
 - [ ] 检查 `git diff --check`、未涉及文件和既有用户修改；确认没有 mock、空操作处理器、吞错或未记录降级。
 - [ ] 根据 PRD Acceptance Criteria 逐项附证据，区分 Implemented、Compiled、Unit-tested、Device-tested。
-- [ ] 用户评审通过后才执行 `task.py start`/分支实现；实现完成并通过质量门后再按仓库流程归档。
+- [ ] 实现完成并通过质量门后按仓库流程归档（任务已 `in_progress`，首个 PR 已合入前置修正）。
 
 依赖：阶段 0–5。退出条件：PRD 验收项全部有证据，用户明确接受剩余限制和未执行的设备检查。
 
