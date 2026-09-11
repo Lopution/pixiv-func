@@ -883,3 +883,35 @@ Closed the 09-01 parent: all seven children merged (PR #3-#9), parent-level acce
 ### Status
 
 [OK] **Completed**
+
+
+## Session 27: UI redesign: tokens, IA, shared components, responsive/a11y matrix
+<!-- trellis-session: v=2 fp=2e22433137ea9904 -->
+
+**Date**: 2026-09-11
+**Task**: UI redesign: tokens, IA, shared components, responsive/a11y matrix
+**Branch**: `task/09-11-ui-redesign`
+
+### Summary
+
+Semantic ThemeExtension layer, /me branch + root /settings, shared FeedLoading/TagChips/AuthorSummary, SliverLayoutBuilder grid columns, AppBreakpoints, golden matrix (10 files), reduced-motion page transitions. 741 tests green.
+
+### Main Changes
+
+- lib/app/theme/func_semantic_tokens.dart; lib/app/widgets/{tag_chips,author_summary,settings_action_button}.dart; lib/app/layout/app_breakpoints.dart; routes.dart /me branch + root settings; home_page NavigationBar/NavigationRail
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] flutter analyze --no-pub: 0 issues; flutter test: 741 pass
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR review/merge; windows-desktop task deferred
