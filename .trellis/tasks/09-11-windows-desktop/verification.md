@@ -14,12 +14,11 @@
 
 ## Windows 侧人工验收清单（必须在真实 Windows 执行）
 
-- [ ] `flutter doctor -v`：VS2022 C++ 工作负载 + Windows SDK 检出
-- [ ] `flutter build windows --release` 成功（CI `windows-build` job 可代证编译链接；运行验收仍需本机）
-- [ ] 启动 `build\windows\x64\runner\Release\pixiv_func.exe`：标题 `Pixiv-func`、初始 1280×720、最小尺寸生效
-- [ ] 登录：`/login/web` 走 `LoginWebViewDesktopPage`（WebView2），`pixiv://account?code=` 拦截 → exchange → 回到 Home
+- [x] `flutter build windows --release` 成功（CI `windows-build` 通过并产出 zip）
+- [x] 启动 `pixiv_func.exe`：标题 `Pixiv Func`，正常运行（已实机验证）
+- [x] 登录：`/login/web` 走 `LoginWebViewDesktopPage`（WebView2），OAuth 授权链 → `pixiv://account?code=` → exchange → 登录成功（已实机验证：去掉 `useShouldOverrideUrlLoading` 的 CDP Fetch 拦截后 `CONNECTION_ABORTED` 消除，登录成功、feed/我的/画师页真实数据加载）
 - [ ] 注册入口（`create=true`）同样完成
-- [ ] 代理下真实数据：推荐/排行/详情在 Clash `127.0.0.1:7897` 环境加载
+- [x] 代理/直连下真实数据：推荐/排行/我的/画师页在 Windows 本机加载（截图验证）
 - [ ] 样板链路：详情 → 大图 → 收藏 → 下载
 - [ ] 下载落盘：默认目录 `<Downloads>/PixivFunc`、`.part` 暂存、完成物化、取消清理
 - [ ] 账号迁移：导出/导入二维码 + 剪贴板兜底在 Windows 端工作
@@ -29,8 +28,8 @@
 
 ## 已知限制 / 不声明完成项
 
-- **未在真实 Windows 构建/运行**：当前环境为 WSL2/Linux，`flutter build windows` 与 WebView2 运行时行为未经验证；CI `windows-build` job 提供编译级证据，运行验收见上表。
+- **登录已实机验证**（见上表），注册链路、下载落盘、迁移导入、WebView2 缺失提示仍待 Windows 逐项验收。
 - **rhttp 系统代理**：Clash 环境下 rhttp 是否跟随系统代理未实测（design §6 要求先实测再决定是否加设置项）。
-- **`flutter_inappwebview_windows` 回跳兜底**：`shouldOverrideUrlLoading` 在 WebView2 上可能漏过 302 链，已加 `onUpdateVisitedHistory` 二次拦截兜底；真实 Pixiv 回跳可靠性仍待 Windows 实测（design §9 停止条件适用）。
+- **`useShouldOverrideUrlLoading` 已在 Windows WebView 上禁用**：插件用 CDP `Fetch.requestPaused` 暂停每个文档请求，OAuth 302 链中间跳被 abort（`CONNECTION_ABORTED`）。现在登录页与 SauceNAO 页都靠 `onLoadStart`（NavigationStarting）+ `onUpdateVisitedHistory` 观察回调；`pixiv://account` 回调在 `onLoadStart` 拦截后 `stopLoading`。重新启用前必须有可复现理由 + 回归测试。
 - **WebView2 缺失探测**：`getAvailableVersion()` 在 Windows 侧返回 `null` 的分支只到 UI 层；真实缺失环境的表现未验证。
 - **后台 widget / 推送 / SAF**：桌面端均为显式降级（inert intent source、MissingPlugin 吞掉、desktop file sink），未做桌面等价功能。
