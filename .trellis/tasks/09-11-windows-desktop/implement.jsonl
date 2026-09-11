@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/backend/rust-plugin.md", "reason": "rhttp 插件清单/工具链约定，windows target 接入必须遵循"}
+{"file": ".trellis/spec/backend/in-app-web-profile.md", "reason": "登录/资料 web session 的平台边界约定"}
+{"file": ".trellis/spec/backend/release-artifacts.md", "reason": "构建产物与签名降级约定"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "改动横跨 Dart 能力层/Rust 工具链/Windows runner 三层"}

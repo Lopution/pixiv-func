@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "质量门：analyze 零问题、测试回归、git diff --check"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "Windows 降级必须显式可见，不得吞错或静默失败"}
