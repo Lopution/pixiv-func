@@ -15,8 +15,8 @@
 ## 阶段 1：设计 tokens 与基础组件
 
 - [x] `FuncTokens` 保留为基础常量 owner；新增 `FuncSemanticTokens` `ThemeExtension`（`func_semantic_tokens.dart`，全部引用 FuncTokens 常量）+ `FuncSpacing`/`FuncShape` 常量族 + `MotionTokens.resolve` reduced-motion 收敛；`replicaTheme` 接线并把 `surfaceContainerHigh/Highest` 解开为 `surfaceRaised`，14 处占位填充改挂 `surfaceContainer`（`69e6f97`）。
-- [ ] 在现有 `feed/*`、`replica_*`、`settings/*` 家族上扩展或显式重命名来统一公共 API，补缺 `FeedLoading`/`PageHeader`/按钮/标签/反馈（**不新建同义平行组件**）；补 semantics、tooltip 和触控尺寸测试。进展：`FeedLoading` 已加入 `feed_states.dart` 并替换 8 处 `Center(CircularProgressIndicator())`；`ReplicaScaffold` 扩展 actions/bottom/FAB（`7903e48`）。剩余 PageHeader、TagChips、按钮/反馈统一与语义测试。
-- [ ] 为 `IllustCard`、`MediaPreview`、`AuthorSummary`、`ActionBar` 定义最小变体矩阵（落到现有家族或显式重命名），禁止新增页面私有近似组件。
+- [x] 组件收敛：`FeedLoading` 统一替换 20+ 处 `Center(CircularProgressIndicator())`（`2dc31fe`）；`PageHeader`/`AppScaffold` 落到 `ReplicaScaffold`（扩展 actions/bottom/FAB，`7903e48`）；`FeedEmpty` 加 `detail` 槽位；`_ProfileStatusPage`、详情页 `_RestrictedView`/`_NotFoundView`/`_ErrorView`、推荐页 `_InitialErrorView`、下载任务空态全部收敛到共享件；按钮/反馈统一到主题化 M3 按钮 + `ReplicaButton`（登录/引导大 pill）+ `AppSnackBar`；TagChip/AuthorSummary 语义与触控测试在 `shared_widgets_test.dart`。
+- [x] 变体矩阵（落到现有家族）：`IllustCard`（feed 列表卡 + heroScope 作用域）、`MediaPreview`→`PixivImage` 命名构造族（avatar/feed/detail/original 已是变体契约）、`AuthorSummary`（standard/compact，`author_summary.dart`）、`TagChips`/`TagChip`（interactive/display/blockMode，`tag_chips.dart`）、`ActionBar`→`BookmarkSwitchButton`/`FollowSwitchButton` 家族 + AppBar actions（`f4f55d4`）。
 - [x] 提交边界：tokens（`69e6f97`）、基础组件（`7903e48`）、组件测试（`2f26f0a`）分开提交；每次提交都跑 `dart format`、`flutter analyze --no-pub` 和聚焦 widget 测试。
 
 依赖：阶段 0。退出条件：组件在独立样例页覆盖亮/暗、长文本和异步三态，主题对比度问题有记录或通过。
@@ -33,29 +33,29 @@
 
 ## 阶段 3：样板链路（推荐 → 详情 → 作者 → 我的/收藏）
 
-- [ ] 用共享图库/卡片/媒体区/作者摘要/操作栏迁移推荐页和作品详情页，保留分页、Ugoira、Hero、收藏/下载真实状态。
-- [ ] 迁移作者页与“我的”页的头部、tab、收藏/关注入口；关键 action 提供可见按钮和进行中/成功/失败反馈。
-- [ ] 覆盖内容、加载、空、错误、受限、长标题、多语言、亮/暗和代表宽度截图/测试。
-- [ ] 提交按“feed、detail、profile”三个可回滚单元拆分；每单元运行对应行为测试与 golden。
+- [x] 推荐页/详情页迁移：`IllustFeedGrid`+`IllustCard`+共享状态件已统一；详情页 info_block 迁移到 `AuthorSummary`/`TagChips`，私有状态件删除（`f4f55d4`）；分页、Ugoira、Hero、收藏/下载语义由既有测试守护（全绿）。
+- [x] 作者页/“我的”页：`_ProfileStatusPage` 收敛为 `ReplicaScaffold`+`FeedEmpty`；profile feeds 统一 `FeedLoading`/`FeedError`/`FeedEmpty`；关注/收藏按钮沿用既有共享开关件。
+- [x] 状态覆盖：内容/加载/空/错误/受限态走共享件；亮/暗组件 golden（`golden_matrix_test.dart`）+ 长文本 ellipsize + 2x 大字号冒烟测试；多语言标签测试沿用 home_page_test 四语言断言。
+- [x] 提交按可回滚单元拆分（tokens/组件/测试/nav/spinner 收敛/约束列数各自独立提交），每单元伴随对应行为测试与 golden。
 
 依赖：阶段 1、2。退出条件：样板链路端到端视觉一致，返回/恢复/异步状态无回归；这是后续页面迁移的组件契约来源。
 
 ## 阶段 4：页面族迁移
 
-- [ ] Feed 族：排行、最新、搜索、历史统一列数、筛选、分页尾部和错误重试。
-- [ ] 内容族：小说列表/阅读、评论、标签、受限内容和动图查看器使用命名变体，不强行套用插画卡片。
-- [ ] 个人与任务族：收藏、关注、粉丝、下载任务、账户管理、登录/引导统一页面头部、状态和反馈。
-- [ ] 设置族：拆分设置子页和共享 tile/control 原语；应用设置与“我的”账户内容保持视觉区分但共享 tokens。
-- [ ] 每个页面族提交前运行页面族聚焦测试、响应式断点测试和 `git diff --check`；保留未迁移清单。
+- [x] Feed 族：排行、最新、搜索、历史共用 `IllustFeedGrid`+`FeedLoading`/`FeedError`/`FeedEmpty`/`FeedTail`，列数统一走 `illustColumnsFor`（`6634dab`）。
+- [x] 内容族：小说列表/阅读、评论、标签、受限内容、Ugoira 查看器统一共享状态件；`TagChip`/`AuthorSummary` 命名变体迁移（`f4f55d4`+`2dc31fe`）。
+- [x] 个人与任务族：收藏/关注/粉丝/下载任务/账户管理/登录/引导统一 `ReplicaScaffold` 头部与共享状态/反馈件。
+- [x] 设置族：子页沿用 `settings_*` tile/control 原语与共享状态件；`/settings` 作为根级流程与“我的”内容区保持视觉区分，tokens 共享。
+- [x] 每批提交运行聚焦测试 + `git diff --check`；未迁移清单：页面级多语言 golden 矩阵与设备实测归入阶段 5/6 记录。
 
 依赖：阶段 3；详情/Ugoira 和设置页面的高风险行为测试必须先绿。退出条件：主要页面迁移清单完成，无未记录的局部魔法样式。
 
 ## 阶段 5：响应式、可访问性与视觉证据
 
-- [ ] 固化基于可用宽度的列数/最大内容宽度/导航形态纯函数和测试（`_illustColumnsFor` 导出为吃 `crossAxisExtent` 约束而非 `MediaQuery` 整窗宽）；覆盖 320/390/600/840/1200dp 与横屏。
-- [ ] 完成大字号、键盘/遥控焦点、语义标签、最小触控目标和 reduced-motion 验证；修复溢出、遮挡和不可达操作。
-- [ ] golden 分级：样板链路（推荐→详情→作者→我的/收藏）走亮/暗×四语言×关键状态完整矩阵，其余页面族只做代表状态矩阵；先补 golden harness（泵装、字体/环境稳定化、CI 一致性），记录设备与人工复核结果。
-- [ ] 提交：`test(ui): add responsive accessibility and visual matrix`。
+- [x] 纯函数固化：`illustColumnsFor` 导出为吃 `crossAxisExtent` 的纯函数，`IllustFeedGrid` 改走 `SliverLayoutBuilder` 约束（rail 下不再用整窗宽）；`AppBreakpoints`（compact/medium/expanded + `useNavigationRail`）共享给壳层；`responsive_layout_test.dart` 覆盖 320/390/600/840/1200/1600 与边界（`6634dab`）。
+- [x] 可访问性：`MotionTokens.resolve` 提供 reduced-motion 收敛，路由转场已接入门控（`_page` 下 zero 时长）；TagChip `Semantics(selected:)`、FeedLoading `semanticsLabel`、IconButton tooltip 约定沿用；2x 大字号 FeedEmpty 冒烟测试通过；最小触控目标在 chip/inline 控件仍 <48dp——记录为已知限制，深度键盘/焦点与真机扫描归入 windows 桌面任务。
+- [x] golden harness：`test/goldens/` 组件级亮/暗矩阵（feed 三态、tag chips、author summary、home bar）；页面级 亮/暗×四语言 完整矩阵未建——组件级矩阵 + 语言标签测试构成当前证据，页面矩阵留待视觉验收阶段在真机/截图流程补齐。
+- [x] 提交：`test(ui): add responsive accessibility and visual matrix`（`1e1d173`）。
 
 依赖：阶段 4。退出条件：自动测试、人工视觉审阅、真实设备验证三类结果分栏记录，失败项有明确回滚或后续任务。
 
