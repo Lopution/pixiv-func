@@ -915,3 +915,45 @@ Semantic ThemeExtension layer, /me branch + root /settings, shared FeedLoading/T
 ### Next Steps
 
 - PR review/merge; windows-desktop task deferred
+
+
+## Session 28: windows-desktop: runner + 平台能力层 + 桌面登录/外链/CI
+<!-- trellis-session: v=2 fp=dce4014246b2f6c0 -->
+
+**Date**: 2026-09-11
+**Task**: windows-desktop: runner + 平台能力层 + 桌面登录/外链/CI
+**Branch**: `task/09-11-windows-desktop`
+
+### Summary
+
+Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/url_launcher 降级 + CI windows job；762 测试通过；Windows 侧运行验收待真实设备
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `84d120f` | docs(task): draft windows desktop task plan |
+| `a783921` | docs(windows): record platform baseline and toolchain prerequisites |
+| `71d582e` | feat(windows): add runner and desktop capability layer |
+| `95860ef` | feat(windows): oauth login via in-app webview |
+| `fe3b466` | feat(windows): saucenao result webview via inappwebview |
+| `6f9cbc9` | fix(windows): track flutter metadata and drop unused test imports |
+| `89d12ec` | fix(windows): gate double-back-to-exit to android |
+| `5d4d0b4` | style(test): format windows capability test |
+| `3fc1841` | fix(windows): route caps checks through injectable provider |
+| `c4394f6` | feat(windows): url_launcher external links and webview2 missing prompt |
+| `35bbac5` | ci(windows): release zip artifact on windows runner |
+| `c276694` | test(windows): desktop verification evidence and remaining limits |
+| `f9486ff` | refactor(windows): reuse outbound url capability for external results |
+
+### Testing
+
+- [OK] flutter analyze 0 issues; flutter test 762 pass; dart format lib test clean; git diff --check clean
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真实 Windows 机器跑 build/登录/下载验收清单后 archive
