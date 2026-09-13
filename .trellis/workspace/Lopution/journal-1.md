@@ -957,3 +957,25 @@ Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/u
 ### Next Steps
 
 - 真实 Windows 机器跑 build/登录/下载验收清单后 archive
+
+
+## Session 29: Android static performance audit
+<!-- trellis-session: v=2 fp=1cd952e91d74bd53 -->
+
+**Date**: 2026-09-13
+**Task**: Android static performance audit
+**Branch**: `task/09-13-android-static-performance-audit`
+
+### Summary
+
+完成 Android 滑动与 Hero 掉帧的静态审计：确认刷新率不是主因，定位 uncapped DPR decode width、800px masonry cache、Hero 动态裁剪与路由叠加为主要候选；对照 Pix-EzViewer、PixMix、Pansy、Pixview、Piko；analyze 和 13 个聚焦测试通过，全量测试保留 1 个既有 fade 契约失败，未做真机验证。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ed91bee` | docs(perf): audit Android frame-drop paths |
+
+### Status
+
+[OK] **Completed**
