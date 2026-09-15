@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 29
-- **Last Active**: 2026-09-13
+- **Total Sessions**: 30
+- **Last Active**: 2026-09-15
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~981 | Active |
+| `journal-1.md` | ~1029 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 30 | 2026-09-15 | UX 修复批次：详情页比例/个人页头部/后台缓存存活/底栏动效 | `582a29e`, `b775628`, `36938cb`, `475fe2c`, `578b94c`, `caae01e`, `b4c4198`, `e166e2e`, `8d76c5c`, `f6e93c7` | `task/09-15-startup-transition-i18n-fixes` |
 | 29 | 2026-09-13 | Android static performance audit | `ed91bee` | `task/09-13-android-static-performance-audit` |
 | 28 | 2026-09-11 | windows-desktop: runner + 平台能力层 + 桌面登录/外链/CI | `84d120f`, `a783921`, `71d582e`, `95860ef`, `fe3b466`, `6f9cbc9`, `89d12ec`, `5d4d0b4`, `3fc1841`, `c4394f6`, `35bbac5`, `c276694`, `f9486ff` | `task/09-11-windows-desktop` |
 | 27 | 2026-09-11 | UI redesign: tokens, IA, shared components, responsive/a11y matrix | - | `task/09-11-ui-redesign` |
