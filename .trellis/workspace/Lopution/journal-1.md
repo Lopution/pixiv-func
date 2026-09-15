@@ -915,3 +915,115 @@ Semantic ThemeExtension layer, /me branch + root /settings, shared FeedLoading/T
 ### Next Steps
 
 - PR review/merge; windows-desktop task deferred
+
+
+## Session 28: windows-desktop: runner + 平台能力层 + 桌面登录/外链/CI
+<!-- trellis-session: v=2 fp=dce4014246b2f6c0 -->
+
+**Date**: 2026-09-11
+**Task**: windows-desktop: runner + 平台能力层 + 桌面登录/外链/CI
+**Branch**: `task/09-11-windows-desktop`
+
+### Summary
+
+Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/url_launcher 降级 + CI windows job；762 测试通过；Windows 侧运行验收待真实设备
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `84d120f` | docs(task): draft windows desktop task plan |
+| `a783921` | docs(windows): record platform baseline and toolchain prerequisites |
+| `71d582e` | feat(windows): add runner and desktop capability layer |
+| `95860ef` | feat(windows): oauth login via in-app webview |
+| `fe3b466` | feat(windows): saucenao result webview via inappwebview |
+| `6f9cbc9` | fix(windows): track flutter metadata and drop unused test imports |
+| `89d12ec` | fix(windows): gate double-back-to-exit to android |
+| `5d4d0b4` | style(test): format windows capability test |
+| `3fc1841` | fix(windows): route caps checks through injectable provider |
+| `c4394f6` | feat(windows): url_launcher external links and webview2 missing prompt |
+| `35bbac5` | ci(windows): release zip artifact on windows runner |
+| `c276694` | test(windows): desktop verification evidence and remaining limits |
+| `f9486ff` | refactor(windows): reuse outbound url capability for external results |
+
+### Testing
+
+- [OK] flutter analyze 0 issues; flutter test 762 pass; dart format lib test clean; git diff --check clean
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真实 Windows 机器跑 build/登录/下载验收清单后 archive
+
+
+## Session 29: Android static performance audit
+<!-- trellis-session: v=2 fp=1cd952e91d74bd53 -->
+
+**Date**: 2026-09-13
+**Task**: Android static performance audit
+**Branch**: `task/09-13-android-static-performance-audit`
+
+### Summary
+
+完成 Android 滑动与 Hero 掉帧的静态审计：确认刷新率不是主因，定位 uncapped DPR decode width、800px masonry cache、Hero 动态裁剪与路由叠加为主要候选；对照 Pix-EzViewer、PixMix、Pansy、Pixview、Piko；analyze 和 13 个聚焦测试通过，全量测试保留 1 个既有 fade 契约失败，未做真机验证。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ed91bee` | docs(perf): audit Android frame-drop paths |
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 30: UX 修复批次：详情页比例/个人页头部/后台缓存存活/底栏动效
+<!-- trellis-session: v=2 fp=088a36d14937a6c2 -->
+
+**Date**: 2026-09-15
+**Task**: UX 修复批次：详情页比例/个人页头部/后台缓存存活/底栏动效
+**Branch**: `task/09-15-startup-transition-i18n-fixes`
+
+### Summary
+
+修复四个视觉问题：详情页多图按固有比例自适应（meta_pages 无每页尺寸，改 PixEz 式固有尺寸+估算占位盒）；个人页 banner 缩矮至 320/350dp 并 Shaft 式整体暗化+白字；后台切回淡入重播——自定义 WidgetsFlutterBinding 跳过 imageCache.clear()（Android UI_HIDDEN 触发全清）；底栏切页落点重放真实点按的两层粉色 ink（InkHighlight+主题 splash，overlayColor.resolve(pressed) 取色）。另含早前累积的渐变参数对齐、caption 链接 TextSpan 化、搜索聚焦延迟、全局 Bouncing 物理、字号 token 收敛。
+
+### Main Changes
+
+- 详情页多图：去固定 AspectRatio，解码后按固有比例布局（PixEz 同款）
+- 个人页头部：320/350dp 矮 banner + 黑色 scrim 降对比度 + 白色身份信息
+- main.dart 自定义 binding：handleMemoryPressure 不再 imageCache.clear()，后台切回不重播淡入
+- 底栏切页：目标 item 重放粉色 InkHighlight+InkSparkle（与顶栏逐项同源）
+- 字号收敛 FuncSemanticTokens/textTheme；caption 链接内联化；搜索聚焦延迟至转场完成；全局 Bouncing 物理
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `582a29e` | fix(illust): hero/ugoira transition guard, instant tier hand-off, PixEz fade timings |
+| `b775628` | fix(illust): size detail pages by each image's intrinsic aspect ratio |
+| `36938cb` | fix(illust): render caption links as inline text spans |
+| `475fe2c` | refactor(ui): converge hard-coded font sizes onto semantic text tokens |
+| `578b94c` | fix(search): focus the query field after the route transition completes |
+| `caae01e` | feat(scroll): unified bounce physics and no platform overscroll glow |
+| `b4c4198` | fix(nav): replay landing ink on the destination bar after a branch swap |
+| `e166e2e` | feat(profile): shorter dimmed banner with white identity text |
+| `8d76c5c` | fix(app): keep the decoded image cache across background trips |
+| `f6e93c7` | docs(spec): image hand-off, intrinsic sizing and cache-survival contracts |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；全量 783 测试通过；git diff --check 干净
+- [OK] arm64 github release APK 构建通过（31.2MB）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 开 PR 合入 main（analyze-and-test CI）
