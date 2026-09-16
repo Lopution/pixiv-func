@@ -1225,3 +1225,40 @@ tag/用户屏蔽走官方 /v1/mute 同步，单作品屏蔽本地按账号持久
 ### Next Steps
 
 - Wave 2 末项 search-filter-v2
+
+
+## Session 36: search-filter-v2：Shaft v3 级过滤器面
+<!-- trellis-session: v=2 fp=d0bd7ad809adb1db -->
+
+**Date**: 2026-09-16
+**Task**: search-filter-v2：Shaft v3 级过滤器面
+**Branch**: `task/09-16-search-filter-v2`
+
+### Summary
+
+SearchFilters 补齐 Shaft v3 面:男/女向人气 sort(会员)、AI 三态(仅 AI 客户端谓词)、bookmark_num_min/max(会员 wire+客户端兜底)、ratio_pattern、content_type、width/height_min/max;sheet 按 SearchResultType 分组;novel sort 归一
+
+### Main Changes
+
+- search_models 新枚举+字段+cacheKey/toQuery(illust-only 范围);next_page_parser 白名单;search_repository popular 三档非会员 preview;_SearchFeedController.filterPageIds 客户端谓词;search_filter_sheet type 参数+五组新控件;四语言 23 键
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2d2bfbf` | docs(09-16): search-filter-v2 设计固化 |
+| `c7e6243` | feat(search): 过滤模型与 wire 契约 |
+| `8769b9e` | feat(search): 客户端兜底谓词与会员路由 |
+| `460d617` | feat(search): 过滤 sheet 分组 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue;flutter test 857 全绿(新增 wire 序列化/cursor 白名单/谓词/sheet 渲染断言);dart format 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Wave 3:bookmark-tags / content-expansion / network-account-settings / reverse-search-engines
