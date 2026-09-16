@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 34
+- **Total Sessions**: 35
 - **Last Active**: 2026-09-16
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1188 | Active |
+| `journal-1.md` | ~1227 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 35 | 2026-09-16 | mute-system：三态屏蔽与服务端同步 | `b139c3c`, `fcd884f`, `e22fb92`, `df7e8ba`, `60d5ae8`, `59976bc` | `task/09-16-mute-system` |
 | 34 | 2026-09-16 | card-quick-actions：卡片长按快捷菜单与稍后再看 | `927583e`, `d26a3a8`, `407dc46`, `3c4e2cb`, `7ba69fc` | `task/09-16-card-quick-actions` |
 | 33 | 2026-09-16 | motion-layer：动效语法统一 + reduce-motion + 四层接入 | `6fe3a60`, `20972e4`, `97a2709`, `30ff34b`, `820d922`, `a2eda8a` | `task/09-16-motion-layer` |
 | 32 | 2026-09-16 | 小说域修复与功能闭环 | `fea4b01`, `d30c912`, `17d1ca7`, `9549d69`, `1cf35d7` | `task/09-16-novel-domain-repair` |

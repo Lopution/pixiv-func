@@ -1,0 +1,3 @@
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "mutation boundary/ledger 协议"}
+{"file": "lib/core/bookmark/bookmark_store.dart", "reason": "revision/boundary 参考实现"}
+{"file": "lib/core/paging/paged_feed_controller.dart", "reason": "C9 过滤挂接点"}

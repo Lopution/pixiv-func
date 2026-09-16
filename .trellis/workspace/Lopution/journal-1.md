@@ -1186,3 +1186,42 @@ IllustCard 长按弹动作 sheet（收藏/下载/稍后再看/分享，注册表
 ### Next Steps
 
 - Wave 2 继续 mute-system（屏蔽动作注册位已留在 illustCardActionsProvider 注释）
+
+
+## Session 35: mute-system：三态屏蔽与服务端同步
+<!-- trellis-session: v=2 fp=dadb0830c51abe56 -->
+
+**Date**: 2026-09-16
+**Task**: mute-system：三态屏蔽与服务端同步
+**Branch**: `task/09-16-mute-system`
+
+### Summary
+
+tag/用户屏蔽走官方 /v1/mute 同步，单作品屏蔽本地按账号持久化；卡片模糊+点按揭示，设置可切直接隐藏；/settings/muted 三段管理页；长按菜单新增屏蔽此作品/作者
+
+### Main Changes
+
+- lib/core/mute/*(MuteStore 账号边界+hydrate+legacy blocked_tags 迁移推送+pending 回滚；MuteRepository /v1/mute/list+edit)；mute_predicate；IllustCard+MutedCover+revealedMuteIdsProvider；PagedFeedController/WidgetFeedLoader hide 模式过滤；MutedItemsPage+/settings/muted 路由+设置 tile；_MuteWorkAction/_MuteUserAction 注册进 illustCardActionsProvider；info_block tag 屏蔽改走 MuteStore；blocked_tags/BlockedTagsPage 删除；四语言 mute* 键
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b139c3c` | docs(09-16): mute-system 设计固化 |
+| `fcd884f` | chore(09-16): mute-system 上下文清单与激活 |
+| `e22fb92` | feat(mute): core 域与服务端同步 |
+| `df7e8ba` | feat(mute): 卡片模糊变体与 feed 过滤 |
+| `60d5ae8` | feat(mute): 长按动作与管理页 |
+| `59976bc` | test(mute): 端到端覆盖 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；相关测试全绿（card_action 10 项、mute_store 9 项、paged_feed hide/blur 2 项）；全套件 1 项失败已修（ranking fixture 未接 /v1/mute/list）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Wave 2 末项 search-filter-v2
