@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 32
+- **Total Sessions**: 33
 - **Last Active**: 2026-09-16
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1111 | Active |
+| `journal-1.md` | ~1150 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 33 | 2026-09-16 | motion-layer：动效语法统一 + reduce-motion + 四层接入 | `6fe3a60`, `20972e4`, `97a2709`, `30ff34b`, `820d922`, `a2eda8a` | `task/09-16-motion-layer` |
 | 32 | 2026-09-16 | 小说域修复与功能闭环 | `fea4b01`, `d30c912`, `17d1ca7`, `9549d69`, `1cf35d7` | `task/09-16-novel-domain-repair` |
 | 31 | 2026-09-16 | 搜索筛选会员适配与刷新图片交接修复 | `920185f`, `1441c37`, `d6dcef9`, `512fde4`, `cdd1ada` | `task/09-16-search-filter-and-image-swap` |
 | 30 | 2026-09-15 | UX 修复批次：详情页比例/个人页头部/后台缓存存活/底栏动效 | `582a29e`, `b775628`, `36938cb`, `475fe2c`, `578b94c`, `caae01e`, `b4c4198`, `e166e2e`, `8d76c5c`, `f6e93c7` | `task/09-15-startup-transition-i18n-fixes` |
