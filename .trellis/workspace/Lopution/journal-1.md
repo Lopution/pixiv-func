@@ -1068,3 +1068,44 @@ Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/u
 ### Next Steps
 
 - 观察真机上 preview 端点翻页游标行为（next_url 参数回声未验证）
+
+
+## Session 32: 小说域修复与功能闭环
+<!-- trellis-session: v=2 fp=069d502a0d3108b1 -->
+
+**Date**: 2026-09-16
+**Task**: 小说域修复与功能闭环
+**Branch**: `task/09-16-novel-domain-repair`
+
+### Summary
+
+小说正文改走 /webview/v2/novel 内嵌 bootstrap JSON（根因：detail 端点无正文字段）；补齐小说收藏 add/delete、评论 v3 端点泛化、九模式排行与 trending-tags/novel；父任务规划文档随本 PR 入库
+
+### Main Changes
+
+- fetchDetail = /v2/novel/detail 元数据 + /webview/v2/novel 内嵌 JSON 正文合并；extractNovelWebPayload 提取正文/上传图/pixivimage 缩略图/系列前后篇；缺脚本或截断对象显式报错
+- BookmarkRepository 扩展 addNovel/deleteNovel（novel_id + restrict）；NovelStore 双向同步 BookmarkStore；详情页 BookmarkSwitchButton(isNovel)
+- 评论域泛化 (workKind,workId)：/v3/novel/comments、/v2/novel/comment/replies、/v1/novel/comment/add；嵌套路由 + 详情页入口
+- /v1/novel/ranking 九模式 feed + NovelRankingPage + 排行页入口；NovelRow 提取共享；trending-tags 按 illust/novel 分端点 + 搜索首页 SegmentedButton
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `fea4b01` | docs(09-16): novel repair 根因证据与设计固化 |
+| `d30c912` | fix(novel): 正文改走 /webview/v2/novel 内嵌 JSON |
+| `17d1ca7` | feat(novel): 收藏 add/delete 与系列 prev/next 兜底 |
+| `9549d69` | feat(novel): 评论支持 novel 维度 |
+| `1cf35d7` | feat(novel): 小说排行与热词 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；dart format 干净；flutter test 全量 810 通过（含 novel_ranking_feed_test 5 条、webview 提取器 6 条、评论/收藏泛化回归）；git diff --check 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 开 PR 合入 main；内嵌图 token 的阅读器渲染属读者改版延期项（当前有效 token 折叠、无效显示原文，有测试覆盖）

@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
+import '../../app/navigation/routes.dart';
 import '../../app/widgets/feed/feed_grid.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -82,6 +83,13 @@ class _RankingPageState extends State<RankingPage>
     return Scaffold(
       appBar: AppBar(
         titleSpacing: 0,
+        actions: [
+          IconButton(
+            tooltip: context.l10n.novelRanking,
+            onPressed: () => openNovelRanking(context),
+            icon: const Icon(Icons.menu_book_outlined),
+          ),
+        ],
         title: TabBar(
           controller: _tabController,
           isScrollable: true,
