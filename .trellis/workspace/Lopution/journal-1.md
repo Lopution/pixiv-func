@@ -1148,3 +1148,41 @@ MotionTokens 单一数据源+MotionScope 双源降级；路由转场三原语；
 ### Next Steps
 
 - rebase main → PR → 进入 Wave 2 card-quick-actions
+
+
+## Session 34: card-quick-actions：卡片长按快捷菜单与稍后再看
+<!-- trellis-session: v=2 fp=397f5c084a15472b -->
+
+**Date**: 2026-09-16
+**Task**: card-quick-actions：卡片长按快捷菜单与稍后再看
+**Branch**: `task/09-16-card-quick-actions`
+
+### Summary
+
+IllustCard 长按弹动作 sheet（收藏/下载/稍后再看/分享，注册表可扩展），watchlater.db 账号隔离落库 + 列表页/路由/设置入口
+
+### Main Changes
+
+- lib/app/widgets/card_actions/*（CardAction 抽象 + 有序注册表 + showAppBottomSheet 弹层）；lib/core/watchlater/*（watchlater.db、repository 幂等 add/rowid 次序、AsyncNotifier store）；lib/features/watchlater/watchlater_page.dart；IllustEntity.toJson 往返；routes.dart 'watchlater' common route + openWatchLater；settings_page tile；四语言 cardAction*/watchLater* 键
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `927583e` | docs(09-16): card-quick-actions 设计固化 |
+| `d26a3a8` | feat(watchlater): core 域落库与 store |
+| `407dc46` | feat(card): 动作注册表与长按菜单 |
+| `3c4e2cb` | feat(watchlater): 列表页与入口 |
+| `7ba69fc` | test(card): 手势/分发/暂存覆盖 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 833 全绿（新增 card_action_test 6 项 + watch_later_store_test 6 项）；dart format 干净；git diff --check 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Wave 2 继续 mute-system（屏蔽动作注册位已留在 illustCardActionsProvider 注释）
