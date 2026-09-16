@@ -1,0 +1,4 @@
+{"file": "lib/core/bookmark/bookmark_store.dart", "reason": "check 参照"}
+{"file": "lib/core/bookmark/bookmark_repository.dart", "reason": "check 参照"}
+{"file": "test/bookmark_flow_test.dart", "reason": "check 参照"}
+{"file": "test/bookmark_store_test.dart", "reason": "check 参照"}

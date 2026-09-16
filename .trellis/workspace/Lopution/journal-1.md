@@ -1262,3 +1262,41 @@ SearchFilters 补齐 Shaft v3 面:男/女向人气 sort(会员)、AI 三态(仅 
 ### Next Steps
 
 - Wave 3:bookmark-tags / content-expansion / network-account-settings / reverse-search-engines
+
+
+## Session 37: bookmark-tags: 收藏标签体系
+<!-- trellis-session: v=2 fp=91c642ce71441d5d -->
+
+**Date**: 2026-09-16
+**Task**: bookmark-tags: 收藏标签体系
+**Branch**: `task/09-16-bookmark-tags`
+
+### Summary
+
+收藏标签维度闭环:add 携带 tags[](空格拼接,PixEz 形)、bookmark detail 预填编辑 sheet、用户标签集合分页管理页、tag 过滤收藏 feed
+
+### Main Changes
+
+- core/bookmark: BookmarkTagFacet/UserBookmarkTag/BookmarkDetail/UserBookmarkTagPage 模型;op/entry 携带 tags;addWithRestrict 透传;repository 增 fetchDetail/fetchUserTags;NextPageParser 白名单 bookmark-tags 两端点 + bookmarks tag 参数;收藏 sheet 重构为 _BookmarkEditSheet(已收藏长按开编辑,detail 预填,已选 InputChip+建议 FilterChip+新标签输入);userBookmarkTagSuggestionsProvider/bookmarkDetailProvider;UserBookmarkTagsController 轻量分页;BookmarkTagsPage + BookmarkTagFeedPage(ProfileFeedKey.bookmarkTag);路由 bookmarks/tags + bookmarks/tag;profile 收藏 tab 工具栏标签入口;四语言 l10n
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `41d1b4e` | docs(09-16): bookmark-tags 设计固化 |
+| `708962a` | feat(bookmark): 标签模型与 wire 契约 |
+| `a80e421` | feat(bookmark): op/entry 携带标签 |
+| `73bacdf` | feat(bookmark): 收藏 sheet 标签编辑 |
+| `44d182e` | feat(bookmark): 标签页与过滤收藏 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue;872 测试全绿(含 layering_test 修复跨 feature import:BookmarkTagFeedPage 移入 features/profile);git diff --check 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- Wave 3 继续:content-expansion(series+pixivision)
