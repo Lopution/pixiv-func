@@ -1027,3 +1027,44 @@ Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/u
 ### Next Steps
 
 - 开 PR 合入 main（analyze-and-test CI）
+
+
+## Session 31: 搜索筛选会员适配与刷新图片交接修复
+<!-- trellis-session: v=2 fp=581b2555f86f28e8 -->
+
+**Date**: 2026-09-16
+**Task**: 搜索筛选会员适配与刷新图片交接修复
+**Branch**: `task/09-16-search-filter-and-image-swap`
+
+### Summary
+
+非会员 popular_desc 改路由 popular-preview 端点，duration 预设客户端换算为日期区间并与自定义日期互斥；PixivImage 转 stateful，element 级 URL 交接置零淡化（Glide 语义），feed 卡片按 scope+作品 id 加 ValueKey
+
+### Main Changes
+
+- is_premium 从 OAuth user 解析，三登录流/refresh/transfer/JSON 全链路透传
+- SearchFilters.toQuery 不再发 duration，预设换算 start_date/end_date；duration 与自定义日期互斥 + start>end 校验
+- 非会员 popular_desc → /v1/search/popular-preview/* 端点（去 sort），Premium 保持原端点
+- PixivImage stateful 化 + _lastShownUrl 坑位交接检测 → fade=0；卡片 ValueKey 跟随作品
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `920185f` | feat(auth): persist user.is_premium through login and refresh |
+| `1441c37` | fix(search): route free popular sort to popular-preview, resolve durations to dates |
+| `d6dcef9` | fix(search): make duration and dates mutually exclusive in the filter sheet |
+| `512fde4` | fix(image): replace cross-work dissolve with instant slot hand-off |
+| `cdd1ada` | docs(spec): slot hand-off and premium search contracts |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；全量 795 测试通过；CI 7/7 绿（PR #20）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 观察真机上 preview 端点翻页游标行为（next_url 参数回声未验证）
