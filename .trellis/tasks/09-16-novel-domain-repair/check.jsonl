@@ -1,0 +1,2 @@
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "store/mutation/paging 契约核对"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "ApiParseError/HttpError 传播语义核对"}

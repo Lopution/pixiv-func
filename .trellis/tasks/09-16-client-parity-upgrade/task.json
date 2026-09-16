@@ -1,0 +1,42 @@
+{
+  "id": "client-parity-upgrade",
+  "name": "client-parity-upgrade",
+  "title": "开源竞品审计落地：功能补齐、基础设施与动效升级",
+  "description": "父任务：吸收 PixEz/Shaft/Pixeval/pixes/pansy/freepiv/skana_pix 审计结论的功能补齐（清单 1-16)，修复小说页运行期损坏，补齐动效层。排除 FANBOX/pixiv COMIC、AI 超分/插帧/OCR、iOS/macOS 移植。",
+  "status": "planning",
+  "dev_type": null,
+  "scope": "parent: audit-items 1-16 + novel repair + motion layer; excludes FANBOX/comic, on-device AI, iOS/macOS",
+  "package": null,
+  "priority": "P1",
+  "creator": "Lopution",
+  "assignee": "Lopution",
+  "createdAt": "2026-09-16",
+  "completedAt": null,
+  "branch": null,
+  "base_branch": "main",
+  "worktree_path": null,
+  "commit": null,
+  "pr_url": null,
+  "subtasks": [],
+  "children": [
+    "09-16-novel-domain-repair",
+    "09-16-card-quick-actions",
+    "09-16-mute-system",
+    "09-16-search-filter-v2",
+    "09-16-bookmark-tags",
+    "09-16-content-expansion",
+    "09-16-network-account-settings",
+    "09-16-reverse-search-engines",
+    "09-16-download-v2",
+    "09-16-feed-resilience",
+    "09-16-watchlist-local-library",
+    "09-16-motion-layer",
+    "09-16-tablet-desktop-layout"
+  ],
+  "parent": null,
+  "relatedFiles": [],
+  "notes": "",
+  "meta": {
+    "notes": "2026-09-16: 竞品审计落地。13 children; novel-domain-repair 先修损坏; mute=服务端/v1/mute为主+本地覆盖; 源码留存 /root/pixiv-audit/"
+  }
+}

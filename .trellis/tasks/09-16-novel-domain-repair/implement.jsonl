@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-16-client-parity-upgrade/design.md", "reason": "父任务跨子任务共享契约：分层归属、实体store/mutation协议、测试基线"}
+{"file": ".trellis/tasks/09-16-novel-domain-repair/design.md", "reason": "本任务设计：根因证据链、webview正文管线、功能闭环归属"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "BookmarkStore/CommentStore/PagedFeedController 契约必须沿用"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "分层归属与路由门面规则"}
