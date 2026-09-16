@@ -1109,3 +1109,42 @@ Windows runner + capability 层 + InAppWebView 登录/SauceNAO + file_selector/u
 ### Next Steps
 
 - 开 PR 合入 main；内嵌图 token 的阅读器渲染属读者改版延期项（当前有效 token 折叠、无效显示原文，有测试覆盖）
+
+
+## Session 33: motion-layer：动效语法统一 + reduce-motion + 四层接入
+<!-- trellis-session: v=2 fp=78d1a430ee3a5459 -->
+
+**Date**: 2026-09-16
+**Task**: motion-layer：动效语法统一 + reduce-motion + 四层接入
+**Branch**: `task/09-16-motion-layer`
+
+### Summary
+
+MotionTokens 单一数据源+MotionScope 双源降级；路由转场三原语；StaggeredEntrance+PressScale 挂全量卡片；sheet/dialog 单入口收口字面量
+
+### Main Changes
+
+- lib/app/motion/*, lib/app/navigation/routes.dart, feed/novel 卡片与列表, 设置页
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `6fe3a60` | docs(09-16): motion-layer 设计固化 |
+| `20972e4` | feat(motion): MotionTokens 扩展 + 减少动态效果设置 |
+| `97a2709` | feat(motion): 路由转场语义化 |
+| `30ff34b` | feat(motion): 列表进场 stagger + 卡片按压反馈 |
+| `820d922` | feat(motion): 弹层时长统一 + 动效字面量收口 |
+| `a2eda8a` | test(motion): 降级矩阵与进场/按压断言 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue; flutter test 821 全绿; motion_test 11 例
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- rebase main → PR → 进入 Wave 2 card-quick-actions
