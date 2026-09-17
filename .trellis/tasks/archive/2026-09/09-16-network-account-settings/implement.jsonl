@@ -1,0 +1,16 @@
+{"file": "lib/core/settings/app_settings.dart", "reason": "imageSource/ImageSourceMode 现状与 schemaVersion 序列化"}
+{"file": "lib/core/settings/settings_controller.dart", "reason": "selectImageSource 校验与写入模式"}
+{"file": "lib/core/network/compat/network_contracts.dart", "reason": "PixivDestinationRegistry 白名单精确匹配语义"}
+{"file": "lib/core/network/compat/network_providers.dart", "reason": "policy watch 重建路径，imageSource 挂这里"}
+{"file": "lib/core/network/compat/image_cache.dart", "reason": "PixivImageCache/HttpFileService 图片请求边界"}
+{"file": "lib/core/network/compat/network_probe.dart", "reason": "探针步骤模型，镜像连通性测试挂点"}
+{"file": "lib/features/settings/pages/browse_settings_page.dart", "reason": "镜像源 UI 挂点（现有单源隐藏门控）"}
+{"file": "lib/core/mute/mute_models.dart", "reason": "MuteState/MuteKey/MutedUser 导出形态"}
+{"file": "lib/core/mute/mute_repository.dart", "reason": "服务端 mute edit 写口，导入走 add"}
+{"file": "lib/core/mute/mute_store.dart", "reason": "账号边界持久化 + serverSynced 语义"}
+{"file": "lib/core/history/history_repository.dart", "reason": "page/upsert/clear 导入导出入口"}
+{"file": "lib/core/platform/saf_tree.dart", "reason": "SAF pickTree + SafDocumentSink 导出写文件"}
+{"file": "lib/core/reverse_image/desktop_image_input.dart", "reason": "openFile XTypeGroup 导入读文件范式"}
+{"file": "lib/core/auth/account_transfer.dart", "reason": "versioned envelope + 校验导入范式"}
+{"file": "lib/features/settings/pages/account_settings_page.dart", "reason": "服务端显示设置 section 挂点"}
+{"file": ".trellis/tasks/09-16-network-account-settings/design.md", "reason": "本任务设计基线"}
