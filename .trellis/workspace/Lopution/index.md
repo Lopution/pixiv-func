@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 39
+- **Total Sessions**: 40
 - **Last Active**: 2026-09-17
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1397 | Active |
+| `journal-1.md` | ~1438 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 40 | 2026-09-17 | 09-16-reverse-search-engines: 多引擎以图搜图（IQDB/Ascii2D/TinEye + WebView 自上传） | `50d6deb`, `9974116`, `9c0ad4d`, `d95b0d6`, `6483d65` | `task/09-16-reverse-search-engines` |
 | 39 | 2026-09-17 | 09-16-network-account-settings: 镜像 + 服务端显示设置 + 备份 | `f283526`, `c52d571`, `961e03d`, `8ed7920`, `2dfcf1d`, `5d42bc5`, `735d467` | `task/09-16-network-account-settings` |
 | 38 | 2026-09-17 | content-expansion: 插画系列与 pixivision | `729676c`, `bfbced3`, `66ae8ed`, `f54d098`, `160fca5`, `bc4347d`, `6c1691a` | `task/09-16-content-expansion` |
 | 37 | 2026-09-16 | bookmark-tags: 收藏标签体系 | `41d1b4e`, `708962a`, `a80e421`, `73bacdf`, `44d182e` | `task/09-16-bookmark-tags` |

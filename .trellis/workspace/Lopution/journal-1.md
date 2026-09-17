@@ -1395,3 +1395,44 @@ SearchFilters 补齐 Shaft v3 面:男/女向人气 sort(会员)、AI 三态(仅 
 ### Status
 
 [OK] **Completed**
+
+
+## Session 40: 09-16-reverse-search-engines: 多引擎以图搜图（IQDB/Ascii2D/TinEye + WebView 自上传）
+<!-- trellis-session: v=2 fp=05f930f09095bc82 -->
+
+**Date**: 2026-09-17
+**Task**: 09-16-reverse-search-engines: 多引擎以图搜图（IQDB/Ascii2D/TinEye + WebView 自上传）
+**Branch**: `task/09-16-reverse-search-engines`
+
+### Summary
+
+Session summary was not supplied.
+
+### Main Changes
+
+为 SauceNAO 反向搜图接入 IQDB / Ascii2D / TinEye，四引擎可选可切。
+
+**传输决策**：Ascii2D/TinEye 在 Cloudflare 后面，headless multipart 会被 cf-mitigated 质询拦（Shaft #733 实证）。走 WebView 自上传——真实页面手势 + 真浏览器 Cookie/JS 上下文过质询，不注入 input.files、不自动 click、不退回 headless。Android 侧 `armReverseUpload` channel 校验 `cacheDir/reverse_image_inputs/` 归属后 FileProvider 出 content Uri，vendored InAppWebViewChromeClient 的 armed 槽一次性消费；桌面无选择器拦截，提示用户在页面选择器里重选同图。IQDB 留在 headless（无 CF），引擎级约束 jpeg/png/gif ≤8MiB ≤7500px 在发请求前拒绝。
+
+**结构**：`ReverseImageEngineSpec`（displayName/transport/端点/host 白名单/约束）+ `ReverseImageSearchWebUpload` outcome；导航策略按引擎 host 参数化；`selectEngine` 无输入也可切换（持久化选择），失败保留输入换引擎重试；`AppSettings.reverseImageEngine` 持久化。
+
+**测试教训**：`InAppWebView` 在 widget 测试需 `InAppWebViewPlatform.instance` fake（断言 null platform）；平台类型经 `flutter_inappwebview` 主包 re-export，直引 platform_interface 触发 depend_on_referenced_packages。已写入 frontend/quality-guidelines。
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `50d6deb` | docs(09-16): reverse-search-engines 计划与上下文 |
+| `9974116` | feat(reverse-image): 引擎模型与 IQDB provider |
+| `9c0ad4d` | feat(reverse-image): WebView 上传通道 |
+| `d95b0d6` | feat(reverse-image): 引擎切换与导航策略泛化 |
+| `6483d65` | feat(reverse-image): 引擎选择与上传 UI |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 全量 990 通过；:app:testGithubDebugUnitTest BUILD SUCCESSFUL；dart format 0 改动；git diff --check 干净
+
+### Status
+
+[OK] **Completed**
