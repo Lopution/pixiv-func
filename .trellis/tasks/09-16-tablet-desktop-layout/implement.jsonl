@@ -1,0 +1,6 @@
+{"file": "lib/app/layout/app_breakpoints.dart", "reason": "断点阶梯唯一来源；expanded 接线点"}
+{"file": "lib/features/illust/detail/illust_detail_page.dart", "reason": "单 CustomScrollView 现状——双栏改造主体"}
+{"file": "lib/features/home/home_page.dart", "reason": "NavigationRail 切换点；extended 接线与三档导航"}
+{"file": "lib/app/widgets/feed/feed_grid.dart", "reason": "illustColumnsFor 唯一列数策略——保持不动并文档化"}
+{"file": "lib/core/platform/platform_caps.dart", "reason": "isDesktop 最小窗口约束判定；测试可注入"}
+{"file": "lib/app/widgets/smooth_wheel_scroll.dart", "reason": "键鼠滚动路径——双栏下各 pane 独立生效复核"}

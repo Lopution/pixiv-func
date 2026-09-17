@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-16-watchlist-local-library/prd.md", "reason": "验收标准（追更增删查/角标/解码三档/导出格式）"}
+{"file": ".trellis/tasks/09-16-watchlist-local-library/design.md", "reason": "端点契约、本地库存储、阅读管线复用边界"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "测试坑位与禁静默 mock/fallback"}
+{"file": "lib/core/novel/novel_webview_text.dart", "reason": "markup→纯文本转换与本地 payload 等价物复核"}

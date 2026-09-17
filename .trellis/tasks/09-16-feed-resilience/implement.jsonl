@@ -1,0 +1,7 @@
+{"file": "lib/core/paging/paged_feed_controller.dart", "reason": "快照冷启动挂钩点：build() 首查快照、提交后写快照、可选 snapshotCodec"}
+{"file": "lib/core/entity/illust_store.dart", "reason": "实体 merge/store 边界；IllustEntity toJson/fromJson 往返是快照 codec 基础"}
+{"file": "lib/core/mutation/mutation_models.dart", "reason": "MutationLedger 在途语义——队列是其持久化补层，不重写；envelope/revision 契约参照"}
+{"file": "lib/core/history/history_database.dart", "reason": "sqflite factory 注入/schema 版本/outbox 先例（attempts/next_attempt_at 串行 flush）"}
+{"file": "lib/core/bookmark/bookmark_store.dart", "reason": "bookmark mutation 入队点；网络失败 → envelope → ActionQueue"}
+{"file": "lib/core/network/api_error.dart", "reason": "网络类错误 vs 4xx 分类——RetryScope 判定依据"}
+{"file": "test/history_persistence_test.dart", "reason": "sqflite_ffi 内存库测试夹具范式"}
