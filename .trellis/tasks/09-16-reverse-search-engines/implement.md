@@ -3,7 +3,7 @@
 > 一个勾一个 commit，提交信息即条目文本。每步后跑 `flutter analyze` + 相关测试。
 
 - [x] `feat(reverse-image): 引擎模型与 IQDB provider`——`ReverseImageEngine`/`ReverseImageEngineSpec`/`unsupportedInput`/`ReverseImageSearchWebUpload` outcome + 共享 headless 分类提取 + `IqdbWebViewProvider`（8MiB/jpeg-png-gif 门控）+ 单测
-- [ ] `feat(reverse-image): WebView 上传通道`——`WebViewUploadProvider`（Ascii2D/TinEye descriptor）+ `armReverseUpload`/`disarmReverseUpload` channel + FileProvider 暴露 `reverse_image_inputs/` + vendored inappwebview armed-Uri 短路 + Kotlin 单测
+- [x] `feat(reverse-image): WebView 上传通道`——`WebViewUploadProvider`（Ascii2D/TinEye descriptor）+ `armReverseUpload`/`disarmReverseUpload` channel + FileProvider 暴露 `reverse_image_inputs/` + vendored inappwebview armed-Uri 短路 + Kotlin 单测
 - [ ] `feat(reverse-image): 引擎切换与导航策略泛化`——session engines map + selectedEngine、controller selectEngine、失败保留输入、`ReverseImageNavigationPolicy` 按引擎 host 参数化、AppSettings.reverseImageEngine + 单测
 - [ ] `feat(reverse-image): 引擎选择与上传 UI`——ready/failure 引擎 chips（约束不满足禁用+原因）、`_UploadWebView`（armed + 提示条，桌面降级提示）、四语言 l10n、widget 测试
 - [ ] `chore(09-16): reverse-search-engines journal + 收尾`——add_session 记录
