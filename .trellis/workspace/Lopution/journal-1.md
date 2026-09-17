@@ -1342,3 +1342,56 @@ SearchFilters 补齐 Shaft v3 面:男/女向人气 sort(会员)、AI 三态(仅 
 ### Next Steps
 
 - 父任务 09-16-client-parity-upgrade 剩余子任务:feed-resilience / watchlist-local-library / tablet-desktop-layout 等
+
+
+## Session 39: 09-16-network-account-settings: 镜像 + 服务端显示设置 + 备份
+<!-- trellis-session: v=2 fp=b1a612c77ccc64f2 -->
+
+**Date**: 2026-09-17
+**Task**: 09-16-network-account-settings: 镜像 + 服务端显示设置 + 备份
+**Branch**: `task/09-16-network-account-settings`
+
+### Summary
+
+镜像预设/自定义、服务端显示设置同步、JSON 备份导出导入
+
+### Main Changes
+
+## 摘要
+
+完成「网络与账号设置增强」全部 6 个实施勾：图片镜像（官方 + pixiv.cat/re/nl 预设 + 自定义 HTTPS 反代，经 `PixivDestinationRegistry` 白名单与 `PixivPolicyHttpClient` URL 重写贯穿图片缓存与下载通道）、服务端显示设置（`/v1/user/ai-show-settings` 与 `/v1/user/restricted-mode-settings` 读写，乐观 toggle + 失败回滚 + 可见错误）、JSON 备份（`pixivfunc.backup.v1` envelope，settings/mutes/history，merge/overwrite 策略，SAF 导出 + file_selector 导入，凭据经 `SecretSettingRef` 不出仓）。
+
+## 关键决策
+
+- 镜像 host 走 destination registry 的 `extraImageHosts` 白名单，而非放开 host 校验；第三方镜像只走 `dohRealSni` 路由（ECH/noSni/insecureNoSni 是 Pixiv 自有设施专用）。
+- 自定义镜像持久化值必须是 `https://` 规范形式，UI 侧 `normalizeCustomSource` 升级裸 host；拒绝非 443 端口与 IP 字面量，与 registry 约束对齐。
+- 导入 merge/overwrite 的明确语义：settings 覆盖、服务端 mute tags/users 永远只增（与官方客户端共享状态，不删）、本地 workIds union 或替换、history 按账号+类型+ID 取新 `lastViewedAt`。
+- 导出走既有 SAF 抽象（Android method channel / 桌面文件系统），写失败删除半成品文档。
+
+## 测试
+
+- 全量 `flutter test`：962 通过、0 失败（含 `test/architecture/layering_test.dart`）。
+- `flutter analyze` 0 issue；`dart format --set-exit-if-changed lib test` 0 改动；`git diff --check` 干净。
+- 新增覆盖：`image_mirror_test`、`restricted_compat_network_test`（镜像集成）、`server_display_settings_test`（8 例）、`backup_test`（20 例）、`settings_test`（镜像 UI）。
+
+## 坑位（已写入 spec）
+
+- `material_ui` 的 `SwitchListTile`/`SnackBar`/`ScaffoldMessenger` 遮蔽 Flutter 同名类：测试必须用 `material_ui` 的 `MaterialApp`，否则 snackbar 被静默丢弃。
+- Riverpod 3 对失败的 `AsyncNotifierProvider.build` 无限退避重试：`provider.future` 永不到终态，错误断言要走 `AsyncError` 状态监听。
+
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `f283526` | docs(09-16): network-account-settings 计划与上下文 |
+| `c52d571` | feat(mirror): 镜像源模型与 URL 重写 |
+| `961e03d` | feat(mirror): 图片通道接入与探针 |
+| `8ed7920` | feat(mirror): 镜像选择 UI |
+| `2dfcf1d` | feat(account): 服务端显示设置读写 |
+| `5d42bc5` | feat(backup): 导出导入域与 JSON schema |
+| `735d467` | feat(backup): 导出导入 UI |
+
+### Status
+
+[OK] **Completed**
