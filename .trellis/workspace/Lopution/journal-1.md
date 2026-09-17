@@ -1300,3 +1300,45 @@ SearchFilters 补齐 Shaft v3 面:男/女向人气 sort(会员)、AI 三态(仅 
 ### Next Steps
 
 - Wave 3 继续:content-expansion(series+pixivision)
+
+
+## Session 38: content-expansion: 插画系列与 pixivision
+<!-- trellis-session: v=2 fp=cd96fc7fc56f008b -->
+
+**Date**: 2026-09-17
+**Task**: content-expansion: 插画系列与 pixivision
+**Branch**: `task/09-16-content-expansion`
+
+### Summary
+
+插画系列(浏览/上下文导航/详情入口/用户系列 tab)与 pixivision spotlight(列表/应用内富文本文章页/搜索入口)落地;cursor 语义校验与 commit-gate 复用既有分页契约
+
+### Main Changes
+
+- core/series: IllustSeriesEntity/Context + store + repository(3 端点,cursor 钉住 seriesId/userId,/v1/illust-series/illust 404=非系列) + 两个 feed/context controller;features: IllustSeriesPage + UserSeriesFeed + 详情页 IllustSeriesSection(prev/next 导航) + profile 第4 chip(ProfileWorkSection 解耦 wire UserWorkType);路由 series/:id
+- core/spotlight: SpotlightArticle + store + repository(文章 HTML 走 thirdPartyHttpClientProvider,桌面 UA+pixivision Referer+Accept-Language)+ category family feed;article_parser(am__body/_feature 变体→段落含链接/标题/图/.illust 卡);SpotlightArticlePage(blocks 渲染,pximg→PixivImage,其余→CachedNetworkImage,/artworks//users/ 站内跳转,其余 url_launcher);SpotlightFeedPage(SegmentedButton 三类)+ search 页入口行;路由 spotlight + spotlight/article/:id?url=;四语言 l10n 10+ 键
+- 质量:修复 gen_l10n_lookup.py 过期 import(replica_strings→replica_language);layering R5 改名 _SeriesCardView/_UserSeriesCardView;spec 补两条测试坑(autoDispose .future 需持订阅;http.Response 默认 latin-1)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `729676c` | docs(09-16): content-expansion 设计固化 |
+| `bfbced3` | feat(series): 系列模型与 wire 契约 |
+| `66ae8ed` | feat(series): 系列 feed 与系列页 |
+| `f54d098` | feat(series): 详情页与用户页入口 |
+| `160fca5` | feat(spotlight): 文章模型与列表 feed |
+| `bc4347d` | feat(spotlight): 文章解析与应用内详情 |
+| `6c1691a` | feat(spotlight): 列表页与搜索页入口 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue;flutter test 912 全绿(series repository/store/feed/page、详情系列区块、profile chip、spotlight repository/feed/parser/page、搜索入口);dart format 干净;git diff --check 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 父任务 09-16-client-parity-upgrade 剩余子任务:feed-resilience / watchlist-local-library / tablet-desktop-layout 等
