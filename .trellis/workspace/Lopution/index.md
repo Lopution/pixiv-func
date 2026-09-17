@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 37
-- **Last Active**: 2026-09-16
+- **Total Sessions**: 38
+- **Last Active**: 2026-09-17
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1302 | Active |
+| `journal-1.md` | ~1344 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 38 | 2026-09-17 | content-expansion: 插画系列与 pixivision | `729676c`, `bfbced3`, `66ae8ed`, `f54d098`, `160fca5`, `bc4347d`, `6c1691a` | `task/09-16-content-expansion` |
 | 37 | 2026-09-16 | bookmark-tags: 收藏标签体系 | `41d1b4e`, `708962a`, `a80e421`, `73bacdf`, `44d182e` | `task/09-16-bookmark-tags` |
 | 36 | 2026-09-16 | search-filter-v2：Shaft v3 级过滤器面 | `2d2bfbf`, `c7e6243`, `8769b9e`, `460d617` | `task/09-16-search-filter-v2` |
 | 35 | 2026-09-16 | mute-system：三态屏蔽与服务端同步 | `b139c3c`, `fcd884f`, `e22fb92`, `df7e8ba`, `60d5ae8`, `59976bc` | `task/09-16-mute-system` |
