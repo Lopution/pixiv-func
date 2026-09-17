@@ -1,0 +1,6 @@
+{"file": ".trellis/tasks/09-16-download-v2/prd.md", "reason": "验收标准（续传可观测/组管理/caption 去重/变量安全）"}
+{"file": ".trellis/tasks/09-16-download-v2/design.md", "reason": "resume 锚点契约与暂停≠取消语义"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "测试坑位（material_ui 遮蔽、Riverpod 3 重试、InAppWebView fake）"}
+{"file": "test/architecture/layering_test.dart", "reason": "分层/R5 命名约束（新 core 文件需过检查）"}
+{"file": "lib/core/download/download_task.dart", "reason": "DownloadStatus/DownloadEvent/快照字段（pause→retryable 语义映射）"}
+{"file": "lib/l10n/app_zh.arb", "reason": "download*/caption/批量 相关键与四语言同步"}

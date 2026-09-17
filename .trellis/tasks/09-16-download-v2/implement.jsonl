@@ -1,0 +1,19 @@
+{"file": "lib/core/download/download_sink.dart", "reason": "DownloadSink/DownloadSinkFactory 契约与 _CoalescingChannelWriter；resume 能力接口加入点"}
+{"file": "lib/core/download/download_manager.dart", "reason": "任务状态机/recovery/持久化记录；pause、Range 注入、resume 分支、组操作的落点"}
+{"file": "lib/core/download/download_recovery.dart", "reason": "持久化记录字段（receivedBytes/pendingMediaStoreId/owner）；resume 字段扩展面"}
+{"file": "lib/core/download/download_request.dart", "reason": "DownloadRequest 元数据面；命名变量数据源扩展点"}
+{"file": "lib/core/download/naming_rule.dart", "reason": "supportedVariables/resolve/_clean 约束；新变量加入点"}
+{"file": "lib/core/download/pixiv_download_transport.dart", "reason": "headers 透传确认（Range 无签名变更）"}
+{"file": "lib/core/download/illust_download_coordinator.dart", "reason": "downloadPage/downloadAllPages 现态；caption 触发与批量协调器落点"}
+{"file": "lib/core/platform/android_platform_interfaces.dart", "reason": "MediaStoreSession/Handle 接口；resumePending 通道契约面"}
+{"file": "lib/core/platform/saf_tree.dart", "reason": "SafDocumentSink/Factory；rename/resume 与 .part 命名加入点"}
+{"file": "lib/core/platform/desktop_file_sink.dart", "reason": "_StagedFileSink .part staging 现态；append-resume 分支"}
+{"file": "android/app/src/main/kotlin/io/github/lopution/pixivfunc/MediaStoreChannel.kt", "reason": "begin/write/finalize/abort/listPending 通道；resumePending 加入点"}
+{"file": "android/app/src/main/kotlin/io/github/lopution/pixivfunc/SafTreeChannel.kt", "reason": "SAF create/write/close/delete 通道；rename/resume 加入点"}
+{"file": "lib/features/settings/pages/download_tasks_page.dart", "reason": "任务页现态（单任务 cancel/retry）；组卡片与组操作落点"}
+{"file": "lib/features/settings/pages/download_settings_page.dart", "reason": "下载设置页；caption 开关落点"}
+{"file": "lib/core/user/user_repository.dart", "reason": "fetchWorks 分页签名（作者枚举数据源）"}
+{"file": "lib/features/profile/user_page.dart", "reason": "作者页结构；「下载全部」入口落点"}
+{"file": "test/download_manager_test.dart", "reason": "manager 测试范式与 fake 边界"}
+{"file": "test/download_sink_test.dart", "reason": "sink 测试范式（MemorySink/staging 断言）"}
+{"file": "test/download_recovery_test.dart", "reason": "recovery 记录/扫描测试范式"}
