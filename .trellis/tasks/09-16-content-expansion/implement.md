@@ -2,7 +2,7 @@
 
 > 一个勾一个 commit,提交信息即条目文本。每步后跑 `flutter analyze` + 相关测试。
 
-- [ ] `feat(series): 系列模型与 wire 契约`——`core/series/`:IllustSeriesEntity/Context 模型 + IllustSeriesStore + PixivSeriesRepository(fetchSeriesWorks/fetchIllustSeriesContext/fetchUserSeries/双 cursor 校验)+ NextPageParser 白名单(/v1/illust/series、/v1/user/illust-series)+ repository/store 单测
+- [x] `feat(series): 系列模型与 wire 契约`——`core/series/`:IllustSeriesEntity/Context 模型 + IllustSeriesStore + PixivSeriesRepository(fetchSeriesWorks/fetchIllustSeriesContext/fetchUserSeries/双 cursor 校验)+ NextPageParser 白名单(/v1/illust/series、/v1/user/illust-series)+ repository/store 单测
 - [ ] `feat(series): 系列 feed 与系列页`——_IllustSeriesFeedController/_UserSeriesFeedController + illustSeriesContextProvider + IllustSeriesPage(头+IllustFeedGrid+触底/刷新)+ UserSeriesFeed 卡片网格 widget + `series/:seriesId` 路由与 openIllustSeries + feed/widget 测试
 - [ ] `feat(series): 详情页与用户页入口`——IllustSeriesSection sliver 接入详情页 + ProfileWorkSection{illust,manga,novel,series} 替换 _workType + tabs delegate 第 4 chip + UserSeriesFeed 挂入 _ProfileTabBody + l10n 四语言 + widget 测试
 - [ ] `feat(spotlight): 文章模型与列表 feed`——`core/spotlight/`:SpotlightArticle 模型 + SpotlightArticleStore + fetchArticles/validateArticlesCursor + 白名单(/v1/spotlight/articles)+ _SpotlightFeedController + repository/feed 测试
