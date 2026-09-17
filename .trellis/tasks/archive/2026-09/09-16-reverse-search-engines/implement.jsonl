@@ -1,0 +1,16 @@
+{"file": "lib/core/reverse_image/reverse_image_provider.dart", "reason": "provider 接口/outcome/失败码；引擎枚举、spec、WebUpload outcome 加入点"}
+{"file": "lib/core/reverse_image/sauce_nao_provider.dart", "reason": "headless multipart→WebView outcome 范式与挑战/限流分类器（IQDB 复用）"}
+{"file": "lib/core/reverse_image/reverse_image_controller.dart", "reason": "session/provider 注入点；search() 输入释放时机（失败保留输入）"}
+{"file": "lib/core/reverse_image/sauce_nao_navigation_policy.dart", "reason": "受控 WebView 导航策略，按引擎 host 参数化"}
+{"file": "lib/core/reverse_image/image_input.dart", "reason": "ReverseImageInputInfo/Limits，引擎级输入约束输入面"}
+{"file": "lib/core/reverse_image/reverse_image_platform.dart", "reason": "armReverseUpload channel 方法加入点"}
+{"file": "lib/core/network/http_client_providers.dart", "reason": "thirdPartyHttpClientProvider 注入点"}
+{"file": "lib/features/search/reverse_image_search_page.dart", "reason": "session 构造、ready/failure UI、两种受控 WebView"}
+{"file": "lib/core/settings/app_settings.dart", "reason": "reverseImageEngine 持久化字段"}
+{"file": "android/app/src/main/kotlin/io/github/lopution/pixivfunc/ReverseImageInputChannel.kt", "reason": "armReverseUpload 实现与单测对象"}
+{"file": "android/app/src/main/res/xml/file_provider_paths.xml", "reason": "reverse_image_inputs 暴露"}
+{"file": "plugins/flutter_inappwebview_android/android/src/main/java/com/pichillilorenzo/flutter_inappwebview_android/webview/in_app_webview/InAppWebViewChromeClient.java", "reason": "onShowFileChooser armed-Uri 短路 patch 点"}
+{"file": "test/sauce_nao_provider_test.dart", "reason": "MockClient provider 测试范式"}
+{"file": "test/reverse_image_search_test.dart", "reason": "controller/session 测试 harness"}
+{"file": "android/app/src/test/kotlin/io/github/lopution/pixivfunc/ReverseImageInputChannelTest.kt", "reason": "channel 单测范式"}
+{"file": ".trellis/tasks/archive/2026-09/09-01-reverse-image-saucenao/research/anonymous-policy.md", "reason": "SauceNAO 匿名策略实测"}

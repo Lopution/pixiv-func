@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "material_ui 遮蔽与 Riverpod 3 失败重试两条刚入库的测试坑位"}
+{"file": "test/architecture/layering_test.dart", "reason": "分层/R5 命名约束（新 provider 文件需过 allowlist 检查）"}
+{"file": "lib/core/reverse_image/reverse_image_external.dart", "reason": "外链 https 校验边界"}
+{"file": ".trellis/tasks/09-16-reverse-search-engines/prd.md", "reason": "验收标准"}
