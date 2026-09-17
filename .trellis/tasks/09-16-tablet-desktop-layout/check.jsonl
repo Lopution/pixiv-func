@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-16-tablet-desktop-layout/prd.md", "reason": "验收标准（三档导航/双栏边界/零窄屏回归）"}
+{"file": ".trellis/tasks/09-16-tablet-desktop-layout/design.md", "reason": "TwoPane 语义与详情页拆分方案"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "测试坑位、material_ui 遮蔽、布局稳定规范"}
+{"file": "lib/features/illust/detail/illust_detail_page.dart", "reason": "窄态零改动复核"}

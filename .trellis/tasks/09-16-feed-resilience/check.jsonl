@@ -1,0 +1,4 @@
+{"file": ".trellis/tasks/09-16-feed-resilience/prd.md", "reason": "验收标准（首帧直出/账号隔离/coalesce/退避分档）"}
+{"file": ".trellis/tasks/09-16-feed-resilience/design.md", "reason": "快照 schema、codec 挂钩、队列 drain 语义"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Riverpod 3 build 重试坑、material_ui 遮蔽、禁静默 mock"}
+{"file": "lib/core/paging/paged_feed_controller.dart", "reason": "最终集成形态复核：快照分支不破坏 commit gate/revision 契约"}

@@ -1436,3 +1436,39 @@ Session summary was not supplied.
 ### Status
 
 [OK] **Completed**
+
+
+## Session 41: download-v2：断点续传/批量/caption/命名
+<!-- trellis-session: v=2 fp=ff72c9b6c6fa19c8 -->
+
+**Date**: 2026-09-18
+**Task**: download-v2：断点续传/批量/caption/命名
+**Branch**: `task/09-16-download-v2`
+
+### Summary
+
+对齐 Shaft 下载体验：Range 断点续传（三平台锚点）、整作者批量入队 + 组管理 UI、caption 边车导出、9 个命名变量
+
+### Main Changes
+
+- Range 断点续传核心 + 三平台落点（MediaStore pending 追加/SAF .part/桌面 .part）
+- 整作者批量（2000 上限、枚举可取消、确认弹窗）+ pauseGroup/resumeGroup/cancelGroup + 组聚合卡片
+- CaptionExporter 边车导出 + RawDownloadSinkFactory.beginRaw + 9 个命名变量
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1ace436` | feat(download): Range 断点续传核心链路 |
+| `d1c2a31` | feat(download): 平台续传落点 |
+| `16069eb` | feat(download): 暂停/恢复与批量组管理 |
+| `c697f42` | feat(download): 整作者作品批量入队 |
+| `ac94333` | feat(download): caption 导出与命名变量扩展 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；全量 1022 通过（3 个 environment-flaky socket 测试环境抖动，隔离重跑全过）；layering_test 绿；:app:testGithubDebugUnitTest 此前 BUILD SUCCESSFUL（本阶段无 Kotlin 变更）；dart format 0；git diff --check 干净
+
+### Status
+
+[OK] **Completed**

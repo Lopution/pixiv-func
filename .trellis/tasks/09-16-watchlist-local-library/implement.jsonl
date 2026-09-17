@@ -1,0 +1,7 @@
+{"file": "lib/core/series/series_models.dart", "reason": "watchlist_added/isConcluded/latestContentId 已解析——追更状态接入点"}
+{"file": "lib/features/series/illust_series_page.dart", "reason": "illust series 追更入口挂载点"}
+{"file": "lib/core/novel/novel_webview_text.dart", "reason": "NovelWebPayload.text markup 形状——本地文本包装与导出转换的输入"}
+{"file": "lib/features/novel/novel_layout.dart", "reason": "排版/分页管线——本地阅读复用对象；hard limits 约束大文件"}
+{"file": "lib/features/settings/pages/backup_settings_page.dart", "reason": "file_selector openFile/saveFile 既有用法范式"}
+{"file": "lib/core/watchlater/watch_later_database.dart", "reason": "一特性一 SQLite 的 factory 注入/版本/测试范式"}
+{"file": "lib/core/platform/saf_tree.dart", "reason": "SAF createDocument 落点通道（Android 导出）"}
