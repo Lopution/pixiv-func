@@ -1,0 +1,7 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "质量门禁与测试坑位记录"}
+{"file": "test/architecture/layering_test.dart", "reason": "分层/R5 命名约束"}
+{"file": "lib/core/settings/settings_repository.dart", "reason": "settings 持久化与迁移，导入写回路径"}
+{"file": "lib/core/network/compat/network_policy.dart", "reason": "policy 构造/route memory/冷却语义"}
+{"file": "lib/core/network/pixiv_client_identity.dart", "reason": "downloadHosts/appApiBase 身份常量"}
+{"file": "lib/core/network/pixiv_http_client.dart", "reason": "authed getJson/post 写口"}
+{"file": ".trellis/tasks/09-16-network-account-settings/prd.md", "reason": "验收标准"}
