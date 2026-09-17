@@ -8,7 +8,7 @@
 - [x] `feat(spotlight): 文章模型与列表 feed`——`core/spotlight/`:SpotlightArticle 模型 + SpotlightArticleStore + fetchArticles/validateArticlesCursor + 白名单(/v1/spotlight/articles)+ _SpotlightFeedController + repository/feed 测试
 - [x] `feat(spotlight): 文章解析与应用内详情`——pub add html + article_parser(常规/_feature 变体、illust 卡、段落链接、ApiParseError)+ spotlightArticleBodyProvider + SpotlightArticlePage(blocks 渲染、host 分流图片、站内/外链接分发)+ `spotlight/article/:articleId` 路由 + parser/widget 测试
 - [x] `feat(spotlight): 列表页与搜索页入口`——SpotlightFeedPage(category SegmentedButton+刷新+触底)+ `spotlight` 路由 + openSpotlight/openSpotlightArticle facade + search_page 入口行 + l10n 四语言 + widget 测试
-- [ ] `chore(09-16): journal + 收尾`——add_session 记录
+- [x] `chore(09-16): journal + 收尾`——add_session 记录
 
 ## 验证命令
 
