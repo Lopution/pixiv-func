@@ -1552,3 +1552,37 @@ expanded≥1200 断点接线（useExtendedRail/useTwoPaneDetail）、TwoPane 容
 ### Status
 
 [OK] **Completed**
+
+
+## Session 45: 09-18-acceptance-fixes：离线入队/搜索持久化/设置分组/详情图/feed 预取
+<!-- trellis-session: v=2 fp=b3a4509c5d92e47e -->
+
+**Date**: 2026-09-18
+**Task**: 09-18-acceptance-fixes：离线入队/搜索持久化/设置分组/详情图/feed 预取
+**Branch**: `task/09-18-acceptance-fixes`
+
+### Summary
+
+验收反馈五连修：actionqueue 断网入队（TransportFailureClassifier 分类连通类 kind，证书/鉴权/4xx 维持可见失败）、SearchFilters 序列化进 settings JSON、设置页按 Shaft hub 模型分组、detail 图 LayoutBuilder 兜底 loose 约束消除 hero 空白回弹、FeedPrefetchCursor 方向感知预取（回滚时反向回温已逐出的解码条目）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7b30e25` | fix(actionqueue): 断网时收藏/关注/追更真正入队 |
+| `5eb6465` | feat(search): 搜索筛选条件持久化 |
+| `905e1df` | refactor(settings): 设置页分组重构 |
+| `77ef315` | fix(detail): 详情图 hero 落位偏小+空白/返回回弹 |
+| `625c188` | fix(feed): 快滑回看图片大片空白 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 全量 +1113 零失败；dart format --set-exit-if-changed 干净；git diff --check 干净
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- rebase main → PR → CI；真机验收：飞行模式收藏→恢复自动重放、筛选重启保留、hero 落位、快滑回看无空白
