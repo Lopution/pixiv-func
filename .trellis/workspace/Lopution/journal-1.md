@@ -1650,3 +1650,35 @@ release 开 minifyEnabled+shrinkResources（proguard-rules.pro keep Flutter embe
 ### Status
 
 [OK] **Completed**
+
+
+## Session 48: devin-trellis-platform: .devin 一等平台固化
+<!-- trellis-session: v=2 fp=7566502e7587c786 -->
+
+**Date**: 2026-09-18
+**Task**: devin-trellis-platform: .devin 一等平台固化
+**Branch**: `task/09-18-devin-trellis-platform`
+
+### Summary
+
+run_subagent/UserPromptSubmit 两个 hook 上线:trellis-implement/check/research 的 task 被包装为带 <!-- trellis-hook-injected --> 标记的指令块并注入任务工件;每轮面包屑输出 <workflow-state>。三个自定义 profile pin model: swe-2-max,research 自检报 Context: hook-injected/self-loaded。排障中修复 env_map 缺 DEVIN_PROJECT_DIR:Devin 同时导出 CLAUDE_PROJECT_DIR,平台误判 claude 致 implement/check 任务态注入静默缺失。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `1a6207f` | feat(trellis): devin hook 注入子代理上下文与每轮面包屑 |
+| `1033da2` | feat(trellis): devin 自定义 trellis-* profile 并 pin swe-2-max |
+| `707e861` | fix(trellis): devin hook 平台探测补 DEVIN_PROJECT_DIR |
+
+### Testing
+
+- [OK] trellis-research 哨兵探测:首行标记+## Your Task+Context: hook-injected;trellis-implement/check 探针:标记+prd.md 注入块+空 jsonl 提示;日志侧 swe-2-max 无回退告警、load_custom_subagents 无 warning;subagent_explore 原文透传回归通过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 开 PR 等 CI;可考虑把 devin 接线上游到 templates/devin.ts 与 shared-hooks 表
