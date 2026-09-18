@@ -1508,3 +1508,25 @@ feeds.db 快照表 + FeedSnapshotStore 冷启动直出/后台 refresh；action_q
 ### Status
 
 [OK] **Completed**
+
+
+## Session 43: 09-16 watchlist + 本地小说库
+<!-- trellis-session: v=2 fp=1f38871c712a2a8c -->
+
+**Date**: 2026-09-18
+**Task**: 09-16 watchlist + 本地小说库
+**Branch**: `task/09-16-watchlist-local-library`
+
+### Summary
+
+追更 watchlist（manga/novel 双端点、离线入队、已读游标、列表页与详情开关）与本地 TXT 小说库（编码检测、SQLite 索引、导入/删除/阅读游标、复用 NovelReader）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `48cc22c` | feat(localnovel): 本地阅读复用阅读器 |
+
+### Status
+
+[OK] **Completed**
