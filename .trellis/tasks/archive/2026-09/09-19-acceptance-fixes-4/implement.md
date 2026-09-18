@@ -8,5 +8,5 @@
 - [x] 4. fix(novel): 推荐翻页 _validateCursor 放行 filter 等客户端身份参数；首页请求补 include_privacy_policy/include_ranking_novels（D）
 - [x] 5. feat(share): share_plus 统一 SharePayload 契约；详情/个人页接系统分享，失败 fallback 剪贴板（E）
 - [x] 6. feat(novel): 沉浸式阅读器壳——全屏 Stack+chrome toggle+back 优先级；元数据撤出+caption HTML 渲染（C1）
-- [ ] 7. feat(novel): 阅读设置弹层（字号/行距/主题持久化）+页脚 tip 行+charIndex 进度恢复（C2）
-- [ ] 8. chore(task): 收尾簿记（勾选、journal、归档）
+- [x] 7. feat(novel): 阅读设置弹层（字号/行距/主题持久化）+页脚 tip 行+charIndex 进度恢复（C2）
+- [x] 8. chore(task): 收尾簿记（勾选、journal、归档）
