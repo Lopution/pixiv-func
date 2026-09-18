@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 43
+- **Total Sessions**: 44
 - **Last Active**: 2026-09-18
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1532 | Active |
+| `journal-1.md` | ~1554 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 44 | 2026-09-18 | 09-16 平板与桌面宽屏布局 | `25c3b5c` | `task/09-16-tablet-desktop-layout` |
 | 43 | 2026-09-18 | 09-16 watchlist + 本地小说库 | `48cc22c` | `task/09-16-watchlist-local-library` |
 | 42 | 2026-09-18 | feed-resilience：快照冷启动与离线动作队列 | `4c0ee28`, `63bae8c`, `e116868`, `eca2319` | `task/09-16-feed-resilience` |
 | 41 | 2026-09-18 | download-v2：断点续传/批量/caption/命名 | `1ace436`, `d1c2a31`, `16069eb`, `c697f42`, `ac94333` | `task/09-16-download-v2` |
