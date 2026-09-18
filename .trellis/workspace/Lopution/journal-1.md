@@ -1530,3 +1530,25 @@ feeds.db 快照表 + FeedSnapshotStore 冷启动直出/后台 refresh；action_q
 ### Status
 
 [OK] **Completed**
+
+
+## Session 44: 09-16 平板与桌面宽屏布局
+<!-- trellis-session: v=2 fp=debb8f9c29091d73 -->
+
+**Date**: 2026-09-18
+**Task**: 09-16 平板与桌面宽屏布局
+**Branch**: `task/09-16-tablet-desktop-layout`
+
+### Summary
+
+expanded≥1200 断点接线（useExtendedRail/useTwoPaneDetail）、TwoPane 容器（55:45）、详情页双栏（左图 pager 右信息列、方向键翻页、滚动条靠右缘）、三档导航（底栏/紧凑 rail/extended rail）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `25c3b5c` | feat(layout): 桌面展开侧栏与窗口约束 |
+
+### Status
+
+[OK] **Completed**
