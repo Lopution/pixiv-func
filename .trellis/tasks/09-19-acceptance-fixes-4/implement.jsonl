@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "组件契约/共享widget归属"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Riverpod/状态边界"}
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "API错误契约"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "质量门"}
