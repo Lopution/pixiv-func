@@ -1,0 +1,8 @@
+{
+  "title": "acceptance-fixes-3: 个人页头部重构/搜图相册选图+预览收缩/小说JS字面量解析",
+  "slug": "09-18-acceptance-fixes-3",
+  "base_branch": "main",
+  "branch": "task/09-18-acceptance-fixes-3",
+  "status": "in_progress",
+  "created": "2026-09-18"
+}
