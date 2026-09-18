@@ -1650,3 +1650,33 @@ release 开 minifyEnabled+shrinkResources（proguard-rules.pro keep Flutter embe
 ### Status
 
 [OK] **Completed**
+
+
+## Session 49: devin-subagent-mode: Devin 工作模式切为派发式
+<!-- trellis-session: v=2 fp=a229a925f59ac3ec -->
+
+**Date**: 2026-09-18
+**Task**: devin-subagent-mode: Devin 工作模式切为派发式
+**Branch**: `task/09-18-devin-subagent-mode`
+
+### Summary
+
+workflow.md 五处平台标签把 Devin 从 codex-inline 迁入 dispatch 组;implement 归 hook 注入变体;协议段补 run_subagent(profile) 机制;task_store 的 _SUBAGENT_CONFIG_DIRS 加 .devin;trellis-start 路由表同步。验证:get_context --platform devin 的 2.1/2.2 均出派发指引,codex-inline/Kilo/Antigravity/DeepSeek 保留原块。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a8af028` | feat(trellis): devin 工作模式 inline → sub-agent dispatch |
+
+### Testing
+
+- [OK] get_context --mode phase --step 2.1/2.2 --platform devin 出 dispatch 变体;py_compile 过;git diff --check 净;标签开闭对称
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 开 PR 等 CI;上游 ai-tools.ts agent-capable 表与模板标签需同步翻转
