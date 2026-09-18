@@ -1472,3 +1472,39 @@ Session summary was not supplied.
 ### Status
 
 [OK] **Completed**
+
+
+## Session 42: feed-resilience：快照冷启动与离线动作队列
+<!-- trellis-session: v=2 fp=24acf0e3f32c9e86 -->
+
+**Date**: 2026-09-18
+**Task**: feed-resilience：快照冷启动与离线动作队列
+**Branch**: `task/09-16-feed-resilience`
+
+### Summary
+
+feeds.db 快照表 + FeedSnapshotStore 冷启动直出/后台 refresh；action_queue 持久化队列（coalesce/串行/RetryScope 分档）；bookmark/follow 离线入队重放
+
+### Main Changes
+
+- FeedSnapshotStore（24h 过期/60 ids/64 feed LRU）+ PagedFeedController build() 快照直出 + IllustSnapshotCodec/NovelSnapshotCodec
+- action_queue 表（schema v2）+ ActionQueue（owner 归属/dedupe coalesce/串行 drain/queueCooldown+row 两档/maxAttempts=5/telemetry）
+- bookmark/follow connectivity 失败入队保留 pending + handler 走同一 repository + pump 三触发点（启动/前台/成功调用）
+- 测试环境：FLUTTER_TEST → :memory: + databaseFactoryFfiNoIsolate（isolate 版在 FakeAsync 下挂起）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `4c0ee28` | feat(feeds): feed_snapshots 存储与 FeedSnapshotStore |
+| `63bae8c` | feat(feeds): PagedFeedController 快照冷启动 |
+| `e116868` | feat(feeds): ActionQueue 持久化队列 |
+| `eca2319` | feat(feeds): 收藏与关注离线入队重放 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；全量 1059 通过零失败；feed/actionqueue/replay 定向测试全绿；dart format 0；git diff --check 干净
+
+### Status
+
+[OK] **Completed**
