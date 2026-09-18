@@ -236,7 +236,11 @@ def _detect_platform(input_data: dict) -> str | None:
         "KIRO_PROJECT_DIR": "kiro",
         "COPILOT_PROJECT_DIR": "copilot",
         "TRAE_PROJECT_DIR": "trae",
+        "DEVIN_PROJECT_DIR": "devin",
         # Last: the shared alias, only meaningful once no vendor key matched.
+        # Devin exports it too — without DEVIN_PROJECT_DIR above, every Devin
+        # hook is detected as claude and the session key `claude_<id>` never
+        # matches the `devin_<id>` pointer task.py start wrote via the ticket.
         "CLAUDE_PROJECT_DIR": "claude",
     }
     for env_name, platform in env_map.items():
