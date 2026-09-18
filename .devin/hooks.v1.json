@@ -21,6 +21,28 @@
           "timeout": 5
         }
       ]
+    },
+    {
+      "matcher": "^run_subagent$",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "python3 .devin/hooks/inject-subagent-context.py",
+          "timeout": 30
+        }
+      ]
+    }
+  ],
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "python3 .devin/hooks/inject-workflow-state.py",
+          "timeout": 10
+        }
+      ]
     }
   ]
 }
