@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 45
+- **Total Sessions**: 46
 - **Last Active**: 2026-09-18
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1588 | Active |
+| `journal-1.md` | ~1618 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 46 | 2026-09-18 | 09-18-apk-slimming：release 构建瘦身 ~1.4MB/ABI | `3822e83` | `task/09-18-apk-slimming` |
 | 45 | 2026-09-18 | 09-18-acceptance-fixes：离线入队/搜索持久化/设置分组/详情图/feed 预取 | `7b30e25`, `5eb6465`, `905e1df`, `77ef315`, `625c188` | `task/09-18-acceptance-fixes` |
 | 44 | 2026-09-18 | 09-16 平板与桌面宽屏布局 | `25c3b5c` | `task/09-16-tablet-desktop-layout` |
 | 43 | 2026-09-18 | 09-16 watchlist + 本地小说库 | `48cc22c` | `task/09-16-watchlist-local-library` |
