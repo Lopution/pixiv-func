@@ -1616,3 +1616,37 @@ release 开 minifyEnabled+shrinkResources（proguard-rules.pro keep Flutter embe
 ### Next Steps
 
 - PR → CI android-size 应转绿
+
+
+## Session 47: acceptance-fixes-2: 九连修落地
+<!-- trellis-session: v=2 fp=a84ded2e57583594 -->
+
+**Date**: 2026-09-18
+**Task**: acceptance-fixes-2: 九连修落地
+**Branch**: `task/09-18-acceptance-fixes-2`
+
+### Summary
+
+第二轮验收桶：删底栏分支淡入（闪白）、搜索页 resizeToAvoidBottomInset:false、折叠工具栏三段式、搜图预览解码比例自适应+重选/取消、profile两tab空态居中+i18n、feed_states删英文默认+5处补传译、watchlater错误标题i18n、ApiParseError透出cause、新作入口归位设置内容组。+1116测试全过
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `176451a` | refactor(home): 新作页功能入口归入设置内容组 |
+| `f6386d5` | fix(apierror): ApiParseError 透出解析失败原因 |
+| `05743e9` | fix(watchlater): 错误页标题不再泄露原始错误串 |
+| `71da098` | fix(i18n): feed_states 补全漏传译并移除英文默认 |
+| `62d4e06` | fix(profile): 好P友/小说空态居中并补传译 |
+| `21f2060` | fix(reversesearch): 预览按解码比例自适应并支持重选/取消 |
+| `6bb0dc6` | fix(profile): 折叠工具栏名字与动作不再冲突 |
+| `6136479` | fix(search): 键盘呼出不再挤压搜索页 |
+| `960d0d4` | fix(shell): 底栏分支切换整页闪白 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue; dart format --set-exit-if-changed 干净; flutter test +1116 零失败; git diff --check 干净
+
+### Status
+
+[OK] **Completed**
