@@ -1586,3 +1586,33 @@ expanded≥1200 断点接线（useExtendedRail/useTwoPaneDetail）、TwoPane 容
 ### Next Steps
 
 - rebase main → PR → CI；真机验收：飞行模式收藏→恢复自动重放、筛选重启保留、hero 落位、快滑回看无空白
+
+
+## Session 46: 09-18-apk-slimming：release 构建瘦身 ~1.4MB/ABI
+<!-- trellis-session: v=2 fp=a6560e9afa8420cb -->
+
+**Date**: 2026-09-18
+**Task**: 09-18-apk-slimming：release 构建瘦身 ~1.4MB/ABI
+**Branch**: `task/09-18-apk-slimming`
+
+### Summary
+
+release 开 minifyEnabled+shrinkResources（proguard-rules.pro keep Flutter embedding/app channel/插件包），resConfigs 留 en/ja/ru/zh，dex.useLegacyPackaging 回 deflate，rhttp Cargo 特性砍 brotli/deflate/zstd 只留 gzip。arm64 30.48→29.12MB、v7a 26.52→25.18MB，两 ABI 回到 CI 上限内。签名 github 包已真机验收
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3822e83` | apk: shrink release build ~1.4MB per ABI |
+
+### Testing
+
+- [OK] 本地 split APK 实测字节数达标；用户真机冒烟通过（webview/下载/反向搜图/secure storage）；CI android-size 将复核
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR → CI android-size 应转绿
