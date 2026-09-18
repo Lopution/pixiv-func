@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "状态存储与持久化惯例：搜索筛选入 settings、mutation store 语义"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "设置页分组/详情图布局属组件层规范"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "质量门槛"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "离线入队跨网络/mutation 层"}
