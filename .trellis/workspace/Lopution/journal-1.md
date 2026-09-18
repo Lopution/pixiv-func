@@ -1710,3 +1710,40 @@ workflow.md 五处平台标签把 Devin 从 codex-inline 迁入 dispatch 组;imp
 ### Status
 
 [OK] **Completed**
+
+
+## Session 51: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+<!-- trellis-session: v=2 fp=3a4648234e36eb19 -->
+
+**Date**: 2026-09-19
+**Task**: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+**Branch**: `task/09-19-acceptance-fixes-4`
+
+### Summary
+
+P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/P4 返回键单一常驻+canPop 锁存；B 资料编辑换 App API multipart+presets；D next_url 校验拆 query/identity 放行 filter+首页补 include_*；E share_plus 统一 SharePayload+剪贴板兜底；C1 沉浸式阅读器壳+chrome+作品信息弹层+caption HTML；C2 阅读设置弹层(字号/行距/主题)+页脚 tip+charIndex 进度持久化恢复；另修两例过期测试断言
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `48039cb` | fix(motion): PressScale/StaggeredEntrance 感知 TickerMode，转场冻结时直渲终态；feed 入场动画 once 语义防重播（P1/P7/P8） |
+| `f1dcecb` | fix(profile): 返回按钮收敛为单一常驻组件统一展开/折叠几何；canPop 首次求值后缓存，返回转场中随页滑出（P3/P4） |
+| `a8b683c` | fix(profile): 资料编辑换 App API v1/user/profile/edit+presets，脱离 www cookie 依赖；_StatusBody loading 文案修正（B） |
+| `9375afe` | fix(novel): 推荐翻页 _validateCursor 放行 filter 等客户端身份参数；首页请求补 include_privacy_policy/include_ranking_novels（D） |
+| `dc718fc` | feat(share): share_plus 统一 SharePayload 契约；详情/个人页接系统分享，失败 fallback 剪贴板（E） |
+| `488e854` | feat(novel): 沉浸式阅读器壳——全屏 Stack+chrome toggle+back 优先级；元数据撤出+caption HTML 渲染（C1） |
+| `d4c5f26` | feat(novel): 阅读设置弹层（字号/行距/主题持久化）+页脚 tip 行+charIndex 进度恢复（C2） |
+| `66866e3` | test(share,novel): 修正过期断言——分享改断言 action→service payload 接线，推荐首页补 include_* 参数 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 1144 过(1 例 WSL loopback 环境 flake：tls_sni)；novel_reader_settings_test 10 新用例
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR：gh pr create --fill → CI 绿后 gh pr merge --merge
