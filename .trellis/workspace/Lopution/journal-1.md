@@ -1680,3 +1680,33 @@ workflow.md 五处平台标签把 Devin 从 codex-inline 迁入 dispatch 组;imp
 ### Next Steps
 
 - 开 PR 等 CI;上游 ai-tools.ts agent-capable 表与模板标签需同步翻转
+
+
+## Session 50: acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量
+<!-- trellis-session: v=2 fp=1f32280b427fd633 -->
+
+**Date**: 2026-09-18
+**Task**: acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量
+**Branch**: `task/09-18-acceptance-fixes-3`
+
+### Summary
+
+第三轮验收返工：设置升第5tab/个人页降设置卡片入口(/me↔/settings对称置换)、profile header删冗余齿轮+actions收⋯溢出菜单(A方案名字居中)、搜图预览删probe-listener单解码贴图收缩+重选取消上移+选图改ACTION_PICK_IMAGES相册、novel bootstrap JS字面量宽松解析(无引号key/单引号/undefined——真机acb诊断透出根因实锤)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b3ccfaf` | test(nav): 跟进第5tab换设置的两处旧断言 |
+| `4e070d6` | fix(novel): bootstrap JS 字面量宽松解析 |
+| `e18b969` | fix(reversesearch): 预览贴图收缩、重选/取消上移、选图改相册 |
+| `f36a1dc` | refactor(profile): header 移除冗余设置入口，折叠态 actions 收进溢出菜单 |
+| `eca8747` | refactor(nav): 设置升第5 tab、个人页降设置卡片入口 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue; dart format 干净; flutter test +1115 零失败(修2处旧契约断言); Kotlin JVM 测试过
+
+### Status
+
+[OK] **Completed**
