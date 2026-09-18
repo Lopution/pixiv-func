@@ -3,6 +3,7 @@
   "slug": "09-18-acceptance-fixes-3",
   "base_branch": "main",
   "branch": "task/09-18-acceptance-fixes-3",
-  "status": "in_progress",
-  "created": "2026-09-18"
+  "status": "completed",
+  "created": "2026-09-18",
+  "completedAt": "2026-09-18"
 }
