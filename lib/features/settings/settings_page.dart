@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/navigation/routes.dart';
 import '../../app/widgets/app_snack_bar.dart';
+import '../../app/widgets/func_bottom_nav.dart';
 import '../../app/widgets/feed/feed_states.dart';
 import '../../app/widgets/settings/settings_section.dart';
 import '../../app/widgets/settings/settings_tile.dart';
@@ -14,6 +15,7 @@ import '../../core/auth/account_store.dart';
 import '../../core/auth/account_transfer.dart';
 import '../../core/auth/account_transfer_service.dart';
 import '../../core/settings/settings_controller.dart';
+import '../../core/settings/shared_preferences.dart';
 import '../../l10n/context.dart';
 import 'pages/account_settings_page.dart';
 import 'settings_helpers.dart';
@@ -111,23 +113,26 @@ class _SettingsList extends ConsumerWidget {
           title: context.l10n.translateSettings,
           onTap: () => openSettingsPage(context, '/settings/translate'),
         ),
-        SettingsSection(title: Text(context.l10n.settingsGroupNetwork)),
-        SettingsTile(
-          icon: Icons.network_check,
-          title: context.l10n.networkSettings,
-          onTap: () => openSettingsPage(context, '/settings/network'),
-        ),
+        SettingsSection(title: Text(context.l10n.settingsGroupBrowse)),
         SettingsTile(
           icon: Icons.image_outlined,
           title: context.l10n.browseSettings,
           onTap: () => openSettingsPage(context, '/settings/browse'),
         ),
-        SettingsSection(title: Text(context.l10n.settingsGroupContent)),
+        SettingsTile(
+          icon: Icons.block_outlined,
+          title: context.l10n.mutedItemsSettings,
+          onTap: () => openSettingsPage(context, '/settings/muted'),
+        ),
         SettingsTile(
           icon: Icons.history,
           title: context.l10n.historySettings,
           onTap: () => openSettingsPage(context, '/settings/history'),
         ),
+        // Content destinations (not preferences) sit in their own group so
+        // the preference sections stay unmixed — the split Shaft draws
+        // between its drawer entries and the settings catalog.
+        SettingsSection(title: Text(context.l10n.settingsGroupLibrary)),
         SettingsTile(
           icon: Icons.bookmark_border,
           title: context.l10n.watchLaterTitle,
@@ -143,12 +148,12 @@ class _SettingsList extends ConsumerWidget {
           title: context.l10n.localNovelsTitle,
           onTap: () => openLocalNovels(context),
         ),
+        SettingsSection(title: Text(context.l10n.settingsGroupNetwork)),
         SettingsTile(
-          icon: Icons.block_outlined,
-          title: context.l10n.mutedItemsSettings,
-          onTap: () => openSettingsPage(context, '/settings/muted'),
+          icon: Icons.network_check,
+          title: context.l10n.networkSettings,
+          onTap: () => openSettingsPage(context, '/settings/network'),
         ),
-        SettingsSection(title: Text(context.l10n.settingsGroupDownload)),
         SettingsTile(
           icon: Icons.download_outlined,
           title: context.l10n.downloadSettings,
@@ -171,14 +176,18 @@ class _SettingsList extends ConsumerWidget {
           title: context.l10n.aboutSettings,
           onTap: () => openSettingsPage(context, '/settings/about'),
         ),
-        if (!kReleaseMode) ...[
-          const Divider(),
+        // Frame probe is a diagnostics tool, not a preference: it ships in
+        // every build but stays hidden until the about-page gesture (or a
+        // non-release build) unlocks the developer group.
+        if (ref.watch(developerOptionsProvider) || !kReleaseMode) ...[
+          SettingsSection(title: Text(context.l10n.settingsGroupDeveloper)),
           SettingsTile(
             icon: Icons.monitor_heart_outlined,
             title: context.l10n.frameProbeTitle,
             onTap: () => openSettingsPage(context, '/settings/frame-probe'),
           ),
         ],
+        const FuncNavBarSpacer(),
       ],
     );
   }

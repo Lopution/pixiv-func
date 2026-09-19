@@ -1902,3 +1902,41 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Next Steps
 
 - 真机跑帧探针拿 UI/Raster 分布，按证据决定 S2-S6 滚动优化
+
+
+## Session 58: perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速
+<!-- trellis-session: v=2 fp=55eff941e8bce250 -->
+
+**Date**: 2026-09-20
+**Task**: perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速
+**Branch**: `task/09-19-perceived-speed`
+
+### Summary
+
+感知速度深挖+壳层动效修复：hero shuttle 圆角随 flight progress 插值（12→0 双向连续）；底栏 scrollDelta 过 slop 收放+隐藏态重发 hero 底边；设置页分组重排+用户面文案去术语；关于页 7 连点解锁帧探针（release 可用）；auto 图源设为默认且竞速改真实小图吞吐判定（GET 64KB 采样，bps 排序）；预取窗口 12→24/后台车道 3→4；点卡预热详情档；低吞吐自动降 preview 到 medium
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2cd9125` | feat(motion): hero shuttle 圆角按 flight progress 插值——卡片端 12 → 详情端 0，两端形态连续不再有落地跳变 |
+| `e0e07c4` | feat(nav): 底栏下滑隐藏——ScrollNotification 累计过 slop 触发 SizeTransition 收高，上滑/切分支即回，隐藏态重发布 hero 底边 |
+| `fb70d51` | feat(settings): 设置页分组重排（内容入口独立成组）+ 用户面文案去术语（SNI/DoH/ECH/梯子只留在高级页） |
+| `935410c` | feat(debug): 关于页连点解锁开发者入口——帧探针脱离 kReleaseMode 门控 |
+| `567f3b9` | feat(network): auto 图源设默认 + 竞速改真实小图吞吐判定 |
+| `adc2ae6` | perf(feed): 预取窗口 12→24、prefetch 车道 3→4 |
+| `9c5bf6f` | perf(detail): 点卡瞬间对详情档发预热请求 |
+| `d842c2a` | feat(settings): 预览画质自适应——低吞吐网络自动降 medium 档（竞速实测值驱动） |
+| `903da15` | chore(task): 勾选实施清单 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；全量 1195 通过（oauth/tls_sni 的 5 个 loopback 用例在全量并发下抖动超时，单独重跑全过，与改动面无关）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机验证 auto 默认下首刷速度与底栏收放手感；探针拿帧数据后再定 S2-S6

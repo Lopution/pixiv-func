@@ -513,11 +513,21 @@ class _FuncBottomNavItem extends StatelessWidget {
 /// [homeShellMetricsProvider] so a Hero flight can clip the returning
 /// artwork against the real bar edge.
 class FuncBranchBottomNav extends ConsumerStatefulWidget {
-  const FuncBranchBottomNav({super.key, required this.branchIndex});
+  const FuncBranchBottomNav({
+    super.key,
+    required this.branchIndex,
+    this.visibility,
+  });
 
   /// The index of the branch this page belongs to — the bar publishes its
   /// measured geometry only while it is the visible branch's bar.
   final int branchIndex;
+
+  /// 1 = fully shown, 0 = slid entirely below the screen edge. Owned by the
+  /// enclosing [BranchRootScaffold], which drives it from scroll deltas —
+  /// the bar floats over the body (`extendBody`), so sliding never reflows
+  /// the page underneath.
+  final AnimationController? visibility;
 
   @override
   ConsumerState<FuncBranchBottomNav> createState() =>
@@ -537,10 +547,21 @@ class _FuncBranchBottomNavState extends ConsumerState<FuncBranchBottomNav>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.visibility?.addListener(_scheduleMeasure);
+  }
+
+  @override
+  void didUpdateWidget(covariant FuncBranchBottomNav oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.visibility != widget.visibility) {
+      oldWidget.visibility?.removeListener(_scheduleMeasure);
+      widget.visibility?.addListener(_scheduleMeasure);
+    }
   }
 
   @override
   void dispose() {
+    widget.visibility?.removeListener(_scheduleMeasure);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -618,7 +639,7 @@ class _FuncBranchBottomNavState extends ConsumerState<FuncBranchBottomNav>
       ],
     );
     if (router == null) {
-      return bar(shell?.currentIndex ?? widget.branchIndex);
+      return _wrapVisibility(bar(shell?.currentIndex ?? widget.branchIndex));
     }
     return ValueListenableBuilder<RouteInformation>(
       valueListenable: router.routeInformationProvider,
@@ -627,10 +648,33 @@ class _FuncBranchBottomNavState extends ConsumerState<FuncBranchBottomNav>
             shell == null || shell.currentIndex == widget.branchIndex;
         if (active != _activeAtBuild) {
           _activeAtBuild = active;
-          if (active) _scheduleMeasure();
+          if (active) {
+            // A hidden bar returning with its branch reads as a bug —
+            // switching tabs always lands with the bar expanded.
+            widget.visibility?.value = 1;
+            _scheduleMeasure();
+          }
         }
-        return bar(shell?.currentIndex ?? widget.branchIndex, visible: active);
+        return _wrapVisibility(
+          bar(shell?.currentIndex ?? widget.branchIndex, visible: active),
+        );
       },
+    );
+  }
+
+  Widget _wrapVisibility(Widget bar) {
+    final visibility = widget.visibility;
+    if (visibility == null) return bar;
+    // Shaft parity: the bar is an overlay that *slides* out of the screen —
+    // the Scaffold uses extendBody so the layout never changes mid-scroll,
+    // which is what makes the gesture feel stable. A SizeTransition would
+    // reflow the list under the finger and feed clamp-correction deltas
+    // back into the scroll accumulator near the bottom edge.
+    return SlideTransition(
+      position: visibility.drive(
+        Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero),
+      ),
+      child: bar,
     );
   }
 
@@ -643,11 +687,32 @@ class _FuncBranchBottomNavState extends ConsumerState<FuncBranchBottomNav>
   ];
 }
 
+/// Trailing spacer for branch-root scrollables. The navigation bar floats
+/// over the body ([Scaffold.extendBody]), so lists pad their tail by the
+/// measured bar height — the same inset redistribution Shaft applies to its
+/// overlay bar. Reports zero on rail layouts, where no bar exists.
+class FuncNavBarSpacer extends ConsumerWidget {
+  const FuncNavBarSpacer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final height = ref.watch(
+      homeShellMetricsProvider.select((m) => m.bottomNavHeight),
+    );
+    return SizedBox(height: height ?? 0);
+  }
+}
+
 /// Scaffold shell for a branch-root page: mounts [FuncBranchBottomNav] at
 /// this level so a route pushed inside the branch navigator covers the bar
 /// naturally — the same layering the page's own AppBar already uses — while
 /// the pushed page is full-height from its first frame.
-class BranchRootScaffold extends StatelessWidget {
+///
+/// The shell also owns the bar's scroll-hide state: a NotificationListener
+/// around the body accumulates vertical scroll deltas (the same
+/// touch-slop-gated scheme Shaft's HideViewOnScrollBehavior uses — direction
+/// changes reset the accumulator) and collapses the bar past the threshold.
+class BranchRootScaffold extends StatefulWidget {
   const BranchRootScaffold({
     super.key,
     required this.branchIndex,
@@ -658,15 +723,96 @@ class BranchRootScaffold extends StatelessWidget {
   final Widget child;
 
   @override
+  State<BranchRootScaffold> createState() => _BranchRootScaffoldState();
+}
+
+class _BranchRootScaffoldState extends State<BranchRootScaffold>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _navVisibility;
+  double _scrollAccum = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _navVisibility = AnimationController(
+      vsync: this,
+      duration: MotionTokens.medium,
+      reverseDuration: MotionTokens.medium,
+      value: 1,
+    );
+  }
+
+  @override
+  void dispose() {
+    _navVisibility.dispose();
+    super.dispose();
+  }
+
+  bool _onScrollNotification(ScrollNotification notification) {
+    if (notification is! ScrollUpdateNotification ||
+        notification.metrics.axis != Axis.vertical) {
+      return false;
+    }
+    // Out-of-range deltas are overscroll, not content movement: under the
+    // app-wide bouncing physics, dragging past an edge still moves pixels
+    // (and the spring-back replays them in reverse). Counting those would
+    // toggle the bar on release at an edge — Shaft's RecyclerView dy only
+    // ever reports real content scroll, so mirror that here.
+    if (notification.metrics.outOfRange) {
+      _scrollAccum = 0;
+      return false;
+    }
+    final delta = notification.scrollDelta ?? 0;
+    if (delta == 0) return false;
+    // Same sign keeps accumulating; a reversal restarts from the fresh
+    // delta so a short reverse flick does not have to pay off a long run.
+    _scrollAccum = (_scrollAccum * delta < 0) ? delta : _scrollAccum + delta;
+    const slop = 18.0; // kTouchSlop
+    // Reset after firing like BottomBarAutoHide does — otherwise the
+    // accumulator grows unbounded during a long scroll in one direction.
+    if (_scrollAccum > slop) {
+      _setNavHidden(true);
+      _scrollAccum = 0;
+    } else if (_scrollAccum < -slop) {
+      _setNavHidden(false);
+      _scrollAccum = 0;
+    }
+    return false;
+  }
+
+  void _setNavHidden(bool hidden) {
+    if (MotionTokens.enabled(context)) {
+      if (hidden) {
+        _navVisibility.reverse();
+      } else {
+        _navVisibility.forward();
+      }
+    } else {
+      _navVisibility.value = hidden ? 0 : 1;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final rail = AppBreakpoints.useNavigationRail(
       MediaQuery.sizeOf(context).width,
     );
     return Scaffold(
-      body: child,
+      // The bar floats over the content — hiding it reveals the list
+      // already painted beneath instead of reclaiming a layout slot.
+      extendBody: true,
+      body: rail
+          ? widget.child
+          : NotificationListener<ScrollNotification>(
+              onNotification: _onScrollNotification,
+              child: widget.child,
+            ),
       bottomNavigationBar: rail
           ? null
-          : FuncBranchBottomNav(branchIndex: branchIndex),
+          : FuncBranchBottomNav(
+              branchIndex: widget.branchIndex,
+              visibility: _navVisibility,
+            ),
     );
   }
 }

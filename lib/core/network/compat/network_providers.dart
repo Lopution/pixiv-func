@@ -88,10 +88,10 @@ final networkAccessPolicyProvider = Provider<NetworkAccessPolicy>((ref) {
         if (persisted != null) {
           ref.read(autoImageSourceWinnerProvider.notifier).set(persisted);
         }
-        final winner = await AutoImageSource.race(policy);
-        if (winner == null) return; // all candidates failed: keep current
-        ref.read(autoImageSourceWinnerProvider.notifier).set(winner);
-        unawaited(autoSource.remember(identity, winner));
+        final result = await AutoImageSource.race(policy);
+        if (result == null) return; // all candidates failed: keep current
+        ref.read(autoImageSourceWinnerProvider.notifier).set(result.host);
+        unawaited(autoSource.remember(identity, result.host));
       } finally {
         autoRaceInFlight = false;
       }
