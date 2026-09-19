@@ -1838,6 +1838,22 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Summary
 
 镜像 host 独立路由组阻断 pximg 组偏好泄漏；镜像补 noSni 档且空 SNI 证书不匹配可降级；image purpose 池化客户端加 headers 预算+body 空闲超时（Stream 子类转发实现，避开 StreamController/Stream.timeout 在 FakeAsync 下的死锁）；pixiv.cat 标注大陆不可达；decodeWidthFor 注释对齐像素级解码语义
+## Session 55: snackbar-unify：messenger入body+showAppSnackBar v2统一形态与动效
+<!-- trellis-session: v=2 fp=96fa62ca2dd3c8df -->
+
+**Date**: 2026-09-19
+**Task**: snackbar-unify：messenger入body+showAppSnackBar v2统一形态与动效
+**Branch**: `task/09-19-snackbar-unify`
+
+### Summary
+
+SnackBar 位置/动效统一：分支 messenger 挪进底栏 Scaffold body，floating snackbar 锚定 body 底缘不再盖导航栏；helper 统一 floating+margin+AnimationStyle+action，app.dart 更新提示与 home_page 退出提示收编同一入口
+
+### Main Changes
+
+- BranchRootScaffold body 内嵌 ScaffoldMessenger，分支页 snackbar 落 body 底缘
+- buildAppSnackBar 统一 floating+EdgeInsets(16,0,16,16)+appSnackBarAnimationStyle(medium/fast)，showAppSnackBar/showAppSnackBarOn 双入口
+- app.dart 更新提示、home_page 退出提示改走统一 helper（退出提示保留手写 margin——其 messenger 覆盖底栏）
 
 ### Git Commits
 
@@ -1853,6 +1869,14 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Testing
 
 - [OK] flutter analyze lib test 0 issues；flutter test 全量 1163 通过（含镜像组隔离/noSni降级/流式守卫新用例）
+| `0b31b60` | docs(task): 09-19-snackbar-unify PRD 与实施计划 |
+| `06fba16` | fix(snackbar): 分支 messenger 挪进底栏 Scaffold body——floating snackbar 锚定 body 底缘不再盖底部导航 |
+| `49b7d08` | feat(snackbar): showAppSnackBar v2 统一形态——floating+统一margin+共享AnimationStyle+action；更新提示与退出提示收编 |
+| `c3fd17f` | test(snackbar): 分支内snackbar不盖底栏/统一形态/action/宽屏兜底回归用例 |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1161 通过；新增 app_snack_bar_test 4 例（不盖底栏/统一形态/action/宽屏兜底）
 
 ### Status
 
@@ -1902,3 +1926,4 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Next Steps
 
 - 真机跑帧探针拿 UI/Raster 分布，按证据决定 S2-S6 滚动优化
+- 合并后观察 pushed-route 内 snackbar 落根 messenger 的表现（全屏底缘，符合预期）
