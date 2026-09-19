@@ -1747,3 +1747,40 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Next Steps
 
 - PR：gh pr create --fill → CI 绿后 gh pr merge --merge
+
+
+## Session 52: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+<!-- trellis-session: v=2 fp=91586ba0dea9d37b -->
+
+**Date**: 2026-09-19
+**Task**: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+**Branch**: `task/09-19-acceptance-fixes-5`
+
+### Summary
+
+验收第五轮：Q1阅读器chrome SafeArea反包+tip垫inset；Q2 TagChip全局hairline；Q3资料编辑listenManual保活；Q4入场played改实体id+findChildIndexCallback；Q5 AppBar标题修复+Montserrat拉丁字族(子集571KB)；Q6评论操作行统一pill；sheet统一入口/spotlight recognizer/login 40px/withWebContent保留API字数/逐页尺寸ajax异步种子(Shaft seedPageDimensions方案)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7043927` | fix(profile): 资料编辑 listenManual 保活防 autoDispose 竞态——initialize 先订阅后 load；补延迟 session 回归测试（Q3） |
+| `f3e41b9` | fix(novel): 阅读器 chrome SafeArea 反包（Material 铺满屏边/inset 垫控件）+页脚 tip 垫 viewPadding；两处 sheet 接 showAppBottomSheet（Q1/S1） |
+| `07c0f9b` | fix(novel): withWebContent 保留 API text_length，仅 0 时用解析长度兜底——点开前后字数一致 |
+| `34cd092` | fix(ui): TagChip 全局 divider hairline 描边，sheet 场景不再融入；golden 重录（Q2/S3） |
+| `d03c242` | fix(comments): 操作行收敛统一 _ActionPill（surface 底+hairline+icon+label），图标色 dividerColor→contentSecondary，delete 用 danger（Q6/S2） |
+| `b75baa3` | fix(feed): 入场动画 played 改实体 id 语义；网格 itemIds+ValueKey+findChildIndexCallback，刷新头部插入旧卡不重播（Q4/S5） |
+| `041a706` | fix(illust): 详情 AppBar 标题样式修正（裸 TextStyle→titleLarge 链路）+相关区裸样式收敛语义源；related 网格 itemIds 随行（Q5-P1） |
+| `d292f5b` | fix(ui): spotlight 链接改 TextSpan+TapGestureRecognizer（Stateful 管理生命周期）；login info 图标 IconButton 40px（S4/S7） |
+| `3fdbd1a` | feat(illust): 多页作品逐页尺寸——/ajax/illust/{id}/pages 异步种子合并 metaPages，不阻塞 Ready、失败降级作品级比例、单页不发 |
+| `2362eb5` | feat(theme): Montserrat 400-700 拉丁/数字字族（pyftsubset 子集化+OFL 许可），CJK 引擎级系统回退（Q5-P2） |
+| `10614fe` | style(test): dart format 回流（app_api_profile_edit/user_profile） |
+| `b97f3de` | chore(spec): spec 补 SafeArea/Material 层级、hairline 分层、widget 侧 autoDispose 竞态、id 入场、web 端点异步种子约定 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；flutter test 1151 通过；tag chip golden重录；git diff --check干净
+
+### Status
+
+[OK] **Completed**
