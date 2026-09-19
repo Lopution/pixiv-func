@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 52
+- **Total Sessions**: 53
 - **Last Active**: 2026-09-19
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1786 | Active |
+| `journal-1.md` | ~1828 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 53 | 2026-09-19 | release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog | `bad4804`, `6c15931`, `67379ae`, `dd500f5`, `056221b`, `a16607d` | `task/09-19-release-readiness` |
 | 52 | 2026-09-19 | acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat | `7043927`, `f3e41b9`, `07c0f9b`, `34cd092`, `d03c242`, `b75baa3`, `041a706`, `d292f5b`, `3fdbd1a`, `2362eb5`, `10614fe`, `b97f3de` | `task/09-19-acceptance-fixes-5` |
 | 51 | 2026-09-19 | 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化 | `48039cb`, `f1dcecb`, `a8b683c`, `9375afe`, `dc718fc`, `488e854`, `d4c5f26`, `66866e3` | `task/09-19-acceptance-fixes-4` |
 | 50 | 2026-09-18 | acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量 | `b3ccfaf`, `4e070d6`, `e18b969`, `f36a1dc`, `eca8747` | `task/09-18-acceptance-fixes-3` |
