@@ -1710,3 +1710,77 @@ workflow.md 五处平台标签把 Devin 从 codex-inline 迁入 dispatch 组;imp
 ### Status
 
 [OK] **Completed**
+
+
+## Session 51: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+<!-- trellis-session: v=2 fp=3a4648234e36eb19 -->
+
+**Date**: 2026-09-19
+**Task**: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+**Branch**: `task/09-19-acceptance-fixes-4`
+
+### Summary
+
+P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/P4 返回键单一常驻+canPop 锁存；B 资料编辑换 App API multipart+presets；D next_url 校验拆 query/identity 放行 filter+首页补 include_*；E share_plus 统一 SharePayload+剪贴板兜底；C1 沉浸式阅读器壳+chrome+作品信息弹层+caption HTML；C2 阅读设置弹层(字号/行距/主题)+页脚 tip+charIndex 进度持久化恢复；另修两例过期测试断言
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `48039cb` | fix(motion): PressScale/StaggeredEntrance 感知 TickerMode，转场冻结时直渲终态；feed 入场动画 once 语义防重播（P1/P7/P8） |
+| `f1dcecb` | fix(profile): 返回按钮收敛为单一常驻组件统一展开/折叠几何；canPop 首次求值后缓存，返回转场中随页滑出（P3/P4） |
+| `a8b683c` | fix(profile): 资料编辑换 App API v1/user/profile/edit+presets，脱离 www cookie 依赖；_StatusBody loading 文案修正（B） |
+| `9375afe` | fix(novel): 推荐翻页 _validateCursor 放行 filter 等客户端身份参数；首页请求补 include_privacy_policy/include_ranking_novels（D） |
+| `dc718fc` | feat(share): share_plus 统一 SharePayload 契约；详情/个人页接系统分享，失败 fallback 剪贴板（E） |
+| `488e854` | feat(novel): 沉浸式阅读器壳——全屏 Stack+chrome toggle+back 优先级；元数据撤出+caption HTML 渲染（C1） |
+| `d4c5f26` | feat(novel): 阅读设置弹层（字号/行距/主题持久化）+页脚 tip 行+charIndex 进度恢复（C2） |
+| `66866e3` | test(share,novel): 修正过期断言——分享改断言 action→service payload 接线，推荐首页补 include_* 参数 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 1144 过(1 例 WSL loopback 环境 flake：tls_sni)；novel_reader_settings_test 10 新用例
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR：gh pr create --fill → CI 绿后 gh pr merge --merge
+
+
+## Session 52: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+<!-- trellis-session: v=2 fp=91586ba0dea9d37b -->
+
+**Date**: 2026-09-19
+**Task**: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+**Branch**: `task/09-19-acceptance-fixes-5`
+
+### Summary
+
+验收第五轮：Q1阅读器chrome SafeArea反包+tip垫inset；Q2 TagChip全局hairline；Q3资料编辑listenManual保活；Q4入场played改实体id+findChildIndexCallback；Q5 AppBar标题修复+Montserrat拉丁字族(子集571KB)；Q6评论操作行统一pill；sheet统一入口/spotlight recognizer/login 40px/withWebContent保留API字数/逐页尺寸ajax异步种子(Shaft seedPageDimensions方案)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7043927` | fix(profile): 资料编辑 listenManual 保活防 autoDispose 竞态——initialize 先订阅后 load；补延迟 session 回归测试（Q3） |
+| `f3e41b9` | fix(novel): 阅读器 chrome SafeArea 反包（Material 铺满屏边/inset 垫控件）+页脚 tip 垫 viewPadding；两处 sheet 接 showAppBottomSheet（Q1/S1） |
+| `07c0f9b` | fix(novel): withWebContent 保留 API text_length，仅 0 时用解析长度兜底——点开前后字数一致 |
+| `34cd092` | fix(ui): TagChip 全局 divider hairline 描边，sheet 场景不再融入；golden 重录（Q2/S3） |
+| `d03c242` | fix(comments): 操作行收敛统一 _ActionPill（surface 底+hairline+icon+label），图标色 dividerColor→contentSecondary，delete 用 danger（Q6/S2） |
+| `b75baa3` | fix(feed): 入场动画 played 改实体 id 语义；网格 itemIds+ValueKey+findChildIndexCallback，刷新头部插入旧卡不重播（Q4/S5） |
+| `041a706` | fix(illust): 详情 AppBar 标题样式修正（裸 TextStyle→titleLarge 链路）+相关区裸样式收敛语义源；related 网格 itemIds 随行（Q5-P1） |
+| `d292f5b` | fix(ui): spotlight 链接改 TextSpan+TapGestureRecognizer（Stateful 管理生命周期）；login info 图标 IconButton 40px（S4/S7） |
+| `3fdbd1a` | feat(illust): 多页作品逐页尺寸——/ajax/illust/{id}/pages 异步种子合并 metaPages，不阻塞 Ready、失败降级作品级比例、单页不发 |
+| `2362eb5` | feat(theme): Montserrat 400-700 拉丁/数字字族（pyftsubset 子集化+OFL 许可），CJK 引擎级系统回退（Q5-P2） |
+| `10614fe` | style(test): dart format 回流（app_api_profile_edit/user_profile） |
+| `b97f3de` | chore(spec): spec 补 SafeArea/Material 层级、hairline 分层、widget 侧 autoDispose 竞态、id 入场、web 端点异步种子约定 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；flutter test 1151 通过；tag chip golden重录；git diff --check干净
+
+### Status
+
+[OK] **Completed**

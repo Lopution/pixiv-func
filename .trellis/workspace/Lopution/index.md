@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 50
-- **Last Active**: 2026-09-18
+- **Total Sessions**: 52
+- **Last Active**: 2026-09-19
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1712 | Active |
+| `journal-1.md` | ~1786 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,8 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 52 | 2026-09-19 | acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat | `7043927`, `f3e41b9`, `07c0f9b`, `34cd092`, `d03c242`, `b75baa3`, `041a706`, `d292f5b`, `3fdbd1a`, `2362eb5`, `10614fe`, `b97f3de` | `task/09-19-acceptance-fixes-5` |
+| 51 | 2026-09-19 | 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化 | `48039cb`, `f1dcecb`, `a8b683c`, `9375afe`, `dc718fc`, `488e854`, `d4c5f26`, `66866e3` | `task/09-19-acceptance-fixes-4` |
 | 50 | 2026-09-18 | acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量 | `b3ccfaf`, `4e070d6`, `e18b969`, `f36a1dc`, `eca8747` | `task/09-18-acceptance-fixes-3` |
 | 49 | 2026-09-18 | devin-subagent-mode: Devin 工作模式切为派发式 | `a8af028` | `task/09-18-devin-subagent-mode` |
 | 47 | 2026-09-18 | acceptance-fixes-2: 九连修落地 | `176451a`, `f6386d5`, `05743e9`, `71da098`, `62d4e06`, `21f2060`, `6bb0dc6`, `6136479`, `960d0d4` | `task/09-18-acceptance-fixes-2` |
