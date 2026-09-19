@@ -1861,3 +1861,44 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Next Steps
 
 - 真机验证 pixiv.re/nl 镜像 noSni 默认 vhost 行为；接 09-19-adaptive-image
+
+
+## Session 56: adaptive-image：冷启动竞速+持久化+auto图源+语义设置页
+<!-- trellis-session: v=2 fp=2cd4ee7fafd635ac -->
+
+**Date**: 2026-09-19
+**Task**: adaptive-image：冷启动竞速+持久化+auto图源+语义设置页
+**Branch**: `task/09-19-adaptive-image`
+
+### Summary
+
+磁盘缓存 1500+优先级 FileService 双车道；图片冷请求 top-2 档竞速写记忆；route kind 按 networkIdentity 持久化；connectivity 变化 advanceNetworkRevision；feed 入场动画改首曝光+fling 门；viewer 低档垫底+邻页 medium 预取；下载命中磁盘缓存直接物化；feed 落地 HEAD 预热胜者路由；ImageSourceMode.auto 候选竞速+按网络持久化+耗尽重竞速；语义档(自动/直连/兼容优先)+生效路由+第三方可达性区；dev-only 帧探针页（addTimingsCallback+imageCache 计数+报告复制）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ae9f38a` | perf(cache): 磁盘缓存上限 200→1500 + PriorityFileService 双闸门——可见图8并发/prefetch3并发互不饿死，标记头出队即剥 |
+| `7f92edd` | feat(network): 幂等图片请求冷启动竞速——无路由/组记忆时 top-2 档并行 send，先达者写记忆，败者 drain 回收；双败保留终态语义落回串行梯子 |
+| `b59b0b9` | feat(network): 路由 kind 按 networkIdentity 持久化——重启/切网后 warmUp 播种组偏好，首请求免探测走上次胜者档 |
+| `ab840a4` | feat(network): connectivity_plus 监听——网络切换即 advanceNetworkRevision(identity=连接类型) 清记忆/池/冷却并按新身份播种持久化 kind |
+| `635521f` | feat(motion): 入场动画挂载触发→首次视口曝光触发——cacheExtent 挂载的折叠下卡片不再把动效放给空气；自测滚动速度 <1000px/s 门挡住 fling 中弹入，position+isScrolling 双监听，stagger 延迟封顶 index8，played 幂等语义不变 |
+| `cc21893` | perf(viewer): 已解码低档垫底(3a)+相邻页 medium 预取(3b)——无转场历史时 IllustTierCache.bestBelow 供出低档作 placeholder，翻页预热邻居页 medium 档；不动 hero/转场/淡入路径 |
+| `7d7baa8` | perf(download): 命中图片磁盘缓存直接物化到 sink——cacheLookup 命中跳过 transport；resume 时 openRead(offset) 只补尾部，字节口径与 206 续传一致；miss/异常落回网络路径 |
+| `fbb857f` | perf(network): feed 数据落地对胜者路由预热连接——warmConnection 按 (host,revision) 节流发 HEAD 建连，无记忆时交给冷竞速不预热；镜像 host 走独立组语义 |
+| `48786e9` | feat(settings): ImageSourceMode.auto——候选源缩略图竞速选线，胜者按 networkIdentity 持久化，失败降级 |
+| `425a229` | fix(network): idle-guard 计时器走 Zone.root 且 connectivity 订阅前先探测 binding——修复 widget/纯 Dart 测试下的悬挂定时器与 EventChannel 异步异常 |
+| `74244d4` | feat(settings): 网络主页面语义档 + 生效路由展示 + 第三方可达性提示 |
+| `f6fd204` | feat(debug): dev-only 滚动帧探针（FrameTimings 采集+导出） |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；flutter test 全量通过（期间修 idle-guard Zone.root 定时器+connectivity binding 探测两处测试环境回归）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机跑帧探针拿 UI/Raster 分布，按证据决定 S2-S6 滚动优化
