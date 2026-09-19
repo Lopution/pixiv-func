@@ -1784,3 +1784,45 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Status
 
 [OK] **Completed**
+
+
+## Session 53: release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog
+<!-- trellis-session: v=2 fp=c47e701fd1d62d84 -->
+
+**Date**: 2026-09-19
+**Task**: release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog
+**Branch**: `task/09-19-release-readiness`
+
+### Summary
+
+发布就绪五件套：pubspec 唯一版本源、启动自动检查更新、崩溃日志落盘导出、release notes 自动生成
+
+### Main Changes
+
+- pubspec version:X.Y.Z+N 为唯一版本源，release.yml 派生 versionName/versionCode，versionCode 不一致即失败
+- 启动延迟一次性自动检查更新（SharedPreferences 节流），store 渠道跳过，有更新才提示
+- runZonedGuarded+FlutterError.onError 崩溃落盘（限容滚动保留最新半），About 页 share_plus 导出+package_info 版本
+- release.yml draft notes：非空手写优先，否则 generate-notes 按 PR 生成
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `bad4804` | chore(release): pubspec `version: X.Y.Z+N` 为唯一版本源——release.yml 读 pubspec 得 versionName/versionCode，去掉两个 inputs；versionCode 不一致即失败（R1） |
+| `6c15931` | feat(updater): 启动延迟一次性自动检查更新——节流间隔内跳过；有更新→Snackbar 入口；无更新/失败静默（R2） |
+| `67379ae` | feat(log): runZonedGuarded+FlutterError.onError 崩溃落盘（限容滚动）+About 页 share_plus 导出；About 版本号改读 package_info（R3） |
+| `dd500f5` | chore(release): release.yml 补 generate-notes changelog——draft 有非空 notes 则用，否则按 PR 自动生成（R4） |
+| `056221b` | style(l10n): dart format 回流 lookup 生成物 |
+| `a16607d` | chore(task): 收尾簿记（勾选、journal、归档；首发冒烟清单留档） |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1157 通过（含 auto-check/crash-log 新用例）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 首发冒烟：workflow_dispatch 出 draft→发布→真机验证 更新检测/下载/覆盖安装 全链
