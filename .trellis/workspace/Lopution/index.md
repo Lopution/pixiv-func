@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 54
+- **Total Sessions**: 56
 - **Last Active**: 2026-09-19
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1863 | Active |
+| `journal-1.md` | ~1904 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 56 | 2026-09-19 | adaptive-image：冷启动竞速+持久化+auto图源+语义设置页 | `ae9f38a`, `7f92edd`, `b59b0b9`, `ab840a4`, `635521f`, `cc21893`, `7d7baa8`, `fbb857f`, `48786e9`, `425a229`, `74244d4`, `f6fd204` | `task/09-19-adaptive-image` |
 | 54 | 2026-09-19 | network-image-l0：镜像路由隔离+noSni档+流式空闲守卫 | `8d0eeb9`, `88ff238`, `6ad07e6`, `766e3d2`, `34f2ec4`, `902b003` | `task/09-19-network-image-l0` |
 | 53 | 2026-09-19 | release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog | `bad4804`, `6c15931`, `67379ae`, `dd500f5`, `056221b`, `a16607d` | `task/09-19-release-readiness` |
 | 52 | 2026-09-19 | acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat | `7043927`, `f3e41b9`, `07c0f9b`, `34cd092`, `d03c242`, `b75baa3`, `041a706`, `d292f5b`, `3fdbd1a`, `2362eb5`, `10614fe`, `b97f3de` | `task/09-19-acceptance-fixes-5` |

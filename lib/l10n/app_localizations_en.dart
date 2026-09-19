@@ -263,6 +263,42 @@ class AppLocalizationsEn extends AppLocalizations {
       'System DNS + real SNI direct connection. For networks known to be reachable directly.';
 
   @override
+  String get networkModeCompatPrefer => 'Compatibility-first';
+
+  @override
+  String get networkModeCompatPreferHint =>
+      'Try DoH/ECH/no-SNI compatibility routes before direct — for networks where direct is already blocked.';
+
+  @override
+  String get networkEffectiveRoutes => 'Effective routes';
+
+  @override
+  String get networkEffectiveRoutesEmpty =>
+      'No route learned yet — browse a bit and refresh.';
+
+  @override
+  String get networkRouteKindDirect => 'Direct';
+
+  @override
+  String get networkRouteKindCompat => 'Compat (no SNI)';
+
+  @override
+  String get networkThirdParty => 'Third-party reachability';
+
+  @override
+  String get networkThirdPartyHint =>
+      'Plain system routing (your VPN/proxy applies). Not through the Pixiv compatibility ladder.';
+
+  @override
+  String get networkReachable => 'Reachable';
+
+  @override
+  String get networkUnreachable => 'Unreachable';
+
+  @override
+  String get networkChecking => 'Checking…';
+
+  @override
   String get networkAdvanced => 'Advanced';
 
   @override
@@ -302,6 +338,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get networkProbeHint =>
       'Probes the four official Pixiv hosts layer by layer: system DNS → DoH → TCP → TLS(real SNI) → minimal request. TCP ok but TLS handshake fails = SNI blocked.';
+
+  @override
+  String get frameProbeTitle => 'Frame probe';
+
+  @override
+  String get frameProbeHint =>
+      'Records frame timings while you scroll. Stop after a fling-heavy pass, then copy the report. Dev/profile builds only.';
+
+  @override
+  String get frameProbeStart => 'Start recording';
+
+  @override
+  String get frameProbeStop => 'Stop';
 
   @override
   String get networkProbeRun => 'Run probe';
@@ -650,6 +699,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get imageSourceUnreachableMainland =>
       'Usually unreachable from mainland networks';
+
+  @override
+  String get imageSourceAuto => 'Auto (race mirrors on this network)';
+
+  @override
+  String imageSourceAutoWinner(String host) {
+    return 'Current: $host';
+  }
+
+  @override
+  String get imageSourceAutoPending =>
+      'Not measured yet — falls back to direct';
 
   @override
   String get previewQuality => 'Preview quality';
@@ -1150,6 +1211,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get refresh => 'Refresh';
 
   @override
   String get relatedWorks => 'Related works';

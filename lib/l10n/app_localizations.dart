@@ -540,6 +540,72 @@ abstract class AppLocalizations {
   /// **'使用系统 DNS + 真实 SNI 直连。适合已知直连可用的网络。'**
   String get networkModeDirectOnlyHint;
 
+  /// No description provided for @networkModeCompatPrefer.
+  ///
+  /// In zh, this message translates to:
+  /// **'兼容优先'**
+  String get networkModeCompatPrefer;
+
+  /// No description provided for @networkModeCompatPreferHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'先试 DoH/ECH/空 SNI 等兼容路线，全部失败再直连。适合直连已被阻断的网络。'**
+  String get networkModeCompatPreferHint;
+
+  /// No description provided for @networkEffectiveRoutes.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前生效路由'**
+  String get networkEffectiveRoutes;
+
+  /// No description provided for @networkEffectiveRoutesEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有路由记录——逛一逛再刷新。'**
+  String get networkEffectiveRoutesEmpty;
+
+  /// No description provided for @networkRouteKindDirect.
+  ///
+  /// In zh, this message translates to:
+  /// **'直连'**
+  String get networkRouteKindDirect;
+
+  /// No description provided for @networkRouteKindCompat.
+  ///
+  /// In zh, this message translates to:
+  /// **'兼容通道（无 SNI）'**
+  String get networkRouteKindCompat;
+
+  /// No description provided for @networkThirdParty.
+  ///
+  /// In zh, this message translates to:
+  /// **'第三方服务可达性'**
+  String get networkThirdParty;
+
+  /// No description provided for @networkThirdPartyHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'走系统路由（你的 VPN/代理会生效），不经过 Pixiv 兼容梯子。'**
+  String get networkThirdPartyHint;
+
+  /// No description provided for @networkReachable.
+  ///
+  /// In zh, this message translates to:
+  /// **'可达'**
+  String get networkReachable;
+
+  /// No description provided for @networkUnreachable.
+  ///
+  /// In zh, this message translates to:
+  /// **'不可达'**
+  String get networkUnreachable;
+
+  /// No description provided for @networkChecking.
+  ///
+  /// In zh, this message translates to:
+  /// **'检测中…'**
+  String get networkChecking;
+
   /// No description provided for @networkAdvanced.
   ///
   /// In zh, this message translates to:
@@ -611,6 +677,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'对 Pixiv 四个官方主机逐层测试：系统 DNS → DoH → TCP → TLS(真实 SNI) → 最小请求。TCP 通但 TLS 握手失败 = SNI 被封。'**
   String get networkProbeHint;
+
+  /// No description provided for @frameProbeTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'帧探针'**
+  String get frameProbeTitle;
+
+  /// No description provided for @frameProbeHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'滚动时记录帧耗时。快速滑动一段后停止，再复制报告。仅 debug/profile 构建可见。'**
+  String get frameProbeHint;
+
+  /// No description provided for @frameProbeStart.
+  ///
+  /// In zh, this message translates to:
+  /// **'开始记录'**
+  String get frameProbeStart;
+
+  /// No description provided for @frameProbeStop.
+  ///
+  /// In zh, this message translates to:
+  /// **'停止'**
+  String get frameProbeStop;
 
   /// No description provided for @networkProbeRun.
   ///
@@ -1259,6 +1349,24 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'大陆网络通常不可达'**
   String get imageSourceUnreachableMainland;
+
+  /// No description provided for @imageSourceAuto.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动（按当前网络竞速选源）'**
+  String get imageSourceAuto;
+
+  /// No description provided for @imageSourceAutoWinner.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前：{host}'**
+  String imageSourceAutoWinner(String host);
+
+  /// No description provided for @imageSourceAutoPending.
+  ///
+  /// In zh, this message translates to:
+  /// **'尚未测速，暂按直连'**
+  String get imageSourceAutoPending;
 
   /// No description provided for @previewQuality.
   ///
@@ -2153,6 +2261,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'重试'**
   String get retry;
+
+  /// No description provided for @refresh.
+  ///
+  /// In zh, this message translates to:
+  /// **'刷新'**
+  String get refresh;
 
   /// No description provided for @relatedWorks.
   ///

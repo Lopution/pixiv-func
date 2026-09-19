@@ -249,6 +249,40 @@ class AppLocalizationsZh extends AppLocalizations {
   String get networkModeDirectOnlyHint => '使用系统 DNS + 真实 SNI 直连。适合已知直连可用的网络。';
 
   @override
+  String get networkModeCompatPrefer => '兼容优先';
+
+  @override
+  String get networkModeCompatPreferHint =>
+      '先试 DoH/ECH/空 SNI 等兼容路线，全部失败再直连。适合直连已被阻断的网络。';
+
+  @override
+  String get networkEffectiveRoutes => '当前生效路由';
+
+  @override
+  String get networkEffectiveRoutesEmpty => '还没有路由记录——逛一逛再刷新。';
+
+  @override
+  String get networkRouteKindDirect => '直连';
+
+  @override
+  String get networkRouteKindCompat => '兼容通道（无 SNI）';
+
+  @override
+  String get networkThirdParty => '第三方服务可达性';
+
+  @override
+  String get networkThirdPartyHint => '走系统路由（你的 VPN/代理会生效），不经过 Pixiv 兼容梯子。';
+
+  @override
+  String get networkReachable => '可达';
+
+  @override
+  String get networkUnreachable => '不可达';
+
+  @override
+  String get networkChecking => '检测中…';
+
+  @override
   String get networkAdvanced => '高级设置';
 
   @override
@@ -286,6 +320,18 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get networkProbeHint =>
       '对 Pixiv 四个官方主机逐层测试：系统 DNS → DoH → TCP → TLS(真实 SNI) → 最小请求。TCP 通但 TLS 握手失败 = SNI 被封。';
+
+  @override
+  String get frameProbeTitle => '帧探针';
+
+  @override
+  String get frameProbeHint => '滚动时记录帧耗时。快速滑动一段后停止，再复制报告。仅 debug/profile 构建可见。';
+
+  @override
+  String get frameProbeStart => '开始记录';
+
+  @override
+  String get frameProbeStop => '停止';
 
   @override
   String get networkProbeRun => '开始探测';
@@ -623,6 +669,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get imageSourceUnreachableMainland => '大陆网络通常不可达';
+
+  @override
+  String get imageSourceAuto => '自动（按当前网络竞速选源）';
+
+  @override
+  String imageSourceAutoWinner(String host) {
+    return '当前：$host';
+  }
+
+  @override
+  String get imageSourceAutoPending => '尚未测速，暂按直连';
 
   @override
   String get previewQuality => '预览质量';
@@ -1105,6 +1162,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get retry => '重试';
+
+  @override
+  String get refresh => '刷新';
 
   @override
   String get relatedWorks => '相关作品';

@@ -108,6 +108,17 @@
   "networkModeAutomaticHint": "Standard network stack: selects a reachable route per host group.",
   "networkModeDirectOnly": "Direct only",
   "networkModeDirectOnlyHint": "System DNS + real SNI direct connection. For networks known to be reachable directly.",
+  "networkModeCompatPrefer": "Compatibility-first",
+  "networkModeCompatPreferHint": "Try DoH/ECH/no-SNI compatibility routes before direct — for networks where direct is already blocked.",
+  "networkEffectiveRoutes": "Effective routes",
+  "networkEffectiveRoutesEmpty": "No route learned yet — browse a bit and refresh.",
+  "networkRouteKindDirect": "Direct",
+  "networkRouteKindCompat": "Compat (no SNI)",
+  "networkThirdParty": "Third-party reachability",
+  "networkThirdPartyHint": "Plain system routing (your VPN/proxy applies). Not through the Pixiv compatibility ladder.",
+  "networkReachable": "Reachable",
+  "networkUnreachable": "Unreachable",
+  "networkChecking": "Checking…",
   "networkAdvanced": "Advanced",
   "networkAdvancedHint": "DoH endpoints, ECH front host and other details.",
   "networkAdvancedReset": "Reset to defaults",
@@ -120,6 +131,10 @@
   "networkProbe": "Layered connectivity probe",
   "networkProbeTitle": "Layered connectivity probe",
   "networkProbeHint": "Probes the four official Pixiv hosts layer by layer: system DNS → DoH → TCP → TLS(real SNI) → minimal request. TCP ok but TLS handshake fails = SNI blocked.",
+  "frameProbeTitle": "Frame probe",
+  "frameProbeHint": "Records frame timings while you scroll. Stop after a fling-heavy pass, then copy the report. Dev/profile builds only.",
+  "frameProbeStart": "Start recording",
+  "frameProbeStop": "Stop",
   "networkProbeRun": "Run probe",
   "networkProbeRunning": "Probing…",
   "networkProbeNotRun": "Not run yet",
@@ -276,6 +291,16 @@
   },
   "imageSourceTestFailed": "Mirror connectivity test failed",
   "imageSourceUnreachableMainland": "Usually unreachable from mainland networks",
+  "imageSourceAuto": "Auto (race mirrors on this network)",
+  "imageSourceAutoWinner": "Current: {host}",
+  "@imageSourceAutoWinner": {
+    "placeholders": {
+      "host": {
+        "type": "String"
+      }
+    }
+  },
+  "imageSourceAutoPending": "Not measured yet — falls back to direct",
   "previewQuality": "Preview quality",
   "viewQuality": "Viewer quality",
   "detailQuality": "Detail quality",
@@ -540,6 +565,7 @@
   "save": "Save",
   "saved": "Saved",
   "retry": "Retry",
+  "refresh": "Refresh",
   "relatedWorks": "Related works",
   "cancel": "Cancel",
   "confirm": "Confirm",

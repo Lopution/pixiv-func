@@ -257,6 +257,40 @@ class AppLocalizationsJa extends AppLocalizations {
       'システム DNS + 実 SNI で直結します。直結で利用可能なネットワーク向け。';
 
   @override
+  String get networkModeCompatPrefer => '互換経路優先';
+
+  @override
+  String get networkModeCompatPreferHint =>
+      'DoH/ECH/空SNI などの互換経路を先に試し、すべて失敗したら直连。直连がすでに遮断されているネットワーク向け。';
+
+  @override
+  String get networkEffectiveRoutes => '現在有効な経路';
+
+  @override
+  String get networkEffectiveRoutesEmpty => '経路情報はまだありません——少し浏览してから更新してください。';
+
+  @override
+  String get networkRouteKindDirect => '直连';
+
+  @override
+  String get networkRouteKindCompat => '互換経路（SNI なし）';
+
+  @override
+  String get networkThirdParty => 'サードパーティ到達性';
+
+  @override
+  String get networkThirdPartyHint => 'システム経路（VPN/プロキシが有効）。Pixiv 互換ラダーは経由しません。';
+
+  @override
+  String get networkReachable => '到達可能';
+
+  @override
+  String get networkUnreachable => '到達不能';
+
+  @override
+  String get networkChecking => '確認中…';
+
+  @override
   String get networkAdvanced => '詳細設定';
 
   @override
@@ -294,6 +328,19 @@ class AppLocalizationsJa extends AppLocalizations {
   @override
   String get networkProbeHint =>
       'Pixiv の4公式ホストを層ごとにテスト：システム DNS → DoH → TCP → TLS(実SNI) → 最小リクエスト。TCP 成功でも TLS ハンドシェイク失敗 = SNI ブロック。';
+
+  @override
+  String get frameProbeTitle => 'フレームプローブ';
+
+  @override
+  String get frameProbeHint =>
+      'スクロール中のフレーム時間を記録します。フリックで一通りスクロールして停止し、レポートをコピーしてください。debug/profile ビルド限定。';
+
+  @override
+  String get frameProbeStart => '記録開始';
+
+  @override
+  String get frameProbeStop => '停止';
 
   @override
   String get networkProbeRun => 'プローブ開始';
@@ -632,6 +679,17 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get imageSourceUnreachableMainland => '中国本土ネットワークからは通常到達不能';
+
+  @override
+  String get imageSourceAuto => '自動（現在のネットワークで計測）';
+
+  @override
+  String imageSourceAutoWinner(String host) {
+    return '現在: $host';
+  }
+
+  @override
+  String get imageSourceAutoPending => '未計測 — 直连で読み込み';
 
   @override
   String get previewQuality => 'プレビュー画質';
@@ -1119,6 +1177,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get retry => '再試行';
+
+  @override
+  String get refresh => '更新';
 
   @override
   String get relatedWorks => '関連作品';
