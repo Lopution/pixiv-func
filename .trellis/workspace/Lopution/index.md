@@ -8,8 +8,8 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-1.md`
-- **Total Sessions**: 56
-- **Last Active**: 2026-09-19
+- **Total Sessions**: 58
+- **Last Active**: 2026-09-20
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~1904 | Active |
+| `journal-1.md` | ~1942 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +29,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 58 | 2026-09-20 | perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速 | `2cd9125`, `e0e07c4`, `fb70d51`, `935410c`, `567f3b9`, `adc2ae6`, `9c5bf6f`, `d842c2a`, `903da15` | `task/09-19-perceived-speed` |
 | 56 | 2026-09-19 | adaptive-image：冷启动竞速+持久化+auto图源+语义设置页 | `ae9f38a`, `7f92edd`, `b59b0b9`, `ab840a4`, `635521f`, `cc21893`, `7d7baa8`, `fbb857f`, `48786e9`, `425a229`, `74244d4`, `f6fd204` | `task/09-19-adaptive-image` |
 | 54 | 2026-09-19 | network-image-l0：镜像路由隔离+noSni档+流式空闲守卫 | `8d0eeb9`, `88ff238`, `6ad07e6`, `766e3d2`, `34f2ec4`, `902b003` | `task/09-19-network-image-l0` |
 | 53 | 2026-09-19 | release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog | `bad4804`, `6c15931`, `67379ae`, `dd500f5`, `056221b`, `a16607d` | `task/09-19-release-readiness` |
