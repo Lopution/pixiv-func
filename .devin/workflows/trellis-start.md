@@ -46,14 +46,15 @@ From Step 1 you know the current task and status. Check the task directory:
 
 ---
 
-## Skill routing (quick reference)
+## Routing (quick reference)
 
-| User intent | Skill |
+| User intent | Route |
 |---|---|
-| New feature / unclear requirements | `trellis-brainstorm` |
-| About to write code | `trellis-before-dev` |
-| Done coding / quality check | `trellis-check` |
-| Stuck / fixed same bug multiple times | `trellis-break-loop` |
-| Learned something worth capturing | `trellis-update-spec` |
+| New feature / unclear requirements | `trellis-brainstorm` skill |
+| Implementation inside an active task | `run_subagent` → `trellis-implement` |
+| Quality check after code changes | `run_subagent` → `trellis-check` |
+| Research inside an active task | `run_subagent` → `trellis-research` |
+| Stuck / fixed same bug multiple times | `trellis-break-loop` skill |
+| Learned something worth capturing | `trellis-update-spec` skill |
 
 Full rules + anti-rationalization table in `.trellis/workflow.md`.

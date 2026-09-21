@@ -170,6 +170,37 @@ void main() {
       expect(payload.text, 'body');
     });
 
+    test(
+      'tolerates the real JS literal shape: unquoted keys, single quotes, undefined',
+      () {
+        // The live page ships a JavaScript object literal, not JSON — Gson's
+        // lenient mode ate it on Android clients, dart:convert did not.
+        const html = '''
+<script>
+Object.defineProperty(window, 'pixiv', {value: {
+  sessionUserId: 84522870,
+  premium: false,
+  novel: {
+    id: '1',
+    title: 'novel 1',
+    text: 'it\\'s a "quoted" body',
+    userId: '10',
+    coverUrl: 'https://i.pximg.net/c/1.jpg',
+    tags: ['tag1', 'tag2'],
+    caption: 'cap',
+    optional: undefined,
+    nested: {inner: {deep: true}},
+  },
+  context: {csrfToken: 'x'},
+}, configurable: true, writable: true});
+</script>
+''';
+        final payload = extractNovelWebPayload(html);
+        expect(payload.text, 'it\'s a "quoted" body');
+        expect(payload.seriesPrevId, isNull);
+      },
+    );
+
     test('rejects a page without the pixiv bootstrap script', () {
       expect(
         () => extractNovelWebPayload('<html><body>no script</body></html>'),
@@ -212,6 +243,9 @@ void main() {
       expect(novel.paragraphs, isNotEmpty);
       expect(novel.plainText, contains('para1'));
       expect(novel.seriesId, 77);
+      // API text_length is pixiv's official count and what list rows show;
+      // merging the body must not replace it with the parsed sum (11).
+      expect(novel.textLength, 1234);
     });
 
     test('propagates webview transport failure as an API error', () async {

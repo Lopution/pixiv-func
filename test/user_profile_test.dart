@@ -549,42 +549,102 @@ void main() {
     }
   });
 
-  testWidgets('current profile header hosts the settings entry', (
+  testWidgets(
+    'current profile header keeps share inline and overflows into a menu',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: appLocalizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('zh', 'CN'),
+
+          home: Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: ReplicaProfileHeaderDelegate(
+                    user: _user(42),
+                    isMe: true,
+                    selectedTabIndex: 0,
+                    showRestrictSelector: false,
+                    restrict: UserRestrict.public,
+                    onRestrictChanged: (_) {},
+                    onShare: () {},
+                    onEditProfile: () {},
+                  ),
+                ),
+                const SliverToBoxAdapter(child: SizedBox(height: 1000)),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      // Expanded header keeps share/edit inline; the collapsed toolbar carries
+      // the remaining actions in a single overflow menu.
+      expect(find.byIcon(Icons.share_outlined), findsWidgets);
+
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+      await tester.pump();
+      expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    },
+  );
+
+  testWidgets('header back button stays mounted through the pop animation', (
     tester,
   ) async {
+    Widget header() => Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: ReplicaProfileHeaderDelegate(
+              user: _user(42),
+              isMe: true,
+              selectedTabIndex: 0,
+              showRestrictSelector: false,
+              restrict: UserRestrict.public,
+              onRestrictChanged: (_) {},
+              onShare: () {},
+            ),
+          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 1000)),
+        ],
+      ),
+    );
     await tester.pumpWidget(
       MaterialApp(
         localizationsDelegates: appLocalizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
         locale: const Locale('zh', 'CN'),
-
-        home: Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: ReplicaProfileHeaderDelegate(
-                  user: _user(42),
-                  isMe: true,
-                  selectedTabIndex: 0,
-                  showRestrictSelector: false,
-                  restrict: UserRestrict.public,
-                  onRestrictChanged: (_) {},
-                  onShare: () {},
-                ),
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: TextButton(
+                onPressed: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute<void>(builder: (_) => header())),
+                child: const Text('open'),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 1000)),
-            ],
+            ),
           ),
         ),
       ),
     );
-    await tester.pump();
-    expect(find.byIcon(Icons.settings_outlined), findsWidgets);
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.arrow_back_ios_new), findsOneWidget);
 
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -500));
+    // pop() removes the route from history immediately — canPop flips false
+    // while the pop animation still runs. The header button must not
+    // unmount mid-slide.
+    tester.state<NavigatorState>(find.byType(Navigator)).pop();
     await tester.pump();
-    expect(find.byIcon(Icons.settings_outlined), findsWidgets);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.byIcon(Icons.arrow_back_ios_new), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.byIcon(Icons.arrow_back_ios_new), findsNothing);
   });
 
   testWidgets(

@@ -1682,3 +1682,212 @@ run_subagent/UserPromptSubmit 两个 hook 上线:trellis-implement/check/researc
 ### Next Steps
 
 - 开 PR 等 CI;可考虑把 devin 接线上游到 templates/devin.ts 与 shared-hooks 表
+## Session 49: devin-subagent-mode: Devin 工作模式切为派发式
+<!-- trellis-session: v=2 fp=a229a925f59ac3ec -->
+
+**Date**: 2026-09-18
+**Task**: devin-subagent-mode: Devin 工作模式切为派发式
+**Branch**: `task/09-18-devin-subagent-mode`
+
+### Summary
+
+workflow.md 五处平台标签把 Devin 从 codex-inline 迁入 dispatch 组;implement 归 hook 注入变体;协议段补 run_subagent(profile) 机制;task_store 的 _SUBAGENT_CONFIG_DIRS 加 .devin;trellis-start 路由表同步。验证:get_context --platform devin 的 2.1/2.2 均出派发指引,codex-inline/Kilo/Antigravity/DeepSeek 保留原块。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `a8af028` | feat(trellis): devin 工作模式 inline → sub-agent dispatch |
+
+### Testing
+
+- [OK] get_context --mode phase --step 2.1/2.2 --platform devin 出 dispatch 变体;py_compile 过;git diff --check 净;标签开闭对称
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 开 PR 等 CI;上游 ai-tools.ts agent-capable 表与模板标签需同步翻转
+
+
+## Session 50: acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量
+<!-- trellis-session: v=2 fp=1f32280b427fd633 -->
+
+**Date**: 2026-09-18
+**Task**: acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量
+**Branch**: `task/09-18-acceptance-fixes-3`
+
+### Summary
+
+第三轮验收返工：设置升第5tab/个人页降设置卡片入口(/me↔/settings对称置换)、profile header删冗余齿轮+actions收⋯溢出菜单(A方案名字居中)、搜图预览删probe-listener单解码贴图收缩+重选取消上移+选图改ACTION_PICK_IMAGES相册、novel bootstrap JS字面量宽松解析(无引号key/单引号/undefined——真机acb诊断透出根因实锤)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `b3ccfaf` | test(nav): 跟进第5tab换设置的两处旧断言 |
+| `4e070d6` | fix(novel): bootstrap JS 字面量宽松解析 |
+| `e18b969` | fix(reversesearch): 预览贴图收缩、重选/取消上移、选图改相册 |
+| `f36a1dc` | refactor(profile): header 移除冗余设置入口，折叠态 actions 收进溢出菜单 |
+| `eca8747` | refactor(nav): 设置升第5 tab、个人页降设置卡片入口 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue; dart format 干净; flutter test +1115 零失败(修2处旧契约断言); Kotlin JVM 测试过
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 51: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+<!-- trellis-session: v=2 fp=3a4648234e36eb19 -->
+
+**Date**: 2026-09-19
+**Task**: 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化
+**Branch**: `task/09-19-acceptance-fixes-4`
+
+### Summary
+
+P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/P4 返回键单一常驻+canPop 锁存；B 资料编辑换 App API multipart+presets；D next_url 校验拆 query/identity 放行 filter+首页补 include_*；E share_plus 统一 SharePayload+剪贴板兜底；C1 沉浸式阅读器壳+chrome+作品信息弹层+caption HTML；C2 阅读设置弹层(字号/行距/主题)+页脚 tip+charIndex 进度持久化恢复；另修两例过期测试断言
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `48039cb` | fix(motion): PressScale/StaggeredEntrance 感知 TickerMode，转场冻结时直渲终态；feed 入场动画 once 语义防重播（P1/P7/P8） |
+| `f1dcecb` | fix(profile): 返回按钮收敛为单一常驻组件统一展开/折叠几何；canPop 首次求值后缓存，返回转场中随页滑出（P3/P4） |
+| `a8b683c` | fix(profile): 资料编辑换 App API v1/user/profile/edit+presets，脱离 www cookie 依赖；_StatusBody loading 文案修正（B） |
+| `9375afe` | fix(novel): 推荐翻页 _validateCursor 放行 filter 等客户端身份参数；首页请求补 include_privacy_policy/include_ranking_novels（D） |
+| `dc718fc` | feat(share): share_plus 统一 SharePayload 契约；详情/个人页接系统分享，失败 fallback 剪贴板（E） |
+| `488e854` | feat(novel): 沉浸式阅读器壳——全屏 Stack+chrome toggle+back 优先级；元数据撤出+caption HTML 渲染（C1） |
+| `d4c5f26` | feat(novel): 阅读设置弹层（字号/行距/主题持久化）+页脚 tip 行+charIndex 进度恢复（C2） |
+| `66866e3` | test(share,novel): 修正过期断言——分享改断言 action→service payload 接线，推荐首页补 include_* 参数 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；flutter test 1144 过(1 例 WSL loopback 环境 flake：tls_sni)；novel_reader_settings_test 10 新用例
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR：gh pr create --fill → CI 绿后 gh pr merge --merge
+
+
+## Session 52: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+<!-- trellis-session: v=2 fp=91586ba0dea9d37b -->
+
+**Date**: 2026-09-19
+**Task**: acceptance-fixes-5: 六问修复+自查项+字数/逐页尺寸/Montserrat
+**Branch**: `task/09-19-acceptance-fixes-5`
+
+### Summary
+
+验收第五轮：Q1阅读器chrome SafeArea反包+tip垫inset；Q2 TagChip全局hairline；Q3资料编辑listenManual保活；Q4入场played改实体id+findChildIndexCallback；Q5 AppBar标题修复+Montserrat拉丁字族(子集571KB)；Q6评论操作行统一pill；sheet统一入口/spotlight recognizer/login 40px/withWebContent保留API字数/逐页尺寸ajax异步种子(Shaft seedPageDimensions方案)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `7043927` | fix(profile): 资料编辑 listenManual 保活防 autoDispose 竞态——initialize 先订阅后 load；补延迟 session 回归测试（Q3） |
+| `f3e41b9` | fix(novel): 阅读器 chrome SafeArea 反包（Material 铺满屏边/inset 垫控件）+页脚 tip 垫 viewPadding；两处 sheet 接 showAppBottomSheet（Q1/S1） |
+| `07c0f9b` | fix(novel): withWebContent 保留 API text_length，仅 0 时用解析长度兜底——点开前后字数一致 |
+| `34cd092` | fix(ui): TagChip 全局 divider hairline 描边，sheet 场景不再融入；golden 重录（Q2/S3） |
+| `d03c242` | fix(comments): 操作行收敛统一 _ActionPill（surface 底+hairline+icon+label），图标色 dividerColor→contentSecondary，delete 用 danger（Q6/S2） |
+| `b75baa3` | fix(feed): 入场动画 played 改实体 id 语义；网格 itemIds+ValueKey+findChildIndexCallback，刷新头部插入旧卡不重播（Q4/S5） |
+| `041a706` | fix(illust): 详情 AppBar 标题样式修正（裸 TextStyle→titleLarge 链路）+相关区裸样式收敛语义源；related 网格 itemIds 随行（Q5-P1） |
+| `d292f5b` | fix(ui): spotlight 链接改 TextSpan+TapGestureRecognizer（Stateful 管理生命周期）；login info 图标 IconButton 40px（S4/S7） |
+| `3fdbd1a` | feat(illust): 多页作品逐页尺寸——/ajax/illust/{id}/pages 异步种子合并 metaPages，不阻塞 Ready、失败降级作品级比例、单页不发 |
+| `2362eb5` | feat(theme): Montserrat 400-700 拉丁/数字字族（pyftsubset 子集化+OFL 许可），CJK 引擎级系统回退（Q5-P2） |
+| `10614fe` | style(test): dart format 回流（app_api_profile_edit/user_profile） |
+| `b97f3de` | chore(spec): spec 补 SafeArea/Material 层级、hairline 分层、widget 侧 autoDispose 竞态、id 入场、web 端点异步种子约定 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；flutter test 1151 通过；tag chip golden重录；git diff --check干净
+
+### Status
+
+[OK] **Completed**
+
+
+## Session 53: release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog
+<!-- trellis-session: v=2 fp=c47e701fd1d62d84 -->
+
+**Date**: 2026-09-19
+**Task**: release-readiness：版本源统一+自动更新检查+崩溃落盘+changelog
+**Branch**: `task/09-19-release-readiness`
+
+### Summary
+
+发布就绪五件套：pubspec 唯一版本源、启动自动检查更新、崩溃日志落盘导出、release notes 自动生成
+
+### Main Changes
+
+- pubspec version:X.Y.Z+N 为唯一版本源，release.yml 派生 versionName/versionCode，versionCode 不一致即失败
+- 启动延迟一次性自动检查更新（SharedPreferences 节流），store 渠道跳过，有更新才提示
+- runZonedGuarded+FlutterError.onError 崩溃落盘（限容滚动保留最新半），About 页 share_plus 导出+package_info 版本
+- release.yml draft notes：非空手写优先，否则 generate-notes 按 PR 生成
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `bad4804` | chore(release): pubspec `version: X.Y.Z+N` 为唯一版本源——release.yml 读 pubspec 得 versionName/versionCode，去掉两个 inputs；versionCode 不一致即失败（R1） |
+| `6c15931` | feat(updater): 启动延迟一次性自动检查更新——节流间隔内跳过；有更新→Snackbar 入口；无更新/失败静默（R2） |
+| `67379ae` | feat(log): runZonedGuarded+FlutterError.onError 崩溃落盘（限容滚动）+About 页 share_plus 导出；About 版本号改读 package_info（R3） |
+| `dd500f5` | chore(release): release.yml 补 generate-notes changelog——draft 有非空 notes 则用，否则按 PR 自动生成（R4） |
+| `056221b` | style(l10n): dart format 回流 lookup 生成物 |
+| `a16607d` | chore(task): 收尾簿记（勾选、journal、归档；首发冒烟清单留档） |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1157 通过（含 auto-check/crash-log 新用例）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 首发冒烟：workflow_dispatch 出 draft→发布→真机验证 更新检测/下载/覆盖安装 全链
+
+
+## Session 54: network-image-l0：镜像路由隔离+noSni档+流式空闲守卫
+<!-- trellis-session: v=2 fp=42e40b6c12860227 -->
+
+**Date**: 2026-09-19
+**Task**: network-image-l0：镜像路由隔离+noSni档+流式空闲守卫
+**Branch**: `task/09-19-network-image-l0`
+
+### Summary
+
+镜像 host 独立路由组阻断 pximg 组偏好泄漏；镜像补 noSni 档且空 SNI 证书不匹配可降级；image purpose 池化客户端加 headers 预算+body 空闲超时（Stream 子类转发实现，避开 StreamController/Stream.timeout 在 FakeAsync 下的死锁）；pixiv.cat 标注大陆不可达；decodeWidthFor 注释对齐像素级解码语义
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8d0eeb9` | fix(network): 镜像 host 独立路由组——阻断 pximg 组偏好泄漏到镜像的证书终态失败 |
+| `88ff238` | fix(network): 镜像补 noSni 档——空 SNI 证书不匹配改为可降级信号 |
+| `6ad07e6` | fix(network): 图片流式传输空闲超时——headers 超时换档，body 僵死报错不再无限挂起 |
+| `766e3d2` | docs(image): decodeWidthFor 注释对齐实现——像素级解码是刻意的，逻辑 1.5x cap 曾在高 DPR 上发糊 |
+| `34f2ec4` | feat(settings): pixiv.cat 预设标注大陆网络不可达 |
+| `902b003` | test(network): 镜像组隔离/noSni降级/流式守卫回归用例 |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1163 通过（含镜像组隔离/noSni降级/流式守卫新用例）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机验证 pixiv.re/nl 镜像 noSni 默认 vhost 行为；接 09-19-adaptive-image

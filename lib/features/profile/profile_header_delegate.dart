@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'package:material_ui/material_ui.dart';
 
 import '../../app/icons/app_icons.dart';
-import '../../app/navigation/routes.dart';
 import '../../app/person_avatar.dart';
 import '../../app/pixiv_image.dart';
 import '../../core/profile/profile_models.dart';
@@ -168,7 +167,6 @@ class ReplicaProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
     // The artwork band covers the whole expanded header; identity content
     // sits on a bottom gradient so the text stays readable over any image.
     final backgroundHeight = maxExtent;
-    final canPop = Navigator.of(context).canPop();
     return Material(
       color: colors.surface,
       child: LayoutBuilder(
@@ -190,25 +188,6 @@ class ReplicaProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
                   child: _ProfileBackground(user: user, withScrim: true),
                 ),
               ),
-              // Pushed pages (other artists) need a visible back affordance
-              // while the header is still expanded — the collapsed toolbar's
-              // own back button only exists once fully collapsed. /me as a
-              // branch root never reports canPop, so it stays clean.
-              if (canPop && geometry.backgroundOpacity > 0)
-                Positioned(
-                  top: topInset + 4,
-                  left: 8,
-                  child: Opacity(
-                    opacity: geometry.backgroundOpacity,
-                    child: IconButton.filledTonal(
-                      tooltip: MaterialLocalizations.of(
-                        context,
-                      ).backButtonTooltip,
-                      onPressed: () => Navigator.of(context).maybePop(),
-                      icon: const Icon(Icons.arrow_back_ios_new),
-                    ),
-                  ),
-                ),
               if (geometry.showExpandedIdentity)
                 Positioned(
                   top: geometry.expandedContentOffset,
@@ -245,7 +224,6 @@ class ReplicaProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
                             child: _CollapsedProfile(
                               user: user,
                               isMe: isMe,
-                              canPop: canPop,
                               showRestrictSelector: showRestrictSelector,
                               restrict: restrict,
                               onRestrictChanged: onRestrictChanged,
@@ -260,6 +238,16 @@ class ReplicaProfileHeaderDelegate extends SliverPersistentHeaderDelegate {
                     ),
                   ),
                 ),
+              // One persistent back button for both header states: the
+              // collapsed row reserves the same 48px slot underneath, so
+              // the affordance never jumps when the header folds — and it
+              // stays mounted through the pop animation instead of being
+              // unmounted by a canPop flip (P3/P4).
+              Positioned(
+                top: topInset + 4,
+                left: 8,
+                child: const _HeaderBackButton(),
+              ),
             ],
           );
         },
@@ -440,36 +428,21 @@ class _ExpandedProfileDetails extends StatelessWidget {
       children: [
         SizedBox(
           height: 48,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 56),
-                child: Center(
-                  child: Text(
-                    key: const ValueKey('profile-expanded-name'),
-                    user.name,
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: textColor,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  tooltip: context.l10n.profileShare,
-                  onPressed: onShare,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 56),
+            child: Center(
+              child: Text(
+                key: const ValueKey('profile-expanded-name'),
+                user.name,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
                   color: textColor,
-                  icon: const Icon(Icons.share_outlined),
                 ),
               ),
-            ],
+            ),
           ),
         ),
         if (user.account.isNotEmpty)
@@ -500,10 +473,19 @@ class _ExpandedProfileDetails extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        if (isMe)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+        // One actions row under the stats — the share icon used to sit alone
+        // at the name row's trailing edge while edit/settings lived here,
+        // which scattered the controls across two spots.
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              tooltip: context.l10n.profileShare,
+              onPressed: onShare,
+              color: textColor,
+              icon: const Icon(Icons.share_outlined),
+            ),
+            if (isMe) ...[
               if (onEditProfile != null)
                 IconButton(
                   tooltip: context.l10n.profileEditTitle,
@@ -511,20 +493,14 @@ class _ExpandedProfileDetails extends StatelessWidget {
                   color: textColor,
                   icon: const Icon(Icons.edit_outlined),
                 ),
-              IconButton(
-                tooltip: context.l10n.settingsTitle,
-                onPressed: () => openSettings(context),
-                color: textColor,
-                icon: const Icon(Icons.settings_outlined),
+            ] else
+              FollowSwitchButton(
+                userId: user.id,
+                userName: user.name,
+                userAccount: user.account,
               ),
-            ],
-          )
-        else
-          FollowSwitchButton(
-            userId: user.id,
-            userName: user.name,
-            userAccount: user.account,
-          ),
+          ],
+        ),
       ],
     );
   }
@@ -534,7 +510,6 @@ class _CollapsedProfile extends StatelessWidget {
   const _CollapsedProfile({
     required this.user,
     required this.isMe,
-    required this.canPop,
     required this.showRestrictSelector,
     required this.restrict,
     required this.onRestrictChanged,
@@ -546,7 +521,6 @@ class _CollapsedProfile extends StatelessWidget {
 
   final UserEntity user;
   final bool isMe;
-  final bool canPop;
   final bool showRestrictSelector;
   final UserRestrict restrict;
   final ValueChanged<UserRestrict> onRestrictChanged;
@@ -560,98 +534,68 @@ class _CollapsedProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final settingsButton = IconButton(
-      tooltip: context.l10n.settingsTitle,
-      onPressed: () => openSettings(context),
-      icon: const Icon(Icons.settings_outlined),
-    );
-    final downloadAllButton = onDownloadAll == null
-        ? null
-        : IconButton(
-            tooltip: _text(context, 'downloadAuthorWorks'),
-            onPressed: onDownloadAll,
-            icon: const Icon(Icons.file_download_outlined),
-          );
-    final actions = isMe && showRestrictSelector
-        ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              PopupMenuButton<UserRestrict>(
-                tooltip: _text(context, 'restrictSelector'),
-                initialValue: restrict,
-                onSelected: onRestrictChanged,
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: UserRestrict.public,
-                    child: Text(_text(context, 'restrictPublic')),
-                  ),
-                  PopupMenuItem(
-                    value: UserRestrict.private,
-                    child: Text(_text(context, 'restrictPrivate')),
-                  ),
-                ],
-                icon: const Icon(Icons.filter_alt_outlined),
-              ),
-              if (onOpenBookmarkTags != null)
-                IconButton(
-                  tooltip: _text(context, 'bookmarkTags'),
-                  onPressed: onOpenBookmarkTags,
-                  icon: const Icon(Icons.label_outline),
-                ),
-              ?downloadAllButton,
-              if (onEditProfile != null)
-                IconButton(
-                  tooltip: _text(context, 'profileEditTitle'),
-                  onPressed: onEditProfile,
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-              settingsButton,
-            ],
-          )
-        : isMe
-        ? Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ?downloadAllButton,
-              if (onEditProfile != null)
-                IconButton(
-                  tooltip: _text(context, 'profileEditTitle'),
-                  onPressed: onEditProfile,
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-              settingsButton,
-            ],
-          )
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ?downloadAllButton,
-              IconButton(
-                tooltip: _text(context, 'profileShare'),
-                onPressed: onShare,
-                icon: const Icon(Icons.share_outlined),
-              ),
-            ],
-          );
+    // One overflow entry per header action. Settings is the fifth home tab
+    // now, so it no longer needs a spot here.
+    final entries = <PopupMenuEntry<String>>[
+      if (isMe && showRestrictSelector) ...[
+        CheckedPopupMenuItem(
+          value: 'restrictPublic',
+          checked: restrict == UserRestrict.public,
+          child: Text(_text(context, 'restrictPublic')),
+        ),
+        CheckedPopupMenuItem(
+          value: 'restrictPrivate',
+          checked: restrict == UserRestrict.private,
+          child: Text(_text(context, 'restrictPrivate')),
+        ),
+        const PopupMenuDivider(),
+      ],
+      if (onOpenBookmarkTags != null)
+        PopupMenuItem(
+          value: 'bookmarkTags',
+          child: Text(_text(context, 'bookmarkTags')),
+        ),
+      if (onDownloadAll != null)
+        PopupMenuItem(
+          value: 'downloadAll',
+          child: Text(_text(context, 'downloadAuthorWorks')),
+        ),
+      if (onEditProfile != null)
+        PopupMenuItem(
+          value: 'editProfile',
+          child: Text(_text(context, 'profileEditTitle')),
+        ),
+      if (!isMe)
+        PopupMenuItem(
+          value: 'share',
+          child: Text(_text(context, 'profileShare')),
+        ),
+    ];
+    void onMenuSelected(String value) {
+      switch (value) {
+        case 'restrictPublic':
+          onRestrictChanged(UserRestrict.public);
+        case 'restrictPrivate':
+          onRestrictChanged(UserRestrict.private);
+        case 'bookmarkTags':
+          onOpenBookmarkTags?.call();
+        case 'downloadAll':
+          onDownloadAll?.call();
+        case 'editProfile':
+          onEditProfile?.call();
+        case 'share':
+          onShare();
+      }
+    }
 
-    // Three-section toolbar: leading / title / actions. The title centres
-    // inside whatever space the actions leave and ellipsizes there — the
-    // old full-width-centred Stack overlapped the action row once it grew
-    // past the hardcoded 64px side padding (5 icons ≈ 240px on /me).
+    // Three-section toolbar: leading spacer / centred title / a single
+    // overflow button. The persistent _HeaderBackButton overlays the
+    // leading 48px slot, so both ends reserve identical 56px chrome and
+    // the title stays centred on screen.
     return Row(
       children: [
-        const SizedBox(width: 4),
-        SizedBox(
-          width: 48,
-          height: 48,
-          child: canPop
-              ? IconButton(
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                  onPressed: () => Navigator.of(context).maybePop(),
-                  icon: const Icon(Icons.arrow_back_ios_new),
-                )
-              : const SizedBox.shrink(),
-        ),
+        const SizedBox(width: 8),
+        const SizedBox(width: 48, height: 48),
         Expanded(
           child: Text(
             key: const ValueKey('profile-toolbar-title'),
@@ -662,9 +606,52 @@ class _CollapsedProfile extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
-        actions,
-        const SizedBox(width: 4),
+        SizedBox(
+          width: 48,
+          height: 48,
+          child: entries.isEmpty
+              ? const SizedBox.shrink()
+              : PopupMenuButton<String>(
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onSelected: onMenuSelected,
+                  itemBuilder: (context) => entries,
+                  icon: const Icon(Icons.more_vert),
+                ),
+        ),
+        const SizedBox(width: 8),
       ],
+    );
+  }
+}
+
+/// The profile header's single back affordance. [Navigator.canPop] flips
+/// false the moment [Route.pop] removes the route from history — before
+/// the pop animation finishes — which would unmount the button mid-slide
+/// and leave it out of the pop snapshot. The first evaluation is latched:
+/// a pushed page keeps its button until the route is gone.
+class _HeaderBackButton extends StatefulWidget {
+  const _HeaderBackButton();
+
+  @override
+  State<_HeaderBackButton> createState() => _HeaderBackButtonState();
+}
+
+class _HeaderBackButtonState extends State<_HeaderBackButton> {
+  var _canPop = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_canPop) _canPop = Navigator.of(context).canPop();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_canPop) return const SizedBox.shrink();
+    return IconButton.filledTonal(
+      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+      onPressed: () => Navigator.of(context).maybePop(),
+      icon: const Icon(Icons.arrow_back_ios_new),
     );
   }
 }
