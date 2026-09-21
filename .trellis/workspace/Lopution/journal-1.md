@@ -1828,6 +1828,39 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 - 首发冒烟：workflow_dispatch 出 draft→发布→真机验证 更新检测/下载/覆盖安装 全链
 
 
+## Session 54: network-image-l0：镜像路由隔离+noSni档+流式空闲守卫
+<!-- trellis-session: v=2 fp=42e40b6c12860227 -->
+
+**Date**: 2026-09-19
+**Task**: network-image-l0：镜像路由隔离+noSni档+流式空闲守卫
+**Branch**: `task/09-19-network-image-l0`
+
+### Summary
+
+镜像 host 独立路由组阻断 pximg 组偏好泄漏；镜像补 noSni 档且空 SNI 证书不匹配可降级；image purpose 池化客户端加 headers 预算+body 空闲超时（Stream 子类转发实现，避开 StreamController/Stream.timeout 在 FakeAsync 下的死锁）；pixiv.cat 标注大陆不可达；decodeWidthFor 注释对齐像素级解码语义
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8d0eeb9` | fix(network): 镜像 host 独立路由组——阻断 pximg 组偏好泄漏到镜像的证书终态失败 |
+| `88ff238` | fix(network): 镜像补 noSni 档——空 SNI 证书不匹配改为可降级信号 |
+| `6ad07e6` | fix(network): 图片流式传输空闲超时——headers 超时换档，body 僵死报错不再无限挂起 |
+| `766e3d2` | docs(image): decodeWidthFor 注释对齐实现——像素级解码是刻意的，逻辑 1.5x cap 曾在高 DPR 上发糊 |
+| `34f2ec4` | feat(settings): pixiv.cat 预设标注大陆网络不可达 |
+| `902b003` | test(network): 镜像组隔离/noSni降级/流式守卫回归用例 |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1163 通过（含镜像组隔离/noSni降级/流式守卫新用例）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机验证 pixiv.re/nl 镜像 noSni 默认 vhost 行为；接 09-19-adaptive-image
 ## Session 57: detail-meta-typography：标题回落+meta 字级统一
 <!-- trellis-session: v=2 fp=815203d9fc836b6c -->
 
