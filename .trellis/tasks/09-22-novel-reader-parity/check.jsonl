@@ -1,0 +1,11 @@
+{"file": ".trellis/tasks/09-22-novel-reader-parity/prd.md", "reason": "R1-R9 需求与 D1-D9 决策为验收基准：同一舞台、D1 写时机（含 W6 null↔0 契约）、限宽接法、明确不做边界"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/design.md", "reason": "spec/binding 契约、进度写时机状态机、FormState/BackAndCancel 落点与恢复等级声明的核对依据"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/implement.md", "reason": "阶段 0-4 checkbox↔commit 一一对应核对；阶段 0 rebaseline 门禁是否被执行"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§5.3/5.4/5.5/5.7 契约验收与 §7 自动化/运行时矩阵口径（未验证项不得推断通过）"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W4/W5 门禁：在线/本地同一契约测试、设置 sheet 失败保留与手机/宽屏动作语义、屏幕阅读器可达路径"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/implementation-draft.md", "reason": "逐项验收对照：改动点、测试断言与显式排除边界（TXT 启发式/平行阅读器/库页改造）"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/risks.md", "reason": "竞合/技术风险复核：commit gate 不绕过、markSeen 时序、写失败可观察、「未验证」标记对照"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "chrome inset 几何与 Predictive Back/PopScope 契约回归核对"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Novel Commit Gate 与 HistoryVisibility 契约不被舞台抽取破坏"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、噪声判定与「测试须能证伪」核对"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "spec/binding 公开签名无 dynamic/option-bag，锚点 record→NovelAnchor 在 features 层重建"}

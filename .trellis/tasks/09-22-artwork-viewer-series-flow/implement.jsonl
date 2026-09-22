@@ -1,0 +1,17 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.4 本包范围、§4.11 所有权冻结（W4 建唯一触觉 owner）、§5.6 FeedbackChannels 分级契约、§5.7 术语、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W4/W5 门禁（分页形态/zoom/toolbar/页码/键鼠/back 分别验证、游标≠进度、触觉首消费者）与 stage 预拆约定"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/implementation-draft.md", "reason": "§4.4 条目→落点映射、信息可达方案对比定案、查看器改造方案、触点表、实施顺序（注意其中 feed 首个 ID 与 ugoira 成功级别两处已被规划修正）"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/risks.md", "reason": "R1 双击/单击冲突、R2 PopScope×replace、R3 续读边界、R4 模式退出、R8 设置开关、R9 controller 归属、R10 实体透传——全部进验证清单"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-viewer.md", "reason": "查看器现状状态机与 §4.4 差距清单（缩放/chrome/页码/空态/键鼠/PopScope）"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-detail.md", "reason": "详情页 sliver 结构、双模式位、InfoBlock/TagChip、下载模式现状——阶段 2/4 的改动基面"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-download-haptics.md", "reason": "触觉零命中审计、下载/保存触点清单与 §5.6 分级映射"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-series.md", "reason": "last_order 游标、latestContentId 语义、WatchlistReadCursor 非进度证明、诚实续读两选项"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-ugoira.md", "reason": "Ugoira 管线/生命周期/导出入口现状与下载模式耦合缺口"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/external-pixez-viewer.md", "reason": "PixEz 查看器底栏/全屏/长按保存惯例、ensureVisible 锚点方案、tag 菜单参照与 M3 chrome 惯例"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/external-pixez-haptics.md", "reason": "HapticUtil 三件套（开关/节流/try-catch）与节流参数、裁剪边界"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/codebase-back-patterns.md", "reason": "W1 已钉 SDK 事实：命令式 pop 绕过 popDisposition、maybePop/系统返回走 PopScope——查看器返回优先级直接消费"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back/PopScope 契约、DragToDismiss 与 Hero 交接、tooltip/Semantics 硬性要求、共享组件归属"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、loopback 噪声判定、设置项须有真实消费者、删 guard 同步删固化测试"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "provider override 测试模式、Notifier/状态所有者约定（seriesRecentOpenStore 落点依据）"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "三层 import 规则：app/haptics 落点合法性、features 间只能经 routes.dart 门面、core 不得 import features/app"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "wire 字段解析归 core owner、firstContentId 的 int? 建模与 FormatException 边界"}

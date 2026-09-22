@@ -1,0 +1,10 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.8 十条验收对照、§5.3 FormState 四态分类核对、§5.5 限宽/弹层归属、§5.7 术语表（种子+settings-specific 补充）、§7 运行时矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W8/W9 门禁逐条核对：四态状态测试、只迁设置页、复用既有 owner、宽度矩阵、mobile/desktop 语义顺序一致"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "W8 归属条目逐项关闭核对（不得整体观感代替证据）"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/implementation-draft.md", "reason": "逐条改动点与验收映射对照；既有测试必须保持/更新清单（:777/:863/:989/:1039/:1100/:1128/:522）"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/risks.md", "reason": "R1-R13 风险复核（W1 前置、栏宽一致、URI 解码回退、_frames 上限、术语四语审校）与「未验证」标记对照"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/codebase-settings-pages.md", "reason": "控件清单/动词清单逐项核对迁移完备性（无遗漏控件、无残留旧动词）"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/external-material-settings-patterns.md", "reason": "M3 推论清单验收：摘要一级惯例、dialog 两动作上限、确认权重不对称消除、先摘要后细节"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back/PopScope 契约回归与可访问性（selected 语义、tooltip 覆盖）核对"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、loopback 噪声判定、material_ui/AsyncNotifier 测试陷阱、设置项真实消费者核对"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "状态建模与枚举完备性核对（更新五态/probe 结论八值分支穷尽）"}

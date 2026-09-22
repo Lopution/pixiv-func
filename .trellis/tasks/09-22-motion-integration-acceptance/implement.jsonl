@@ -1,0 +1,12 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.10 动效八项、§4.11 所有权冻结与窄修复边界、§5 跨包契约、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§2 依赖波次（W10 依赖 W1–W9）、§5 Step A–D 节奏、§6 W10 门禁清单、§7 完成定义"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "Astra 条目归属与状态列——最终矩阵逐项关闭的基础"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/implementation-draft.md", "reason": "窄修复执行草案、逐契约回归方法与 §4.10/§7/W10 门禁映射"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/risks.md", "reason": "环境限制与不可验面、两套 flag 技术风险、决策点定案依据"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/codebase-motion-inventory.md", "reason": "动效原语清单、偏差行号（main@8067b2d）、反馈通道与 re-tap 基线"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/codebase-test-infra.md", "reason": "工具链、既有测试套件、MediaQuery vs accessibilityFeaturesTestValue 注入分层、可自动化边界"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/external-reduced-motion.md", "reason": "Flutter 官方 reduced-motion 契约、iOS 覆盖洞、M3 动效角色映射"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Route Restoration/Predictive Back/Hero Drag/Tab/Pull-to-Refresh 契约与 preload 时序"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "工具链路径、测试陷阱（material_ui、loopback 噪声、终态断言）、验证门禁"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "三层结构与 layering_test 规则——静态闸口测试扩展依据"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "reduceMotion 设置链路（AppSettings→MotionScope）与 ProviderScope override 测试模式"}

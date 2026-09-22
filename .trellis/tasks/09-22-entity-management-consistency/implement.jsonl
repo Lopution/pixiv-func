@@ -1,0 +1,12 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.6 本包范围、§4.11 依赖冻结（W2/W4/W5 前置）、§5.2 ObjectPresentation、§5.5/§5.6/§5.7 契约、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/implementation-draft.md", "reason": "逐条对应父 §4.6 的改动方案：EntityRow/NovelEntry 形态、九态动作映射表、限宽与触觉接入点、l10n 键清单（行号已对基线核实）"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/risks.md", "reason": "stage 拆分依据（objects/management/downloads）、依赖风险、七个决策点定案背景、回归风险与不要重建清单"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/codebase-object-components.md", "reason": "NovelCard/NovelRow/IllustCard 现状与差异、可复用槽件清单、触觉零引用事实"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/codebase-management-pages.md", "reason": "五个管理页现状（长按语义、删除路径、限宽缺口）、排行接入点、AppBreakpoints 现状"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/codebase-download-tasks.md", "reason": "下载九态枚举、DownloadManager API 面与 dismiss 缺口、当前 UI 映射表、测试锚点"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/external-pixez-m3.md", "reason": "M3 选择模式契约、PixEz 下载页/历史页对标、触觉分级借鉴边界"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "共享组件归属 app/widgets、Props 契约、Route Restoration 与可访问性要求"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "三层 import 约束（app/widgets 不能 import features helper → openDownloadTasks 门面决策依据）、共享 widget ≥3 消费者门槛"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、l10n 生成工作流、删 guard 同步删固化测试、loopback 噪声与 material_ui 测试陷阱"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "选择状态保持页面本地、PagedFeedController/History 契约、provider override 测试模式"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "UI 构造器用域类型/枚举而非 option bag；dismiss API 返回类型约定"}

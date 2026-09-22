@@ -1,0 +1,15 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.4 验收措辞、§5.6 触觉分级核对（触点级别/冗余通道/唯一来源）、§7 运行时矩阵逐项对照"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W4/W5 门禁清单核对：分页形态分别验证、zoom/toolbar/页码/键鼠/back 分项、游标与进度不同断言、触觉首消费者同阶段接入"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "Astra 12-16 + 触觉/读屏增补条目归属核对与关闭证据"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/implementation-draft.md", "reason": "逐项验收对照：落点、动作语义、显式排除边界；draft 与定案的两处偏差（feed 首 ID、ugoira 级别）复核已按父契约处理"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/risks.md", "reason": "R1-R10 风险复核：双击/单击序列、PopScope×replace、模式退出可达、续读语义边界、「未验证」标记对照"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-viewer.md", "reason": "查看器差距清单逐项关闭核对（chrome/双击/页码/动作/空态/键鼠/PopScope/读屏）"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-detail.md", "reason": "下载模式显式化、tag 菜单、compact header 落点核对"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-download-haptics.md", "reason": "触点表与 §5.6 分级一致性核对；lib/ 无 HapticFeedback 直调断言"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-series.md", "reason": "游标≠进度边界核对：markSeen 语义未被挪用、firstContentId 来源、内存态不落盘"}
+{"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-ugoira.md", "reason": "Ugoira 三态入口与资源生命周期约束核对"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back 契约回归、DragToDismiss/Hero 边界、tooltip/Semantics、触觉条目增补核对"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、loopback 噪声判定、无消费者设置项规则、固化测试同 commit 改写"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "内存态 store/provider 形态与测试 override 核对"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "firstContentId 解析与可选字段建模核对"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/prd.md", "reason": "W6 对本包契约的消费假设核对：§5.6 触觉 owner 只消费不另建、WatchlistReadCursor 语义保持原样"}

@@ -1,0 +1,10 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.10/§5/§7 契约验收口径与动效原则"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W10 门禁清单与 §7 完成定义——逐项关闭对照"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "追踪矩阵状态列与增补契约项关闭核对"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/implementation-draft.md", "reason": "逐项验收对照：窄修复点、回归方法与显式排除边界"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/risks.md", "reason": "未验证标记对照、环境限制与技术风险复核"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/codebase-motion-inventory.md", "reason": "偏差点与有意不闸项清单核对（main@8067b2d 行号）"}
+{"file": ".trellis/tasks/09-22-motion-integration-acceptance/research/codebase-test-infra.md", "reason": "测试注入分层与可自动化/人工边界核对"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、测试要求与 loopback 噪声判定"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Hero/Tab/Refresh/Restoration/Predictive Back 契约回归"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "分层规则与 layering_test 静态闸口核对"}

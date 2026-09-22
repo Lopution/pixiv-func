@@ -1,0 +1,14 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.5 本包范围（同一舞台/设置/可操作进度/限宽）、§4.11 所有权冻结（W1 前置、不预建公共基件）、§5.3/5.4/5.5/5.7 契约与 §7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§5 实现节奏 Step A-D（rebaseline→契约先行→增量迁移→验证集成）与 §6 W4/W5 门禁（在线/本地同一契约测试、设置弹层失败保留）"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "§4 条目 17/18 归属口径（W1 修硬错误、W5 完成 parity）与弹层/页面宽度追踪项"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/prd.md", "reason": "W1 owning 的契约终态：R1 显式返回、R3 readOffset→initialAnchor（含边界/失效）、R2 TagChip——本包只消费不重做"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/design.md", "reason": "§二 锚点逆映射契约（段界/换行/越界夹取语义）——本地 ReaderProgressBinding.load 的消费接口"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/implementation-draft.md", "reason": "A-H 逐节实现草案：spec/binding 签名、限宽接法、进度 sheet 形态、D1 写时机边界、明确不做清单"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/risks.md", "reason": "W1 同文件竞合、W6 反向依赖、D1-D7 决策点与技术风险（预算异常、goToPage、force relayout、markSeen 时序）"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/codebase-kernel-reuse.md", "reason": "内核复用点与舞台抽取缝清单（行号已对基线核实）：prefs 闸、chrome、持久化缝、不可绕过的 commit gate"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/codebase-reader-diff-matrix.md", "reason": "在线 vs 本地逐维差异矩阵：入口/舞台/设置/进度/增量能力/共有缺口的行号基线"}
+{"file": ".trellis/tasks/09-22-novel-reader-parity/research/external-reader-benchmarks.md", "reason": "Shaft/legado 底栏与进度跳转惯例、WCAG/Baymard 行长依据（fontSize×40）、animateToPage 远跳风险"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "edge-to-edge chrome（Material 穿 inset、SafeArea 只垫控件）与 typed component/零 fallback 文案要求"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "app/widgets ≥3 消费者准入——舞台留 features/novel/ 内；layering_test 边界"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Novel Typed Markup and Reader Commit Contract（generation/contentVersion 闸不可绕过）与 HistoryVisibility 契约"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、loopback 噪声判定、sqflite databasePath 注入与 material_ui 测试坑位"}

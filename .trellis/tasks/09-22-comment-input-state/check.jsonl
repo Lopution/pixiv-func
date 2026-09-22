@@ -1,0 +1,9 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.7 六条逐条验收、§5.3/§5.6/§5.7 契约核对与 §7 运行时矩阵缺口标记"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W6/W7 门禁：四态互斥、失败草稿保留、reply target 行为固定、触觉单来源与术语表核对"}
+{"file": ".trellis/tasks/09-22-comment-input-state/research/implementation-draft.md", "reason": "逐项验收对照：改动点、守卫条件、bottomExtent 公式、测试断言与显式排除边界"}
+{"file": ".trellis/tasks/09-22-comment-input-state/research/risks.md", "reason": "阻塞风险闭环（W4 触觉消费证据）、契约连带（测试+spec 同 commit）与「未验证」标记对照"}
+{"file": ".trellis/tasks/09-22-comment-input-state/research/codebase-composer-input-state.md", "reason": "互斥缺口、网格列数与发送/语义现状的回归对照基线"}
+{"file": ".trellis/tasks/09-22-comment-input-state/research/codebase-replies-page-structure.md", "reason": "回复页结构、mutationKey、删除 pop 与 l10n 键现状的回归对照基线"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Comments Contract 不回归 + 网格表述与代码一致的 spec 核对"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back、resize 约定与无障碍语义核对"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、噪声判定、跑红证据与 forbidden patterns 复核"}
