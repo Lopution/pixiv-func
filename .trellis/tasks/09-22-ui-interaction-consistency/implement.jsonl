@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend spec index and current package-wide contracts"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Shared component reuse, accessibility, navigation, and motion conventions"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "Feature versus shared-widget ownership boundaries"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "Current-HEAD evidence and complete Astra recommendation ownership map"}

@@ -1,0 +1,4 @@
+{"file": ".trellis/spec/frontend/index.md", "reason": "Frontend verification entrypoint"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Required analysis, tests, build, and evidence standards"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Check component reuse, accessibility, navigation, and motion consistency"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "Verify every Astra item retains an evidence-backed disposition"}
