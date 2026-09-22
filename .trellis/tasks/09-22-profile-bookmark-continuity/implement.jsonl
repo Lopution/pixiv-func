@@ -1,0 +1,16 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.3 本包范围、§4.11 所有权冻结（消费现有断点/overlay owner、不预建公共基件）、§5.1/5.3/5.4/5.5/5.6/5.7 契约落点、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§5 Step A–D 实现节奏（Rebaseline/契约优先/增量迁移/验证）、§6 W2/W3 门禁清单"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "§4 归属 W3 的 Astra 条目（#8/#9/#10/#11 与弹层/宽度行）与 §7 实施前重检清单"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/prd.md", "reason": "R1–R8 需求契约、Acceptance Criteria 与 D1–D13 决策定案（本 leaf 的唯一需求源）"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/design.md", "reason": "阶段划分、启动门禁（W1/W2）、契约落点表、复用与禁止、测试策略与证据缺口"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/implementation-draft.md", "reason": "§A–J 逐文件精确改动方案与代码定位（行号基线 main@8067b2d，需 rebaseline）"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/risks.md", "reason": "决策点与风险（注意 #4 已被 prd D4 修正：UserEntity 已有 series 计数字段）、l10n/路由并行冲突、运行时证据缺口"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/codebase-profile-header.md", "reason": "header delegate 与 user_page 结构、动作缺口清单与精确行号"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/codebase-feeds-and-scope.md", "reason": "范围/类型参数模型、收藏标签链路断点、feed controller 与 l10n 现状"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/codebase-overlays-forms.md", "reason": "弹层入口现状（已是 showApp* 无替换工作）、资料编辑/收藏 sheet/下载 dialog 的 FormState 差距"}
+{"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/external-pixez-m3.md", "reason": "PixEz 作者页 re-tap/统计导航/分享直达先例与 M3 flexible app bar 语义"}
+{"file": ".trellis/tasks/09-22-discovery-query-context/research/implementation-draft.md", "reason": "re-tap 回顶通道契约来源（BranchSlidePager same-index 广播 + 页面内 same-index 规则）——本包消费不自建"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Tab/Predictive Back/Hero/Route Restoration 契约、material_ui 阴影、键盘 inset 与 chip 边框已知坑"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、loopback 噪声判定、回归测试须对旧实现失败、终态断言要求"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "BookmarkStore/FollowStore 非乐观 mutation 协议（confirm await + entry.error 读取依据）、PagedFeedState、provider override 测试模式"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "枚举/typed props/strict-casts 边界约定（枚举映射收敛门面、无 option bag）"}

@@ -1,0 +1,12 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§5.3/§5.5/§5.7 契约验收、§4.9 范围核对与 §7 运行时矩阵对照"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W8/W9 专项门禁逐条核对（immediate/action/confirm 状态测试、320-1200+横屏+大字号、Spotlight 可选择、登录主动作恒定、sheet/dialog 语义一致）"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/implementation-draft.md", "reason": "逐项验收对照：改动点、测试断言与显式排除边界"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/risks.md", "reason": "W1 前置串行、#168864 手势竞争、矮屏溢出回归复核与「未验证」标记对照"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/codebase-login-webview.md", "reason": "WebView/登录现状行号对照：验证 W9 只统一结构与层级、未越权改 W1 的动作语义"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/codebase-layout-overlay-infra.md", "reason": "断点/overlay/SnackBar 唯一 owner、SelectionArea 禁用与共享组件归属的验收对照"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/codebase-spotlight.md", "reason": "段落级可选择范围、链接 recognizer 保留、分享→剪贴板回退的验收对照"}
+{"file": ".trellis/tasks/09-22-onboarding-auth-content-layout/research/codebase-onboarding-startup.md", "reason": "StartupGate 不变量与引导页 shell 迁移的验收对照"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "layering 规则、共享组件归属与命名族禁则验收"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "typed component、l10n、PopScope/SafeArea 契约回归"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、platform fake 模式与噪声判定"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "typed 参数/sealed 状态与 dynamic/`!` 禁则核对"}

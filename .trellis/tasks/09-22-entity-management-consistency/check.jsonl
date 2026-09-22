@@ -1,0 +1,8 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§5.2/§5.6/§5.7 契约验收与 implement.md §6 W6 门禁（variant 主动作不丢、删除/移除/取消文案、下载状态映射覆盖、触觉只消费 W4 owner）"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§6 W6/W7 门禁清单逐条对照"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/implementation-draft.md", "reason": "逐项验收对照：改动点、九态映射表、测试锚点与显式排除边界"}
+{"file": ".trellis/tasks/09-22-entity-management-consistency/research/risks.md", "reason": "决策点复核、stage 门禁、回归风险（旧测试改写、IllustCard 视觉回归、l10n 冲突）与「未验证」标记对照"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Route Restoration、可访问性标签与 typed component 契约回归"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令、噪声判定、固化测试同步改写核对"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "枚举完备性（九态映射）、nullable progress 语义核对"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "layering 核对：novel_card/novel_row 删除后无残留引用、路由门面边界"}

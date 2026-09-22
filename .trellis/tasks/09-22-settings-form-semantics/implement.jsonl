@@ -1,0 +1,13 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.8 本包范围十条、§4.11 所有权冻结（共享件扩展须同 stage 接入消费者）、§5.3 FormState/§5.5 ResponsiveContent/§5.7 术语契约、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/implement.md", "reason": "§5 叶子实现节奏（rebaseline→contract→incremental→verify）与 §6 W8/W9 门禁清单、stage 拆分支命名规则"}
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/research/astra-review-traceability.md", "reason": "归属 W8 的 Astra 条目与复核状态（摘要/重排/凭据态/备份权重/诊断层级/帧探针等）"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/implementation-draft.md", "reason": "逐文件精确改动方案、根页摘要逐条值源、action 四态总表与验收映射（行号已对基线核实）"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/risks.md", "reason": "5 个串行 stage 预拆依据、D1-D8 决策点、W1 前置与测试陷阱登记"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/codebase-settings-pages.md", "reason": "全设置页控件清单与 FormState 现状分类、动词清单、既有测试基线行号"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/codebase-contracts-infra.md", "reason": "路由/_settingsSubRoutes、provider owner 地图、弹层/断点现状、probe/帧探针生命周期详录"}
+{"file": ".trellis/tasks/09-22-settings-form-semantics/research/external-material-settings-patterns.md", "reason": "M3/Android 惯例依据：摘要行、immediate/draft 分界、dialog 两动作上限、危险确认权重"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back/PopScope 契约（dirty 守卫参照 ProfileEditPage）、选中态不得仅靠颜色/图标的可访问性要求"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、material_ui 遮蔽与 AsyncNotifier .future 陷阱、loopback 噪声判定、回归测试先证伪要求"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "provider/store 边界与 view-local state 归属（downloadManager 快照读、FrameProbe 单例消费方式）"}
+{"file": ".trellis/spec/frontend/type-safety.md", "reason": "枚举完备性与 typed state 约定（更新失败五态、probe conclusion 八值的分支完备）"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "三层架构与 features 内 helper 归属（core 最小触碰 hasX/_frames cap 的合法性边界）"}

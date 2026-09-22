@@ -1,0 +1,7 @@
+{"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§4.1 本包范围、§4.11 所有权冻结（不预建公共基件）、§5.4 BackAndCancel 与 §5.7 术语契约、§7 验收矩阵"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/implementation-draft.md", "reason": "九项修复的逐文件精确改动方案、代码草案与 focused 测试点（行号已对基线核实）"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/risks.md", "reason": "决策点定案、PopScope SDK 行为依赖、stage 拆分信号与运行时证据缺口"}
+{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/codebase-back-patterns.md", "reason": "全库 PopScope/maybePop 清单与 pop vs maybePop 的 SDK 分派差异"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back/PopScope 契约与 typed Material component 要求"}
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链路径与全量 test 的 loopback 噪声判定"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "provider override 测试模式与状态所有者约定"}
