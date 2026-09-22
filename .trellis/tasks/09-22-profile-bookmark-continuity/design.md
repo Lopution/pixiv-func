@@ -87,8 +87,10 @@ loading/error/empty 时上下文保留：header、tab、chips、范围标识独�
 
 ### ResponsiveContent（父 §5.5 落点）
 
-- 资料编辑 form：expanded 断点（1200 起）列宽 ≤600-720 居中，`AppBreakpoints`
-  为唯一断点来源，不自造宽度常量。
+- 资料编辑 form：expanded 断点（1200 起）列宽 ≤`ContentWidths.form`（520）
+  居中——断点读 `AppBreakpoints`、内容宽度读 `lib/app/layout/content_widths.dart`
+  角色常量（父 §5.5 角色表），不自造宽度常量。若该文件尚未存在，
+  本包为首个消费者时顺手创建（全表常量一并写入）。
 - 收藏 sheet：expanded 断点 builder 内 `ConstrainedBox` 限宽居中；dialog 由
   `showAppDialog` 天然限宽——入口均已合规，本包只做内容侧限宽。
 - 门禁覆盖：320/390/600/840/1200dp 五档主操作可达（测试+运行时矩阵）。

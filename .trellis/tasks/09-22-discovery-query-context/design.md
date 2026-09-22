@@ -33,8 +33,11 @@
 
 ### ReTapChannel（共享通道，本 leaf 创建并冻结形态）
 
-- **发射**：`BranchSlidePager` 持有 `reTapEvents`（`ValueNotifier<int>` 或等价
-  broadcast stream，负载 = branch index；PixEz `topStore` 同构）。只在
+- **发射**：`BranchSlidePager` 持有 `reTapEvents`——**必须是事件而非选中状态**：
+  `ValueNotifier<int>` 装裸 branch index 时同值重赋不通知（`_value == newValue`
+  直接 return），连续同槽点按第二次起丢信号。负载用递增序号
+  `({int branchIndex, int sequence})` 或等价 `Stream` 广播；仍由 pager 持有，
+  不新增全局事件总线（PixEz `topStore` 同构）。只在
   `selectIndex` 的 `index == tab.index` 显式点击分支、`goBranch` 之后发射；
   `syncIndex`、拖拽 settle、`_suppressGoBranch` 路径绝不发射
   （`branch_slide_stack.dart:137-172`）。

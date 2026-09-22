@@ -39,26 +39,36 @@ abstract final class AppHaptics {
   ///     ref.read(settingsProvider).valueOrNull?.enableHaptics ?? true);`
   static void configure({required bool Function() isEnabled});
 
-  /// 轻确认级：选中/切换、复制成功。最小间隔 50ms。
-  static void selectionClick();
+  /// 动作角色（调用侧表达语义，内部映射到 HapticFeedback 级别）：
+  /// 选中/切换/复制等轻确认。内部 → selectionClick，最小间隔 50ms。
+  static void select();
 
-  /// 明确震动级：进入管理模式、危险确认、保存/发送成功、失败。
+  /// 需要警觉的确认：进入管理模式、危险/不可逆确认。内部 → heavyImpact，
   /// 最小间隔 120ms。
-  static void heavyImpact();
+  static void confirm();
+
+  /// 操作成功完成（保存/发送/撤销成功）。内部 → mediumImpact，最小间隔 80ms。
+  static void success();
+
+  /// 操作失败警示。内部 → heavyImpact，最小间隔 120ms。
+  static void error();
 
   /// @visibleForTesting：清空节流时间戳 / 注册触发观察器。
 }
 ```
 
+- **角色而非级别（评审修正）**：消费侧只表达「这个动作是什么」，震感强弱
+  集中在 `AppHaptics` 内部映射——以后要调轻「保存成功」只改一处映射，
+  不用改所有消费者。级别增减先回本契约面扩展。
 - 内部：`isEnabled()` false → 直接返回；距上次触发小于最小间隔 → 丢弃；
   `HapticFeedback.x()` 包 `try/catch`（吞 `MissingPluginException` 等）。
 - enabled 读取失败（settings 未就绪/异常）→ 按 `true` 处理（默认开，
   与 `enableHaptics` 默认值一致）；`configure` 只挂读取闭包，wrapper
   自身不 import Riverpod。
-- 分级语义以父 §5.6 为准：选中/切换/轻确认 → `selectionClick`；进入管理
-  模式/危险确认/保存成功/失败 → `heavyImpact`；普通列表点击不调。
-- W6/W7 消费约定：只调这两个公开方法；新增级别（success/warning 等）
-  须先回到本契约面扩展，不得在消费侧直连 `HapticFeedback`。W10 验收
+- 角色使用语义（父 §5.6）：选中/切换/轻确认 → `select`；进入管理模式/
+  危险确认 → `confirm`；保存/发送成功 → `success`；失败 → `error`；
+  普通列表点击不调。
+- W6/W7 消费约定：只调这四个角色方法。W10 验收
   「无第二来源」的静态断言 = `grep HapticFeedback lib/` 仅命中
   `app_haptics.dart`。
 
@@ -78,8 +88,8 @@ abstract final class AppHaptics {
   duration 天然钳制。
 - **下载选择模式**（`_downloadMode` 语义改造）：
   - 进入：图片长按（ugoira 除外）/双栏 pager 长按 → `_toggleDownloadMode`
-    + `AppHaptics.heavyImpact()`；退出：底栏「取消」/点空白/系统返回 →
-    `selectionClick`。
+    + `AppHaptics.confirm()`；退出：底栏「取消」/点空白/系统返回 →
+    `select()`。
   - chrome：`Scaffold.bottomNavigationBar` 槽挂 `AnimatedSwitcher`
     （`MotionTokens.fast`）底栏：「已选 n / 共 N · 全选 · 完成 · 取消」。
     `n=0` 时「完成」禁用。AppBar title 保持 `illustDetailTitle`（底栏已
@@ -89,15 +99,15 @@ abstract final class AppHaptics {
     「切选中」（placeholder 页仍不可点）；角标优先级 spinner >
     选中(check) > 未选中(空心圈)。
   - 完成：循环 `download(entity, i)`（`illustDownloadControllerProvider`，
-    内部 retry/dedupe 安全）→ 成功 snackbar + `heavyImpact`，退出模式；
-    失败 snackbar + `heavyImpact`，保留模式与选中态（失败输入保留，父 §6）。
+    内部 retry/dedupe 安全）→ 成功 snackbar + `success()`，退出模式；
+    失败 snackbar + `error()`，保留模式与选中态（失败输入保留，父 §6）。
   - 进行中任务不随退出取消；「全选」= 全部页 index 入集合。
 - **下载全部常显**：AppBar `Icons.file_download_outlined` 解除
-  `_downloadMode` 门控；成功/失败 snackbar 同点嫁接 `heavyImpact`。
+  `_downloadMode` 门控；成功/失败 snackbar 同点嫁接 `success()`/`error()`。
 - **tag 菜单**：`InfoBlock` 的 `TagChip.onLongPress` 从 `_blockMode` 翻转
-  改为 `showAppBottomSheet` 菜单（`heavyImpact` 确认长按成立）：
+  改为 `showAppBottomSheet` 菜单（`confirm()` 确认长按成立）：
   搜索该 tag（`openTagSearch`）/ 复制（`Clipboard.setData` + snackbar +
-  `selectionClick`）/ 屏蔽或解除屏蔽（`muteStoreProvider.toggleTag`）/
+  `select()`）/ 屏蔽或解除屏蔽（`muteStoreProvider.toggleTag`）/
   进入批量屏蔽模式（翻转 `_blockMode`）。`TagChip` 组件签名不动——菜单
   是调用点行为，非组件变体。屏蔽模式内 tap=切屏蔽态、菜单不再挂长按
   语义（模式内长按仍弹菜单无碍，但菜单项按 `blocked` 现实态命名）。
@@ -109,7 +119,12 @@ abstract final class AppHaptics {
   `IllustEntity? entity`（routes `_ImageViewerRoute` 把 L126 已解析实体
   透传——store 优先、extra 快照兜底，不建第二数据通道；entity null 时
   保存/分享/信息动作不渲染，页码/缩放/返回不受影响）。
-- **chrome**：`_chromeVisible`（默认 true）。切换通道三选一等价：
+- **chrome**：`_chromeVisible`（默认 true）——**会话级状态，不随翻页重置**。
+  缩放/平移属当前图片（换页重置可接受），但 chrome 显隐表达「我要专心看图」
+  的会话意图：手势翻页、键盘翻页、页码跳转、`replaceImageViewerPage`
+  路由重建后都必须保持原状。实现上把显隐挂到路由替换之外存活的会话级
+  holder（viewer 会话 `ChangeNotifier`/provider，随查看器入口创建销毁），
+  不放在单页 `State` 里。切换通道三选一等价：
   媒体区单击、底栏 `fullscreen`/`fullscreen_exit` 钮、键盘 `F`。
   隐藏 = AppBar + 底栏 + `SystemChrome.setEnabledSystemUIMode(
   SystemUiMode.immersiveSticky)`；恢复逆向。显隐动画
@@ -122,8 +137,13 @@ abstract final class AppHaptics {
   经 `Matrix4` tween + `MotionTokens.fast` 动画驱动。
 - **页码**：底栏左侧 `n / total` 改 `InkWell`+tooltip →
   `showAppBottomSheet` 页码选择 → `jumpToPage`；翻页照旧走
-  `onPageChanged → replaceImageViewerPage`（replace 重建 route/State 是
-  现状语义：缩放/chrome 不跨页存活——既定事实，测试钉住不宣称跨页保留）。
+  `onPageChanged → replaceImageViewerPage`（replace 重建 route/State）——
+  **缩放/平移随页重置可接受；chrome 显隐由会话 holder 保持，不随页重置**
+  （见上条；旧规划「测试钉住不跨页存活」作废）。
+- **系统栏与 chrome 分开验收**：`targetSdk` 随 `flutter.targetSdkVersion`，
+  API 36+ 下 `SystemUiMode` 行为受官方限制——验收分三项独立记录：
+  ①应用 chrome 是否隐藏 ②系统栏实际表现 ③退出查看器后系统栏恢复。
+  「调用成功」不等于「实际全屏」；真机不可验则三项都标「未验证」。
 - **底栏动作**：页码 | `fit_screen`（当前页复位，键盘 `0`）|
   `file_download_outlined`（保存当前页 → `download(entity, _activePage)`，
   复用 `stateFor` 判定的角标语义：downloading 禁用/exist 置底/success·
@@ -137,9 +157,13 @@ abstract final class AppHaptics {
   `F`；`Esc`/`Backspace` → `pop()`；`S` 保存；`I` 信息）+
   `Focus(autofocus: true)`；`Listener(onPointerSignal)`：滚轮 = 以指针
   位置为焦点缩放（focal-point matrix），Shift+滚轮翻页。
-- **PopScope**（消费 W1 结论）：`canPop = !_activeZoomed && _chromeVisible`；
-  `onPopInvokedWithResult` 在 `!didPop` 分支内：zoomed → 复位当前页；
-  否则恢复 chrome。显式 AppBar back、`DragToDismiss` 下拉、键盘
+- **PopScope**（消费 W1 结论 + 统一返回三规则）：`canPop = !_activeZoomed`；
+  `onPopInvokedWithResult` 在 `!didPop` 分支内：zoomed → 复位当前页。
+  **chrome 隐藏不阻塞退出**——隐态下系统返回直接离页（隐藏工具栏不是
+  「必须先显示一次才能退出」的障碍；W1 阅读器的 chrome-first 语义保留，
+  两者差异是媒体类型各自的既定语义，不新增反向步骤）。临时弹层
+  （页码 sheet/菜单）是独立 route，返回先关弹层由 Navigator 天然保证。
+  显式 AppBar back、`DragToDismiss` 下拉、键盘
   `Esc`/`Backspace` 均命令式 `pop()`——绕行 `popDisposition` 是 W1 已钉
   的 SDK 事实，不与系统返回混用。
 - **DragToDismiss 不动**：`enabled: !_activeZoomed` 现状保留；放大态

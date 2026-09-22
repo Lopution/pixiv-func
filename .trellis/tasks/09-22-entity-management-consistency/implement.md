@@ -40,6 +40,10 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       若 W4 未合入：本 leaf 不启动（触觉无源可接，禁止临时封装）。
       若 W5 未合入但其余已合入：可启动，progress variant 条目推后到
       W5 落地后补（design.md §一）。
+      **W3 交接条件**：`profile_novel_feed.dart`、`user_page.dart:268`
+      属 W3 文件——O4 的 profile 调用点与 R8 的 SnackBar action 行
+      仅在 W3 合入后落笔；W3 未合入则这两处行级改动推迟，
+      不阻塞其余 stage（与 W5 的降级条款同构）。
 
 ## Stage 1：objects — 对象组件与调用点迁移
 

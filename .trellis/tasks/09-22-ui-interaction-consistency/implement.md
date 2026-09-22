@@ -2,7 +2,7 @@
 
 ## 1. 父任务规则
 
-本目录只负责审查追踪、任务地图、依赖和最终集成，不运行 `task.py start`，也不直接承载产品代码。当前规划确认前不创建叶子任务；确认后创建的叶子也先保持 `planning`。
+本目录只负责审查追踪、任务地图、依赖和最终集成，不运行 `task.py start`，也不直接承载产品代码。叶子任务已全部创建（10/10，见 `.trellis/tasks/09-22-*/`）；各叶子 planning 文档已冻结，按上表依赖逐叶 `task.py start`。
 
 ## 2. 阶段与依赖
 
@@ -15,12 +15,12 @@
 | 3A | W4 artwork-viewer-series-flow | W1 | 作品浏览/查看/系列路径及首个触觉消费者完成 |
 | 3B | W5 novel-reader-parity | W1 | 在线/本地小说完整舞台一致 |
 | 4 | W6 entity-management-consistency | W2 落地的发现页结构；W4/W5 的进度语义 | 对象组件、排名变体接入与管理页迁移完成 |
-| 5A | W7 comment-input-state | W1；W4 的触觉 owner | 评论/回复输入状态机完成 |
+| 5A | W7 comment-input-state | W1；W4 阶段 s1（AppHaptics 契约稳定） | 评论/回复输入状态机完成 |
 | 5B | W8 settings-form-semantics | W1 | 设置和诊断表单语义完成 |
 | 5C | W9 onboarding-auth-content-layout | W1 | 引导/登录/文章/宽屏布局完成 |
 | 6 | W10 motion-integration-acceptance | W1–W9 | 跨页面一致性、reduced motion 与最终矩阵完成 |
 
-阶段号表示建议合入波次，不产生“前置”列之外的隐式依赖：W1 合入后，W2/W3/W4/W5/W8/W9 可在各自文件所有权不重叠时并行；W7 等待 W4 的触觉 owner，W6 等待 W2/W4/W5，W10 最后执行。所有并行必须使用独立 worktree；若共享本地化、主题或公共组件，按 owner 合入顺序串行。
+阶段号表示建议合入波次，不产生“前置”列之外的隐式依赖：W1 合入后，W2/W3/W4/W5/W8/W9 可在各自文件所有权不重叠时并行；**W4 默认按 s1（触觉+下载模式）/s2（查看器）/s3（详情+系列）三段串行合入**（评审修正，不等体量超限才拆）；**W7 只需等 W4-s1 合入**（触觉契约稳定），不必等查看器/系列段；W6 等待 W2/W4/W5 且其 `profile_novel_feed.dart`/`user_page.dart` 行级改动另需 W3 已合入（不阻塞其余 stage）；W10 最后执行。所有并行必须使用独立 worktree；若共享本地化、主题或公共组件，按 owner 合入顺序串行。
 
 规模预期：W6、W8 为最大工作包，创建叶子时应先按 `implement.md` stage 预拆分支（`task/<slug>-<stage>`）；W1 是有边界的多页面确定性修复合集，若 owning files 或测试量超过一个可审查 PR，也在叶子规划时按 stage 拆分。规模只影响拆分，不改变依赖顺序。
 
@@ -151,4 +151,7 @@
 
 ## 8. 当前停止点
 
-本轮停在阶段 0：父任务已创建，产品代码未修改，未运行 `task.py start`，未创建实现分支。下一步只在用户确认本规划后创建 planning 状态的叶子任务；该确认不自动批准任何叶子开始实现。
+进度记录（随评审修订更新）：W1 已合入归档（PR #56/#57，main@b8eafb3）；
+W2/W4 实现中（各自 worktree，W4 按 s1/s2/s3 拆 PR）；W3/W5/W9 待
+合入空档启动；W7 等 W4-s1；W6 等 W2/W4/W5（另需 W3 行级交接）；
+W8/W10 按表。父任务持续只承载簿记与最终集成，不含产品代码。

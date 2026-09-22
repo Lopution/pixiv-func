@@ -108,10 +108,17 @@ chevron、占位图直角瑕疵 75-83 行）两份平行实现并存，共 5 个
 `store.remove` 后无 SnackBar、无撤销。
 
 - 移除保持"卡片长按 → 动作 sheet"路径；移除成功后
-  `showAppSnackBar(..., action: 撤销)`，`store.add(entry.entity)` 幂等恢复
-  （`watch_later_store.dart:36-43`）。
+  `showAppSnackBar(..., action: 撤销)` 恢复条目。
+- **撤销必须回到原序位置**：列表按 `added_at DESC` 排序
+  （`watch_later_repository.dart:38`），而 `store.add()` 会刷新时间戳
+  （`watch_later_store.dart` 注释自承 "re-adding refreshes the timestamp"）——
+  直接重加会顶到最前，不构成"撤销"。方案：repository 增
+  `add(accountId, entity, {int? addedAt})` 形参（或 `restore(entry)`），
+  撤销时携带被移除条目的原 `addedAt` 落库；这是与 R8 同级的最小
+  core API 增量，不改 add/remove 现有语义。
 - 不扩成收藏体系：不加标签/筛选/多选（父 §4.6）。
-- Given 已移除条目，When 点击"撤销"，Then 条目回到列表原序位置。
+- Given 已移除条目，When 点击"撤销"，Then 条目回到列表原序位置
+  （测试断言恢复后 `addedAt` 与移除前一致）。
 
 ### R6. 追更：区分查看更新 / 打开目录 / 继续阅读 / 取消追更
 
@@ -123,12 +130,21 @@ chevron、占位图直角瑕疵 75-83 行）两份平行实现并存，共 5 个
 - 条目改 `EntityRow` 承载（48×48 封面、"New"徽标→badge 槽、
   `user · date · count`→meta）；trailing `more_vert` → `showAppBottomSheet`
   动作清单。
-- 动作语义：查看更新（tap 主动作）manga→`openIllust(latestContentId)`
-  （直接看新话）、novel→`openNovel(latest)`；打开目录
-  manga→`openIllustSeries(id)`；继续阅读→`openIllust/openNovel(seenId)`
-  （seen 游标=最近打开内容，`watchlist_store.dart:252-279`）；取消追更→
-  `watchlistActionsProvider.toggle(key)`（`watchlist_toggle.dart:54`）。
-- novel "打开目录"本期降级不提供（决策 D3：无 novel 系列目录路由）。
+- 动作语义按**三态分设**（与 W4 对齐，禁止混用）：
+  - **查看更新**（tap 主动作）：`latestContentId` 游标驱动——
+    manga→`openIllust(latest)`、novel→`openNovel(latest)`；
+  - **打开目录**：manga→`openIllustSeries(id)`；novel 本期降级不提供
+    （决策 D3：无 novel 系列目录路由）；
+  - **返回最近打开**：消费 W4 的 `series_recent_open_store` 内存记录
+    （有记录才渲染，文案「返回第 n 话」/「返回上次作品」）；
+  - **取消追更**→`watchlistActionsProvider.toggle(key)`
+    （`watchlist_toggle.dart:54`）。
+- **禁止把 `seenId` 当"继续阅读"**：`markSeen` 只前进不回退
+  （`watchlist_store.dart:252-279`）——先开第 20 话再回看第 5 话，
+  游标仍指 20，它不是"最后停在哪"。`seenId` 只驱动新内容标识；
+  漫画无持久阅读锚点，本轮不做持久化进度——无记录时显示
+  「开始阅读/查看目录」，不强行让游标兼职。novel 可消费真实
+  `readOffset` 锚点时才叫「继续阅读」。
 - 打开仍 `markSeen` 更新游标，但**只算更新游标**，UI 文案不得称其为
   阅读进度（父 §6；W5 进度语义边界）。
 
@@ -157,8 +173,10 @@ refresh 图标+`retryDownload` 文案（§5.7 冲突）；`succeeded` 仅静态 
   组级动作。
 - 九态→动作映射表（设计定稿见 design.md §二）：
   `retryable+paused`→**继续**（resume，非 retry 图标）；`failed/canceled`→
-  重试/重新下载；`succeeded`→**查看**（`openIllust(task.illustId)`，
-  材料已在快照内）；`orphaned`→说明文案+移除；终态条目给"移除"出口。
+  重试/重新下载；`succeeded`→**查看作品**（`openIllust(task.illustId)`——
+  打开的是作品页而非已下载文件，文案必须如实；「打开文件/保存位置」
+  在有本地文件打开能力前不提供）；`orphaned`→说明文案+移除；
+  终态条目给"移除"出口。
 - **核心层增量声明**：`DownloadManager` 新增终态移除 API
   （当前 `manager:108-109` 无 dismiss/clear，终态任务永久驻留 `_jobs`）。
   这是 UI 驱动的最小 core API 新增——只删终态快照记录，不改

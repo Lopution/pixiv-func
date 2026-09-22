@@ -9,7 +9,7 @@
 {"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/codebase-ugoira.md", "reason": "Ugoira 管线/生命周期/导出入口现状与下载模式耦合缺口"}
 {"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/external-pixez-viewer.md", "reason": "PixEz 查看器底栏/全屏/长按保存惯例、ensureVisible 锚点方案、tag 菜单参照与 M3 chrome 惯例"}
 {"file": ".trellis/tasks/09-22-artwork-viewer-series-flow/research/external-pixez-haptics.md", "reason": "HapticUtil 三件套（开关/节流/try-catch）与节流参数、裁剪边界"}
-{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/codebase-back-patterns.md", "reason": "W1 已钉 SDK 事实：命令式 pop 绕过 popDisposition、maybePop/系统返回走 PopScope——查看器返回优先级直接消费"}
+{"file": ".trellis/tasks/archive/2026-09/09-22-interaction-outcome-correctness/research/codebase-back-patterns.md", "reason": "W1 已钉 SDK 事实：命令式 pop 绕过 popDisposition、maybePop/系统返回走 PopScope——查看器返回优先级直接消费"}
 {"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back/PopScope 契约、DragToDismiss 与 Hero 交接、tooltip/Semantics 硬性要求、共享组件归属"}
 {"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、loopback 噪声判定、设置项须有真实消费者、删 guard 同步删固化测试"}
 {"file": ".trellis/spec/frontend/state-management.md", "reason": "provider override 测试模式、Notifier/状态所有者约定（seriesRecentOpenStore 落点依据）"}

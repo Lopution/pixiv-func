@@ -36,10 +36,11 @@ W1 当前仍为 `planning`——若 s1–s3 完成时 W1 未合入，s4 挂起�
 - 钉底语义：内容矮于视口时 CTA 靠 `spaceBetween` + `minHeight` 贴底；高于视口时
   CTA 随流位于文末——两种情形 CTA 均可达。welcome_page.dart L19-30 的
   `minHeight` 写法是现成实现参考。
-- `contentMaxWidth` 是按角色的内容层常量（form/引导 = 520），不是断点；
-  `user_agreement` 不经过 shell（`ListView` 与 `SingleChildScrollView` 嵌套
-  冲突），而是保留 `ListView` 外层 `Align(topCenter)` + `ConstrainedBox`
-  复用文章角色常量——两者共享的是「居中 + 限宽」语义而非同一 widget 树。
+- `contentMaxWidth` 按父 §5.5 冻结角色表读 `ContentWidths.form`（520）
+  ——不是断点；`user_agreement` 不经过 shell（`ListView` 与
+  `SingleChildScrollView` 嵌套冲突），而是保留 `ListView` 外层
+  `Align(topCenter)` + `ConstrainedBox` 复用 `ContentWidths.article`
+  角色常量——两者共享的是「居中 + 限宽」语义而非同一 widget 树。
 - 消费者清点：welcome / language / theme / login = 本包 4 个真实消费者且同
   stage 接入，满足父 §5.5 新增跨 feature shell 的门槛；命名不与 layering_test
   的 `_*Tail/_*Error/_*Empty/_*Card/_*Status/_*Placeholder` 族冲突。
@@ -75,8 +76,9 @@ W1 当前仍为 `planning`——若 s1–s3 完成时 W1 未合入，s4 挂起�
 
 ### Spotlight 文章
 
-- 行长：命名常量（~680–720dp，建议 700）放 `lib/app/layout/` 内容宽常量文件，
-  注释引用 `research/external-m3-adaptive-layout.md` 的换算（bodyMedium 14sp
+- 行长：读 `ContentWidths.article`（700，`lib/app/layout/content_widths.dart`，
+  父 §5.5 冻结角色表；若文件未建，本包首个消费时创建全表）。换算依据见
+  `research/external-m3-adaptive-layout.md`（bodyMedium 14sp
   ≈ 45-55 CJK 字/行 ≈ 640-760dp）；**不进 `AppBreakpoints`**（内容宽 ≠ 断点）。
   `user_agreement` 复用同一常量。
 - 可选择范围 = 段落级：`_SpotlightBlockView` 按块产出 `SelectableText` /
