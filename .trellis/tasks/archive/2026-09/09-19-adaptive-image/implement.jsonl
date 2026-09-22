@@ -1,0 +1,5 @@
+{"file": ".trellis/spec/backend/error-handling.md", "reason": "网络层错误分类与降级语义"}
+{"file": ".trellis/spec/backend/quality-guidelines.md", "reason": "测试与验证约定"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "Riverpod provider 生命周期约定"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "UI组件与动效约定"}
+{"file": ".trellis/spec/guides/cross-layer-thinking-guide.md", "reason": "跨层改动核对清单"}
