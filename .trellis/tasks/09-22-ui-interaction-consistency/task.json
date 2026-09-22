@@ -26,7 +26,8 @@
     "role": "roadmap_parent",
     "source": "/root/Astra.txt",
     "source_baseline": "f655e35",
-    "planning_baseline": "8215fa85f58dd6834f5f2c503991349840842510",
+    "planning_baseline": "3c6c1bd130ae87058ac57c0987756538333b58e4",
+    "product_review_baseline": "8215fa85f58dd6834f5f2c503991349840842510",
     "prior_task": "09-11-ui-redesign",
     "planned_work_packages": "10"
   }
