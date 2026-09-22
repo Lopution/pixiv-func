@@ -1942,6 +1942,34 @@ SnackBar 位置/动效统一：分支 messenger 挪进底栏 Scaffold body，flo
 - 真机跑帧探针拿 UI/Raster 分布，按证据决定 S2-S6 滚动优化
 
 
+## Session 57: detail-meta-typography：标题回落+meta 字级统一
+<!-- trellis-session: v=2 fp=815203d9fc836b6c -->
+
+**Date**: 2026-09-19
+**Task**: detail-meta-typography：标题回落+meta 字级统一
+**Branch**: `task/09-19-detail-meta-typography`
+
+### Summary
+
+详情页 AppBar 标题删掉 titleLarge(22sp w600) 覆盖回落 appBarTheme 16sp w500 统一惯例；meta 区（日期/尺寸/统计/ID）收敛到 caption 级 12sp 次色，数字保留 tabular figures；ID 加 SelectionArea 可选中（PixEz parity）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `132e6b9` | fix(detail): AppBar 标题回落 16sp 惯例 + meta 信息统一 caption 层级——ID 保留 tabular 且可选中 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；illust_detail_page_test 32 项通过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 合并后真机复核视觉
 ## Session 58: perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速
 <!-- trellis-session: v=2 fp=55eff941e8bce250 -->
 
