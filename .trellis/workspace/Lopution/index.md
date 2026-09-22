@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~2008 | Active |
+| `journal-1.md` | ~2039 | Active |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -39,6 +39,7 @@
 | 51 | 2026-09-19 | 验收修复批4：动效冻结族/资料编辑/返回键/小说翻页/系统分享/沉浸阅读器+设置持久化 | `48039cb`, `f1dcecb`, `a8b683c`, `9375afe`, `dc718fc`, `488e854`, `d4c5f26`, `66866e3` | `task/09-19-acceptance-fixes-4` |
 | 50 | 2026-09-18 | acceptance-fixes-3: 设置/个人页互换+搜图相册选图+小说JS字面量 | `b3ccfaf`, `4e070d6`, `e18b969`, `f36a1dc`, `eca8747` | `task/09-18-acceptance-fixes-3` |
 | 49 | 2026-09-18 | devin-subagent-mode: Devin 工作模式切为派发式 | `a8af028` | `task/09-18-devin-subagent-mode` |
+| 48 | 2026-09-18 | devin-trellis-platform: .devin 一等平台固化 | `1a6207f`, `1033da2`, `707e861` | `task/09-18-devin-trellis-platform` |
 | 47 | 2026-09-18 | acceptance-fixes-2: 九连修落地 | `176451a`, `f6386d5`, `05743e9`, `71da098`, `62d4e06`, `21f2060`, `6bb0dc6`, `6136479`, `960d0d4` | `task/09-18-acceptance-fixes-2` |
 | 46 | 2026-09-18 | 09-18-apk-slimming：release 构建瘦身 ~1.4MB/ABI | `3822e83` | `task/09-18-apk-slimming` |
 | 45 | 2026-09-18 | 09-18-acceptance-fixes：离线入队/搜索持久化/设置分组/详情图/feed 预取 | `7b30e25`, `5eb6465`, `905e1df`, `77ef315`, `625c188` | `task/09-18-acceptance-fixes` |
