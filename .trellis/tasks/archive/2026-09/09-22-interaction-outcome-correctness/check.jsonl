@@ -1,6 +1,6 @@
 {"file": ".trellis/tasks/09-22-ui-interaction-consistency/design.md", "reason": "§5.4/§5.7 契约验收与 §6 W1 门禁清单（双路径 back、锚点边界、持久化副作用断言）"}
-{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/implementation-draft.md", "reason": "逐项验收对照：改动点、测试断言与显式排除边界"}
-{"file": ".trellis/tasks/09-22-interaction-outcome-correctness/research/risks.md", "reason": "竞态/框架/l10n 风险复核与「未验证」标记对照"}
+{"file": ".trellis/tasks/archive/2026-09/09-22-interaction-outcome-correctness/research/implementation-draft.md", "reason": "逐项验收对照：改动点、测试断言与显式排除边界"}
+{"file": ".trellis/tasks/archive/2026-09/09-22-interaction-outcome-correctness/research/risks.md", "reason": "竞态/框架/l10n 风险复核与「未验证」标记对照"}
 {"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Predictive Back 契约回归"}
 {"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "验证命令与噪声判定"}
 {"file": ".trellis/spec/frontend/type-safety.md", "reason": "状态建模与枚举完备性核对"}

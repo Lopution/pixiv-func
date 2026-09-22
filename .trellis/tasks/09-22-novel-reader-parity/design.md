@@ -60,22 +60,28 @@ abstract interface class ReaderProgressBinding {
 恢复那次程序性 `jumpToPage`）与 commit postFrame 显式回显
 （`novel_reader.dart:373-377, 476-482`）。契约：
 
-- 锚点通知携带来源（`layoutRestore/commitEcho` vs `userTurn`）；恢复跳转的
-  那次 `onPageChanged` 用内核内标记压成非用户源。`onAnchorChanged` 签名扩展
-  或新增 `onUserAnchorChanged`——实现期二选一，对外契约=舞台只为用户翻页
+- 锚点通知携带来源（`layoutRestore/commitEcho` vs `userTurn`/`tocJump`/
+  `progressJump`/`keyTurn` 等提交源）；恢复跳转的那次 `onPageChanged`
+  用内核内标记压成非用户源。`onAnchorChanged` 签名扩展或新增
+  `onUserAnchorChanged`——实现期二选一，对外契约=舞台只为**提交源**
   调 `binding.save`。
-- 推论：打开（无论有无恢复记录）、设置变更 force relayout 回显、开关任何
-  sheet，都不产生写。首次真实翻页写一次，之后每页 settle 写一次（同值去重
+- **提交路径枚举（写进契约，防止漏判）**：真实手势翻页、目录跳转确认、
+  进度 sheet 确认跳页、键盘翻页，都是用户提交位置 → 写；
+  恢复回显、force relayout 回显、slider 预览、打开/取消 sheet，
+  都不是提交 → 不写。首次提交写一次，之后每次 settle 写一次（同值去重
   沿用 `_anchor == anchor` 短路）。
-- **W6 数据源契约**：`local_novels.read_offset` null=未打开、非 null=在读；
-  W6 不再能从"打开即 0"区分，本包 PRD R6 已声明。
+- **W6 数据源契约**：`local_novels.read_offset` null=**没有已提交的
+  阅读锚点**（不称"未打开"——打开本来就不写）；非 null=在读。
 
 ### FormState / BackAndCancel（§5.3/§5.4 落点）
 
-- 阅读设置 sheet = **immediate**：改即生效+写穿，无"应用/保存"按钮；失败经
-  `showAppSnackBar` 可见、不落盘值不回显。§5.3 的"draft 失败保留"不适用
-  （无草稿态）；门禁要求的"失败保留"在此体现为失败可见 + 内存态已应用但
-  存储未污染（immediate 的失败语义=可见回滚提示，不是静默）。
+- 阅读设置 sheet = **immediate**：改即生效+写穿，无"应用/保存"按钮。
+  **持久化失败 = 恢复已确认值 + 可见失败提示**（全应用统一默认，与 W8
+  「旧值保持+显示失败」同规则）：写库失败 → 内存态回滚到最后持久化的
+  字号/主题、`showAppSnackBar` 报失败。不允许"屏幕保留新值但存储未污染"
+  的静默分歧——若某设置确需"仅本次阅读有效"，必须显式命名该状态并写清
+  退出条件，不能靠普通错误提示让用户猜。§5.3 的"draft 失败保留"不适用
+  （无草稿态）。
 - 进度 sheet = 一次性操作：打开捕获页码、slider 只动预览、确认跳页、
   取消/下滑原位不动——cancel 只取消当前操作，不离开阅读页。
 - 返回优先级栈：modal sheet 是路由 → 系统返回先关 sheet；无 sheet 时先关

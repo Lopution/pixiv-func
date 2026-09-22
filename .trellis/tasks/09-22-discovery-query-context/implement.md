@@ -41,12 +41,15 @@ widget test 推断通过。
 ## 阶段 1：re-tap 通道 + 排行族（R10, R2, R3）
 
 - [ ] **R10**：`lib/app/widgets/branch_slide_stack.dart` `BranchSlidePager`
-      新增 `reTapEvents` 广播（`ValueNotifier<int>`/等价 stream，负载 = branch
-      index）；`selectIndex`（:137-151）`index == tab.index` 分支在
-      `goBranch` 后发射；`syncIndex`/`_suppressGoBranch`（:156-172）不发射；
+      新增 `reTapEvents` 广播——**事件负载 = `({int branchIndex, int sequence})`
+      或等价 broadcast stream**；禁止裸 `ValueNotifier<int>` 装索引
+      （同值重赋不通知，二次同槽点击丢信号）。`selectIndex`（:137-151）
+      `index == tab.index` 分支在 `goBranch` 后发射；
+      `syncIndex`/`_suppressGoBranch`（:156-172）不发射；
       注释冻结通道契约（发射点/负载/post-frame 消费，供 W3 复用）。
       测试：`test/navigation_router_test.dart` 或 `func_bottom_nav_test.dart`
-      补「同槽点按 → 信号一次」「syncIndex/拖拽 settle → 不发射」。
+      补「同槽点按 → 信号一次」「**不切分支连续三次同槽点按 → 三次信号**」
+      「syncIndex/拖拽 settle → 不发射」。
       提交：`feat(nav): 新增 branch re-tap 回顶广播通道`
 - [ ] **R2**：`lib/features/ranking/ranking_page.dart` `TabBar`（:104-115）接
       `onTap`：同索引 → `_scrollControllerFor(mode)`（:43,:80-82）

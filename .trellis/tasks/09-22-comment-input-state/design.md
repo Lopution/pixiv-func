@@ -63,8 +63,14 @@ enum CommentComposerInputState { none, keyboard, emoji, stamp }
   `SizedBox(height: bottomExtent, child: panel)`。键盘升起时 SizedBox 逐帧
   跟随 → input row 始终贴键盘上沿；键盘→面板先以当前 insets 摆上屏再
   unfocus 无跳变；面板→键盘由 `max(...)` 让键盘覆盖面板直到状态卸载。
-- 列表底部 padding `8 + bottomExtent`（search_page.dart:552 先例），保证
-  键盘/面板开着时末位与 `FeedTail` 重试钮可滚出可点。
+- **避让责任唯一（评审定案）**：composer 区（input row + `SizedBox(
+  bottomExtent, child: panel)`）**参与布局**（Column 底部槽），列表被
+  压缩是避让的全部机制——列表底部 padding 只留常数 `8` 呼吸位，
+  **不再叠加 `bottomExtent`**（叠加=双重留白 bug）。反之若改用覆盖式
+  布局才需要列表补 padding——本设计不采用覆盖式，禁止两套并存。
+- 验收检查实际位置而非枚举：键盘/表情/stamp 各自展开与互换过程中，
+  末条评论、input row、键盘上沿三者的相对位置逐帧无遮挡、无大块
+  空白闪现。
 - `viewInsets` 只读 `MediaQuery.viewInsetsOf` 权威值：composer 底部区域与
   列表 padding 读同一物理量允许，但不得各自缓存；`_cachedKeyboardHeight`
   是唯一缓存点，采样窗口 = `focusNode.hasFocus` 期间的 `viewInsets.bottom`

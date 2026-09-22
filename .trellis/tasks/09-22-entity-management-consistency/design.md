@@ -66,6 +66,14 @@ class NovelEntry extends StatelessWidget {
 }
 ```
 
+> **密度决策（评审补充，防止"改名式合并"）**：compact/regular 的差异
+> 必须有产品理由而非历史惯性——定案：density 由**列表角色**决定。
+> `compact` = 次级内联 feed（推荐页混排流，小说是辅内容、一屏条目多）；
+> `regular` = 主内容列表（搜索结果/新作/作者页，小说是页面主体）。
+> 「同一本小说在推荐流是次要内容、在搜索结果是主体」是成立的理由。
+> 排名/进度/更新时间是**附加信息槽**，不隐含第二套基础条目设计。
+> 若实现中发现某调用点的角色归属说不通，回写到本节再落码。
+
 - 统一 `PressScale` + `Semantics(label: 'title, author')`；占位图走
   `ClipRRect`（修 `novel_row.dart:75-83` 直角瑕疵）。
 - `trailing` 默认 null（feed 场景不挂动作）；可选
@@ -166,8 +174,10 @@ int clearTerminal();           // 清空全部终态记录，返回移除数
 
 ### 限宽 owner（§5.5）
 
-- `AppBreakpoints` 增 `static const double managementContentMaxWidth = 840`
-  （唯一宽度来源；禁止页面自造常量）。
+- 读 `ContentWidths.management`（840，`lib/app/layout/content_widths.dart`，
+  父 §5.5 冻结角色表；**内容宽度常量不进 `AppBreakpoints`**——断点管
+  换布局，角色常量管布局内宽度）。文件未建时本包首个消费创建全表；
+  禁止页面自造常量。
 - 接入面：watchlist/localnovels/download_tasks 三个 ListView 型管理页，
   body 包 `Center + ConstrainedBox(maxWidth:)`；grid 型
   （history/watchlater）由 `illustColumnsFor` 自然加列，不限宽。

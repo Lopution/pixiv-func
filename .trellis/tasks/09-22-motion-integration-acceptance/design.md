@@ -46,11 +46,13 @@ implement.md 阶段拆 `-s1`（rebaseline+窄修复）/`-s2`（回归+矩阵）�
 | SmoothWheelScroll `wheelScroll` | 功能 | 滚轮步进平滑是滚动功能本体；`AnimationBehavior.preserve` 使平台闸本就不作用 |
 | PullToRefresh 指示器 | 反馈 | 刷新进行中的可见反馈，非装饰 |
 | Ugoira `frame.delayMs` | 内容 | 帧时序是内容行为；spec：reduced motion 不得移除 |
-| `appSnackBarAnimationStyle` | 反馈 | SnackBar 是结果反馈通道；平台闸已自动压 5%，in-app 闸不接（D2） |
+| `appSnackBarAnimationStyle` | 反馈的表现层 | **豁免撤销（评审修正）**：消息内容/按钮/时长是反馈必须保留，但滑入滑出动画是表现方式——`AnimationStyle.noAnimation` 关的是动画不是消息，in-app reduced-motion 闸须接入；平台闸 5% 压缩不构成豁免理由 |
 | TabBar `kTabScrollDuration`、NavigationRail 展开 | 框架 | 应用闸不可达；置零需替换点按语义；记已知限制（D3） |
 
 判断规则：**装饰可去，状态必达**。reduced motion 只移除位移/缩放类装饰；
-反馈可保留淡化但不得消失；内容与物理不动。
+反馈可保留淡化但不得消失；内容与物理不动。**逐项判据是「没有运动功能
+是否仍成立」而非「组件重不重要」**——Ugoira 帧播放是内容本体（豁免成立）；
+图片交接防白闪是功能契约（豁免成立）；SnackBar 无动画仍完整成立（不豁免）。
 
 ### 窄修复 vs 退回责任包
 
@@ -109,7 +111,33 @@ implement.md 阶段拆 `-s1`（rebaseline+窄修复）/`-s2`（回归+矩阵）�
 | reduced motion 只去装饰 | 过闸 widget 三注入落终态（motion_test 模式扩展）；负向断言 Ugoira 播放、滚动物理、SnackBar 可见性仍工作；R2 窄修复落地 | 大部自动 |
 | #48 + MotionTokens 单一来源 | §四 grep 闸口行 + `FuncSemanticTokens.motion*` D5 处理 | 自动 |
 
-## 六、最终验收矩阵（父 §7 映射）
+### 5.1 过渡不变量（评审增补：终态对了不代表过程没问题）
+
+扫描与最终状态断言只证明「没有明显分叉」，证明不了过渡过程。每个过闸
+widget/交互补**过渡中不变量**断言（不追踪逐帧坐标，只在 pump 中间帧
+断言不变量）：
+
+- 图片交接期间（hero flight / 预载切换）始终有有效画面，无白帧；
+- 模式退出后无残留遮罩/选中态；
+- 键盘↔面板切换期间输入区不落入遮挡范围、无大块空白闪现；
+- reduced-motion 下内容立即进入可用终态（无 fade-in 延迟门控）；
+- 少量完整操作录屏（手测或 `flutter run` 桌面）校节奏，记入台账。
+
+### 5.2 设备验收前移（评审增补）
+
+设备/桌面验证不再全部压到 W10——各叶子合入时跑自己负责的代表路径，
+W10 只做跨页面串联与补缺：
+
+| 时机 | 提前验收的代表路径 |
+|---|---|
+| W2 合入前后 | 分类切换、连续重复回顶、搜索修改词与返回恢复 |
+| W4 s2 查看器合入前后 | 隐藏工具栏连续翻图、双击缩放、系统返回、下载选择 |
+| W5 共用舞台合入前后 | 在线/本地恢复、改字号、目录与进度跳转 |
+| W7 合入前后 | 真键盘与表情互换、长回复、发送失败保留 |
+| W10 | 串成跨页面完整流程 + 补集成缺口 |
+
+各叶子的 PR body 按此登记对应行；仍不可验的环境项如实标「未验证」，
+但至少不晚于本表时点尝试一次真机/桌面验证。
 
 - **自动化层**：focused + 全量 `flutter test --no-pub`；`analyze --no-pub`；
   `dart format --output=none --set-exit-if-changed lib test`；

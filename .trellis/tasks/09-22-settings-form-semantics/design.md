@@ -48,14 +48,16 @@ class SettingsTile extends StatelessWidget {
 // settings_helpers.dart（feature 内）
 Widget settingsNarrowBody(Widget child) => Center(
   child: ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: AppBreakpoints.medium), // 600
+    constraints: const BoxConstraints(maxWidth: ContentWidths.settings), // 600
     child: child,
   ),
 );
 ```
 
 - 全宽度生效（窄屏约束不收紧布局，宽屏收栏），无断点分支；单列非双栏（external §3/§6-7）。
-- 不新建跨 feature shell；`AppBreakpoints.medium` 是唯一宽度来源（§5.5 禁自造常量）。
+- 不新建跨 feature shell；内容宽度读 `ContentWidths.settings`（600，
+  `lib/app/layout/content_widths.dart`，父 §5.5 角色表）——断点常量
+  不当内容宽度用；若该文件未建，本包首个消费时创建全表。
 
 ### 3. `persistSettings` 收敛
 

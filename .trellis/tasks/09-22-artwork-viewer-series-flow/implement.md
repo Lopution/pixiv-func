@@ -4,10 +4,12 @@
 `research/implementation-draft.md`（行号已对 `main@8067b2d` 核实；
 research 与 HEAD 的出入以 HEAD 为准并在实现时回注）。
 
-默认单分支 `task/09-22-artwork-viewer-series-flow`，四阶段串行提交。
-若 PR 超可审查规模按 design.md §一 拆 `…-s1`（阶段 1+2）/ `…-s2`
-（阶段 3）/ `…-s3`（阶段 4）串行合入——三阶段都碰
-`illust_detail_page.dart` 与 arb，不可并行。
+**默认按 stage 拆分支串行合入**（评审决议，不再等体量过大才拆）：
+`task/09-22-artwork-viewer-series-flow-s1`（阶段 1+2：AppHaptics+设置+
+下载模式）→ `…-s2`（阶段 3：查看器）→ `…-s3`（阶段 4：详情信息+系列）。
+三阶段都碰 `illust_detail_page.dart` 与 arb，串行不并行；每个 stage
+独立 PR/check/合并后下一个再 rebase 启动。W7 的门禁是 **s1 合入**
+（AppHaptics 契约稳定），不必等 s2/s3。
 
 ## 环境
 
@@ -116,11 +118,15 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-artwork-viewer-
       构造增 `IllustEntity? entity`；`routes.dart` `_ImageViewerRoute` 透传
       已解析实体（不改 extra 形态，entity null 分支动作不渲染）。
       提交：`feat(viewer): ImageViewerPage 接入实体参数`
-- [ ] chrome 显隐：`_chromeVisible` + 媒体区单击/底栏全屏钮/键盘 `F`
+- [ ] chrome 显隐：`_chromeVisible` 提升为**会话级 holder**（viewer 会话
+      `ChangeNotifier`/provider，随查看器入口存活，`replaceImageViewerPage`
+      重建 page State 后仍保持）+ 媒体区单击/底栏全屏钮/键盘 `F`
       三通道；隐藏 = AppBar+底栏+`SystemUiMode.immersiveSticky`；
       `MotionTokens.fast` 淡入淡出；隐藏态手势仍可用。
       新 l10n key：`viewerEnterFullscreen`/`viewerExitFullscreen`（四语）。
-      测试：三通道切换断言 + 隐藏态手势可用断言。
+      测试：三通道切换断言 + 隐藏态手势可用断言 + **隐藏后连续翻页/
+      页码跳转/route 替换仍隐藏**；系统栏表现按三项独立验收
+      （chrome 隐藏/系统栏实际/退出恢复），真机不可验标「未验证」。
       提交：`feat(viewer): chrome 可显隐与沉浸式全屏`
 - [ ] 双击缩放循环 + 单击消歧：同一 `GestureDetector` 注册
       `onTap`+`onDoubleTap`（框架消歧，单击延迟 ~kDoubleTapTimeout）；
@@ -151,13 +157,13 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-artwork-viewer-
       `Listener(onPointerSignal)` 滚轮指针焦点缩放、Shift+滚轮翻页。
       测试：键盘映射逐键断言；滚轮缩放方向断言。
       提交：`feat(viewer): 键盘快捷键与鼠标滚轮等价`
-- [ ] PopScope 三级优先级：`canPop = !_activeZoomed && _chromeVisible`；
-      `!didPop` 分支 zoomed→复位、chrome 隐→恢复；显式 back、
-      `DragToDismiss`、`Esc`/`Backspace` 保持命令式 `pop()`。
-      测试：**放大→返回→复位不退；chrome 隐→返回→恢复不退；再次
-      返回→退；replaceImageViewerPage 换页后（新 route/State）同一
-      拦截仍生效**（risks R2，用真实 replace 复现）。
-      提交：`feat(viewer): 系统返回先复位缩放/恢复 chrome 再退路由`
+- [ ] PopScope：`canPop = !_activeZoomed`（chrome 隐不阻塞退出）；
+      `!didPop` 分支 zoomed→复位；chrome 隐 + 系统返回 → 直接离页；
+      显式 back、`DragToDismiss`、`Esc`/`Backspace` 保持命令式 `pop()`。
+      测试：**放大→返回→复位不退；chrome 隐→返回→直接退（不等第二次）；
+      replaceImageViewerPage 换页后（新 route/State）同一拦截仍生效且
+      chrome 状态保持**（risks R2，用真实 replace 复现）。
+      提交：`feat(viewer): 系统返回先复位缩放，chrome 隐不阻塞退出`
 
 ## 阶段 4：信息可达 + 系列语义（stage `-s3` 候选）
 
@@ -197,8 +203,8 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-artwork-viewer-
 - [ ] **单击/双击序列**：单击→等超时→chrome 切；双击→缩放、chrome 不动；
       双击后再单击→chrome 切（risks R1）。
 - [ ] **PopScope × route-replace**：放大→滑动翻页（`replace` 重建 route）
-      →返回应退路由（State 已重置）；同页内放大→返回→复位不退
-      （risks R2）。
+      →返回应退路由（State 已重置）；同页内放大→返回→复位不退；
+      **chrome 隐→翻页→仍隐；chrome 隐→返回→直接退**（risks R2）。
 - [ ] **l10n arb 并行冲突**：与并行叶子的 arb/生成物冲突时，arb 并集
       保留双方 key → `flutter gen-l10n` → `gen_l10n_lookup.py`，生成物
       不手解（design.md §六）。
