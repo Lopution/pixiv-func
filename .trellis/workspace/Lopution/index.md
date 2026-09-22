@@ -7,9 +7,9 @@
 ## Current Status
 
 <!-- @@@auto:current-status -->
-- **Active File**: `journal-1.md`
-- **Total Sessions**: 58
-- **Last Active**: 2026-09-20
+- **Active File**: `journal-2.md`
+- **Total Sessions**: 59
+- **Last Active**: 2026-09-22
 <!-- @@@/auto:current-status -->
 
 ---
@@ -19,7 +19,8 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-1.md` | ~2039 | Active |
+| `journal-2.md` | ~38 | Active |
+| `journal-1.md` | ~2039 | Archived |
 <!-- @@@/auto:active-documents -->
 
 ---
@@ -29,6 +30,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 59 | 2026-09-22 | W1 交互结果正确性实现（9 项确定性修复） | `0d376d7`, `a97a5c8`, `cd551ee`, `8f7572a`, `f1f3faf`, `d7223f2`, `ffbf138`, `fcca618`, `a6c26a4`, `b530534` | `task/09-22-interaction-outcome-correctness` |
 | 58 | 2026-09-20 | perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速 | `2cd9125`, `e0e07c4`, `fb70d51`, `935410c`, `567f3b9`, `adc2ae6`, `9c5bf6f`, `d842c2a`, `903da15` | `task/09-19-perceived-speed` |
 | 57 | 2026-09-19 | detail-meta-typography：标题回落+meta 字级统一 | `132e6b9` | `task/09-19-detail-meta-typography` |
 | 56 | 2026-09-19 | adaptive-image：冷启动竞速+持久化+auto图源+语义设置页 | `ae9f38a`, `7f92edd`, `b59b0b9`, `ab840a4`, `635521f`, `cc21893`, `7d7baa8`, `fbb857f`, `48786e9`, `425a229`, `74244d4`, `f6fd204` | `task/09-19-adaptive-image` |
