@@ -1682,6 +1682,7 @@ run_subagent/UserPromptSubmit 两个 hook 上线:trellis-implement/check/researc
 ### Next Steps
 
 - 开 PR 等 CI;可考虑把 devin 接线上游到 templates/devin.ts 与 shared-hooks 表
+
 ## Session 49: devin-subagent-mode: Devin 工作模式切为派发式
 <!-- trellis-session: v=2 fp=a229a925f59ac3ec -->
 
@@ -1891,3 +1892,120 @@ P1/P7/P8 PressScale+StaggeredEntrance TickerMode 感知+入场 once 语义；P3/
 ### Next Steps
 
 - 真机验证 pixiv.re/nl 镜像 noSni 默认 vhost 行为；接 09-19-adaptive-image
+
+
+## Session 55: snackbar-unify：messenger入body+showAppSnackBar v2统一形态与动效
+<!-- trellis-session: v=2 fp=96fa62ca2dd3c8df -->
+
+**Date**: 2026-09-19
+**Task**: snackbar-unify：messenger入body+showAppSnackBar v2统一形态与动效
+**Branch**: `task/09-19-snackbar-unify`
+
+### Summary
+
+SnackBar 位置/动效统一：分支 messenger 挪进底栏 Scaffold body，floating snackbar 锚定 body 底缘不再盖导航栏；helper 统一 floating+margin+AnimationStyle+action，app.dart 更新提示与 home_page 退出提示收编同一入口
+
+### Main Changes
+
+- BranchRootScaffold body 内嵌 ScaffoldMessenger，分支页 snackbar 落 body 底缘
+- buildAppSnackBar 统一 floating+EdgeInsets(16,0,16,16)+appSnackBarAnimationStyle(medium/fast)，showAppSnackBar/showAppSnackBarOn 双入口
+- app.dart 更新提示、home_page 退出提示改走统一 helper（退出提示保留手写 margin——其 messenger 覆盖底栏）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `0b31b60` | docs(task): 09-19-snackbar-unify PRD 与实施计划 |
+| `06fba16` | fix(snackbar): 分支 messenger 挪进底栏 Scaffold body——floating snackbar 锚定 body 底缘不再盖底部导航 |
+| `49b7d08` | feat(snackbar): showAppSnackBar v2 统一形态——floating+统一margin+共享AnimationStyle+action；更新提示与退出提示收编 |
+| `c3fd17f` | test(snackbar): 分支内snackbar不盖底栏/统一形态/action/宽屏兜底回归用例 |
+
+### Testing
+
+- [OK] flutter analyze lib test 0 issues；flutter test 全量 1161 通过；新增 app_snack_bar_test 4 例（不盖底栏/统一形态/action/宽屏兜底）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 合并后观察 pushed-route 内 snackbar 落根 messenger 的表现（全屏底缘，符合预期）
+
+## Session 56: adaptive-image：冷启动竞速+持久化+auto图源+语义设置页
+<!-- trellis-session: v=2 fp=2cd4ee7fafd635ac -->
+
+**Date**: 2026-09-19
+**Task**: adaptive-image：冷启动竞速+持久化+auto图源+语义设置页
+**Branch**: `task/09-19-adaptive-image`
+
+### Summary
+
+磁盘缓存 1500+优先级 FileService 双车道；图片冷请求 top-2 档竞速写记忆；route kind 按 networkIdentity 持久化；connectivity 变化 advanceNetworkRevision；feed 入场动画改首曝光+fling 门；viewer 低档垫底+邻页 medium 预取；下载命中磁盘缓存直接物化；feed 落地 HEAD 预热胜者路由；ImageSourceMode.auto 候选竞速+按网络持久化+耗尽重竞速；语义档(自动/直连/兼容优先)+生效路由+第三方可达性区；dev-only 帧探针页（addTimingsCallback+imageCache 计数+报告复制）
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ae9f38a` | perf(cache): 磁盘缓存上限 200→1500 + PriorityFileService 双闸门——可见图8并发/prefetch3并发互不饿死，标记头出队即剥 |
+| `7f92edd` | feat(network): 幂等图片请求冷启动竞速——无路由/组记忆时 top-2 档并行 send，先达者写记忆，败者 drain 回收；双败保留终态语义落回串行梯子 |
+| `b59b0b9` | feat(network): 路由 kind 按 networkIdentity 持久化——重启/切网后 warmUp 播种组偏好，首请求免探测走上次胜者档 |
+| `ab840a4` | feat(network): connectivity_plus 监听——网络切换即 advanceNetworkRevision(identity=连接类型) 清记忆/池/冷却并按新身份播种持久化 kind |
+| `635521f` | feat(motion): 入场动画挂载触发→首次视口曝光触发——cacheExtent 挂载的折叠下卡片不再把动效放给空气；自测滚动速度 <1000px/s 门挡住 fling 中弹入，position+isScrolling 双监听，stagger 延迟封顶 index8，played 幂等语义不变 |
+| `cc21893` | perf(viewer): 已解码低档垫底(3a)+相邻页 medium 预取(3b)——无转场历史时 IllustTierCache.bestBelow 供出低档作 placeholder，翻页预热邻居页 medium 档；不动 hero/转场/淡入路径 |
+| `7d7baa8` | perf(download): 命中图片磁盘缓存直接物化到 sink——cacheLookup 命中跳过 transport；resume 时 openRead(offset) 只补尾部，字节口径与 206 续传一致；miss/异常落回网络路径 |
+| `fbb857f` | perf(network): feed 数据落地对胜者路由预热连接——warmConnection 按 (host,revision) 节流发 HEAD 建连，无记忆时交给冷竞速不预热；镜像 host 走独立组语义 |
+| `48786e9` | feat(settings): ImageSourceMode.auto——候选源缩略图竞速选线，胜者按 networkIdentity 持久化，失败降级 |
+| `425a229` | fix(network): idle-guard 计时器走 Zone.root 且 connectivity 订阅前先探测 binding——修复 widget/纯 Dart 测试下的悬挂定时器与 EventChannel 异步异常 |
+| `74244d4` | feat(settings): 网络主页面语义档 + 生效路由展示 + 第三方可达性提示 |
+| `f6fd204` | feat(debug): dev-only 滚动帧探针（FrameTimings 采集+导出） |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；flutter test 全量通过（期间修 idle-guard Zone.root 定时器+connectivity binding 探测两处测试环境回归）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机跑帧探针拿 UI/Raster 分布，按证据决定 S2-S6 滚动优化
+
+
+## Session 58: perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速
+<!-- trellis-session: v=2 fp=55eff941e8bce250 -->
+
+**Date**: 2026-09-20
+**Task**: perceived-speed: hero R角插值/底栏下滑隐藏/设置页收敛/auto吞吐竞速
+**Branch**: `task/09-19-perceived-speed`
+
+### Summary
+
+感知速度深挖+壳层动效修复：hero shuttle 圆角随 flight progress 插值（12→0 双向连续）；底栏 scrollDelta 过 slop 收放+隐藏态重发 hero 底边；设置页分组重排+用户面文案去术语；关于页 7 连点解锁帧探针（release 可用）；auto 图源设为默认且竞速改真实小图吞吐判定（GET 64KB 采样，bps 排序）；预取窗口 12→24/后台车道 3→4；点卡预热详情档；低吞吐自动降 preview 到 medium
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `2cd9125` | feat(motion): hero shuttle 圆角按 flight progress 插值——卡片端 12 → 详情端 0，两端形态连续不再有落地跳变 |
+| `e0e07c4` | feat(nav): 底栏下滑隐藏——ScrollNotification 累计过 slop 触发 SizeTransition 收高，上滑/切分支即回，隐藏态重发布 hero 底边 |
+| `fb70d51` | feat(settings): 设置页分组重排（内容入口独立成组）+ 用户面文案去术语（SNI/DoH/ECH/梯子只留在高级页） |
+| `935410c` | feat(debug): 关于页连点解锁开发者入口——帧探针脱离 kReleaseMode 门控 |
+| `567f3b9` | feat(network): auto 图源设默认 + 竞速改真实小图吞吐判定 |
+| `adc2ae6` | perf(feed): 预取窗口 12→24、prefetch 车道 3→4 |
+| `9c5bf6f` | perf(detail): 点卡瞬间对详情档发预热请求 |
+| `d842c2a` | feat(settings): 预览画质自适应——低吞吐网络自动降 medium 档（竞速实测值驱动） |
+| `903da15` | chore(task): 勾选实施清单 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；全量 1195 通过（oauth/tls_sni 的 5 个 loopback 用例在全量并发下抖动超时，单独重跑全过，与改动面无关）
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机验证 auto 默认下首刷速度与底栏收放手感；探针拿帧数据后再定 S2-S6
