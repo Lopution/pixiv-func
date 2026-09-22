@@ -1,5 +1,13 @@
 # 执行计划：发现页查询上下文连续（W2）
 
+> ⚠️ **中途修订（实现期间注入，优先级高于下文旧描述）**
+>
+> **R10 事件语义修正**：`reTapEvents` **禁止用 `ValueNotifier<int>` 装分支索引**——
+> `ValueNotifier` 在新值 == 旧值时不通知，连续同槽点按第二次起无信号。
+> 必须实现为「事件」：`{branchIndex, sequence}` 递增序号负载，或 `Stream` 广播
+> （`.broadcast()`）。仍由 `BranchSlidePager` 持有，不新增全局事件总线。
+> 验收增加：不切换分支，连续三轮「滚动 → 重复点击 → 回顶」每轮都生效且不刷新。
+
 需求见 `prd.md`，技术设计见 `design.md`，逐文件精确改动方案见
 `research/implementation-draft.md`（行号已对 `main@8067b2d` 核实）。
 
@@ -40,7 +48,7 @@ widget test 推断通过。
 
 ## 阶段 1：re-tap 通道 + 排行族（R10, R2, R3）
 
-- [ ] **R10**：`lib/app/widgets/branch_slide_stack.dart` `BranchSlidePager`
+- [x] **R10**：`lib/app/widgets/branch_slide_stack.dart` `BranchSlidePager`
       新增 `reTapEvents` 广播——**事件负载 = `({int branchIndex, int sequence})`
       或等价 broadcast stream**；禁止裸 `ValueNotifier<int>` 装索引
       （同值重赋不通知，二次同槽点击丢信号）。`selectIndex`（:137-151）
@@ -51,13 +59,13 @@ widget test 推断通过。
       补「同槽点按 → 信号一次」「**不切分支连续三次同槽点按 → 三次信号**」
       「syncIndex/拖拽 settle → 不发射」。
       提交：`feat(nav): 新增 branch re-tap 回顶广播通道`
-- [ ] **R2**：`lib/features/ranking/ranking_page.dart` `TabBar`（:104-115）接
+- [x] **R2**：`lib/features/ranking/ranking_page.dart` `TabBar`（:104-115）接
       `onTap`：同索引 → `_scrollControllerFor(mode)`（:43,:80-82）
       `animateTo(0)`（`MotionTokens` gated，reduced-motion → `jumpTo(0)`）；
       异索引不变；`onTap` 内不调 `TabController.animateTo`。
       测试：同索引点击 → feed offset 归 0 且不 refresh。
       提交：`feat(ranking): 重复点击当前榜单回到顶部`
-- [ ] **R3**：`lib/app/navigation/routes.dart`（:549-553）`/novel-ranking` 加
+- [x] **R3**：`lib/app/navigation/routes.dart`（:549-553）`/novel-ranking` 加
       `?mode=` + `replaceNovelRankingMode` facade（`context.replace`）；
       `lib/features/ranking/novel_ranking_page.dart` body 由 `ValueKey` 替换
       （:90-95）改 `RootSwipeSwitcher + TabSlideStack` per-mode 常驻 body，
@@ -70,7 +78,7 @@ widget test 推断通过。
 
 ## 阶段 2：推荐 + 新作（R1, R4）
 
-- [ ] **R1a**：`lib/app/navigation/routes.dart`（:963-972）`/recommended` 加
+- [x] **R1a**：`lib/app/navigation/routes.dart`（:963-972）`/recommended` 加
       `?type=` + `replaceRecommendedType` facade；
       `lib/features/home/recommended/recommended_home_page.dart` `_type`（:47）
       改由路由驱动：`TabController`（:54-55）`initialIndex` 播种 + guarded
@@ -79,7 +87,7 @@ widget test 推断通过。
       测试：`test/recommended_home_test.dart` 补 type 参数 round-trip 与
       replace 下手势不重置。
       提交：`feat(recommended): 内容类型接入路由参数`
-- [ ] **R1b**：同文件删 `FittedBox(scaleDown)`（:158-164）改 `isScrollable: true`
+- [x] **R1b**：同文件删 `FittedBox(scaleDown)`（:158-164）改 `isScrollable: true`
       TabBar；新增 per-type `ScrollController` map 传入 `SmoothWheelScroll`
       （:302）；订阅 `reTapEvents` post-frame → 当前 type controller 回顶
       （`hasClients`+`mounted` 守卫）；刷新失败错误（:264-282）改经 #48 共享
@@ -87,12 +95,12 @@ widget test 推断通过。
       测试：re-tap 终态 offset=0 不 refresh；刷新错误 SnackBar 可见；
       断言不经 `PrimaryScrollController`。
       提交：`feat(recommended): 标签不缩字、re-tap 回顶、刷新错误就近提示`
-- [ ] **R4a**：`lib/app/navigation/routes.dart`（:987-996）`/new` 加
+- [x] **R4a**：`lib/app/navigation/routes.dart`（:987-996）`/new` 加
       `?scope=&type=` + `replaceNewFeed` facade；`lib/features/new/new_page.dart`
       `_selectedIndex`/`_type`（:37-38）改由路由驱动（同 D13 防护）。
       测试：`test/new_content_feed_test.dart` 补 scope/type 参数 round-trip。
       提交：`feat(new): 范围与类型接入路由参数`
-- [ ] **R4b**：同文件删 `_selectorExpanded`（:39）与 `_onTabTap` 展开逻辑
+- [x] **R4b**：同文件删 `_selectorExpanded`（:39）与 `_onTabTap` 展开逻辑
       （:70-74,:102）；新增常驻可见 type 选择器行（AppBar 下 segmented/chips）；
       scope `TabBar` 去 `FittedBox`（:106-112）；scope tab 同索引与 type chip
       同索引点击 → 当前 `NewFeedKey` controller（:230,:235,:299）回顶，
@@ -103,14 +111,14 @@ widget test 推断通过。
 
 ## 阶段 3：搜索族（R7, R8, R5, R6）
 
-- [ ] **R7**：`lib/app/navigation/routes.dart` `_searchFilters`/
+- [x] **R7**：`lib/app/navigation/routes.dart` `_searchFilters`/
       `_searchQueryParameters`（:295-347）补齐 `ai`/`bmin`/`bmax`/`ratio`/`ct`/
       `wmin`/`wmax`/`hmin`/`hmax`（字段对齐 `search_models.dart:120-160`）；
       解码保持宽松（`firstWhere orElse`）。
       测试：`test/search_catalog_test.dart` 补 13 字段 URL→`SearchQuery`→
       `cacheKey` round-trip 一致、非法值落默认。
       提交：`fix(search): 路由序列化补齐全部筛选字段`
-- [ ] **R8**：`lib/features/search/search_page.dart` 热门标签（:153-155 处，
+- [x] **R8**：`lib/features/search/search_page.dart` 热门标签（:153-155 处，
       W1 已修 itemCount）改自适应网格 `SliverGridDelegateWithMaxCrossAxisExtent`
       全渲染、保留瓷砖代表图；`CustomScrollView`（:37-40）补显式
       `ScrollController` 并订阅 `reTapEvents` 回顶；trending kind 内存态写入
@@ -118,14 +126,14 @@ widget test 推断通过。
       测试：`test/search_catalog_test.dart` 既有「trims to complete rows」用例
       随 W1 已改写，本包补「全部标签渲染 + 列数随宽度」与 re-tap 回顶。
       提交：`feat(search): 热门标签自适应网格并接入 re-tap`
-- [ ] **R5**：`lib/features/search/search_result_page.dart` 头部（:66-79）
+- [x] **R5**：`lib/features/search/search_result_page.dart` 头部（:66-79）
       关键词改可编辑入口（tap → `openSearchInput(q, type)` 预填 push）+ 筛选
       摘要 chips 行 + 清除入口；空结果 `FeedEmpty`（:138-145）加「修改搜索」
       动作走同一入口；header 在 loading/error/empty 保持可见。
       新 l10n key：`searchModifyQuery` 等（feature 前缀，四语）。
       测试：tap → 输入页预填同 q/type；摘要随筛选变化；空态动作可达。
       提交：`feat(search): 结果页查询头可编辑并补筛选摘要`
-- [ ] **R6**：`lib/features/search/search_page.dart` `_selectSuggestion`
+- [x] **R6**：`lib/features/search/search_page.dart` `_selectSuggestion`
       （:419-424）拆分：行点击 = 只填 `TextEditingController` 不提交；行尾动作 =
       立即搜索；两动作可访问标签可区分。
       测试：tap → 字段更新且无提交；trailing → 提交；既有
@@ -134,7 +142,7 @@ widget test 推断通过。
 
 ## 阶段 4：反向搜图任务头（R9）
 
-- [ ] **R9**：`lib/features/search/reverse_image_search_page.dart` 新增常驻任务头
+- [x] **R9**：`lib/features/search/reverse_image_search_page.dart` 新增常驻任务头
       （缩略图 + 引擎 chip + 阶段标识），在 ready/searching/failure/
       success-empty/结果/WebView 各阶段（`_body` :177-202 上方）保持可见；
       引擎 chip 仅在允许切换的阶段可交互；不延长 temp file 持有
@@ -146,9 +154,9 @@ widget test 推断通过。
 
 ## 收尾
 
-- [ ] `flutter analyze --no-pub` 与全量 `flutter test` 通过（噪声按 spec 判定）；
+- [x] `flutter analyze --no-pub` 与全量 `flutter test` 通过（噪声按 spec 判定）；
       `git diff --check` 干净；`task.py validate` 通过；新 l10n key 四语齐备。
-- [ ] 父 implement.md §6「W2/W3」门禁逐条核对并记录结果；运行时缺口在 PR 标
+- [x] 父 implement.md §6「W2/W3」门禁逐条核对并记录结果；运行时缺口在 PR 标
       「未验证」。
 - [ ] PR：`gh pr create --fill`（body 写明 re-tap 通道契约移交 W3、残缺 URL 过渡
       期 cacheKey 自愈注记、New 页 re-tap 行为迁移说明）；CI 绿后
