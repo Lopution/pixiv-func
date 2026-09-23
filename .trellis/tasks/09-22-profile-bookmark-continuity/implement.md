@@ -153,7 +153,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：注入实体后过滤减少渲染数、清空恢复、无匹配提示、过滤不触发
       loadMore/refresh。
       提交：`feat(bookmark): 标签 feed 本地过滤已加载内容`
-- [ ] **标签列表分页三态**：`bookmark_tags_page.dart` `_TagList`（L78-138）
+- [x] **标签列表分页三态**：`bookmark_tags_page.dart` `_TagList`（L78-138）
       尾部——`loadingMore` → spinner、`loadMoreError != null` → 失败行 +
       重试（调 `loadMore()`，文案复用 `profileLoadMoreFailed`/`profileRetry`
       或新增 bookmark* key）、`!hasMore` → 结束态；不新建平行 tail 组件
