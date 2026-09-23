@@ -133,7 +133,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       （download_tasks 随 stage 3 接入）。
       测试：840/1200dp 限宽断言；320dp 无不可达动作。
       提交：`feat(app): 管理列表接入限宽断点`
-- [ ] **M7**：触觉消费接入（W4 owner 薄封装）：进入选择模式=明确震动、
+- [x] **M7**：触觉消费接入（W4 owner 薄封装）：进入选择模式=明确震动、
       勾选=轻触、删除确认弹出=明确震动（history/localnovels）、
       watchlater 撤销=轻触或不加。`lib/` 零 `HapticFeedback` 直调。
       测试：封装调用点断言（可 mock 薄封装）；真机手感标"未验证"。
