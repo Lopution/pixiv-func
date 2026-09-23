@@ -8,11 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-2.md`
-<<<<<<< HEAD
-- **Total Sessions**: 63
-=======
-- **Total Sessions**: 64
->>>>>>> 21345f8 (chore: record journal)
+- **Total Sessions**: 65
 - **Last Active**: 2026-09-23
 <!-- @@@/auto:current-status -->
 
@@ -23,11 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-<<<<<<< HEAD
-| `journal-2.md` | ~185 | Active |
-=======
-| `journal-2.md` | ~200 | Active |
->>>>>>> 21345f8 (chore: record journal)
+| `journal-2.md` | ~264 | Active |
 | `journal-1.md` | ~2039 | Archived |
 <!-- @@@/auto:active-documents -->
 
@@ -38,6 +30,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 65 | 2026-09-23 | W9 引导登录与内容布局：四阶段收敛引导/登录/WebView/Spotlight 表现层 | `8ea60a0`, `d9c81e6`, `972107c`, `478b927`, `3967359`, `a9e4749`, `528d9f0`, `c1ba35c`, `6a401d5` | `task/09-22-onboarding-auth-content-layout-s4` |
 <<<<<<< HEAD
 | 63 | 2026-09-23 | W7 评论输入状态机收敛：四态互斥/回复页滚动并入/响应式网格/语义/发送进度/触觉接入 | `8b69127` | `task/09-22-comment-input-state` |
 =======

@@ -220,3 +220,45 @@ NovelReaderStage 共享舞台落地：在线/本地同一 chrome/设置/进度/�
 
 - 真机未验证项随 PR 声明：键盘↔面板动画、TalkBack/Narrator 焦点、OEM IME、真机触觉、1.3x 字体、横屏、reduced-motion、俄语长文案、predictive-back
 - PR body 标未验证矩阵：宽屏实机行长、TalkBack/Narrator、桌面焦点让渡、大 TXT CPU/内存、CRLF 渲染
+
+
+## Session 65: W9 引导登录与内容布局：四阶段收敛引导/登录/WebView/Spotlight 表现层
+<!-- trellis-session: v=2 fp=0da005ece52a2816 -->
+
+**Date**: 2026-09-23
+**Task**: W9 引导登录与内容布局：四阶段收敛引导/登录/WebView/Spotlight 表现层
+**Branch**: `task/09-22-onboarding-auth-content-layout-s4`
+
+### Summary
+
+四阶段串行落地：ScrollableFormShell（可滚动+限宽+钉底 CTA）承载 welcome/language/theme/协议/启动错误/登录页；登录页主动作恒定在场、帮助次级化、剪贴板导入 busy 态；Spotlight 正文 700 限宽+段落级可选择+分享/打开原文；WebView 错误层级两端共用 LoginWebViewErrorCard（recoverable→重载+关闭，fatal 登录→原地重启 PKCE，fatal 注册→仅重载），错误文案统一为 '<type> <host>' 不带 query，mobile signup 补 onProgress 对齐 desktop。W1 动作语义全部保持原契约。
+
+### Main Changes
+
+- 新增 app/widgets/scrollable_form_shell.dart + layout/content_widths.dart 角色限宽常量；引导三页/协议页/登录页/启动错误页迁入 shell；Spotlight 限宽+段落 SelectableText+share/open_in_new；login_webview_error_card.dart 两端共用 + describeWebViewFailure 统一 '<type> <host>' 文案；mobile signup NavigationDelegate 补 onProgress
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8ea60a0` | feat(app): 新增可滚动限宽钉底 CTA 的 ScrollableFormShell |
+| `d9c81e6` | feat(onboarding): 引导页迁移到共用可滚动限宽 shell |
+| `972107c` | feat(onboarding): 用户协议页限宽且正文可选择 |
+| `478b927` | feat(app): 启动错误页主操作升级并限宽 |
+| `3967359` | feat(login): 登录页迁入可滚动限宽 shell |
+| `a9e4749` | feat(spotlight): 文章正文限宽并可按段落选择 |
+| `528d9f0` | feat(spotlight): 文章页支持分享与浏览器打开原文 |
+| `c1ba35c` | refactor(login): 两端授权 WebView 共用错误层级卡 |
+| `6a401d5` | fix(login): WebView 错误文案与注册进度条两端对齐 |
+
+### Testing
+
+- [OK] flutter analyze 0 issue；全量 flutter test 1432 通过；focused login_navigation/login_webview_desktop 全绿（desktop fatal 用 detached+resumed 组合规避 framesEnabled 停摆）；git diff --check 净；task.py validate 过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR body 已声明未验证项：WebView2 缺失态真机、桌面端实机错误卡行为、两端真机端到端登录
