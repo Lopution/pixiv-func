@@ -150,7 +150,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       恰好一次契约——D2 核心层增量）。
       测试：core 单测（终态可删/非终态 no-op/清空计数/记录清理）。
       提交：`feat(download): 新增终态任务移除与清空 API`
-- [ ] **T2**：`download_tasks_page.dart` 父子层级——子任务按
+- [x] **T2**：`download_tasks_page.dart` 父子层级——子任务按
       `snapshot.groupId` 聚合缩进于组卡下；未入组平铺；组卡头=组状态+
       聚合进度+组级动作。
       测试：聚合渲染断言（组内子项不再出现于顶层）。
