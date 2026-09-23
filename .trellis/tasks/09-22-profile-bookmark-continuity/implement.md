@@ -53,7 +53,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 1：作者页头部等价路径与 re-tap（R1, R2）
 
-- [ ] **统一动作源 + 挂载阈值**：`lib/features/profile/profile_header_delegate.dart`
+- [x] **统一动作源 + 挂载阈值**：`lib/features/profile/profile_header_delegate.dart`
       ——动作收敛为单一描述清单（share / follow-or-edit / restrict /
       bookmarkTags / downloadAll / more），`_CollapsedProfile` 溢出菜单
       （L539-573）与 `_ExpandedProfile` 动作行（L479-503）由同一清单生成：
