@@ -136,7 +136,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：路由解析（`?restrict=private` → 页面初始 private）；/me 收藏 tab
       私密范围下进标签页断言初始选中 private。
       提交：`feat(bookmark): 收藏范围经路由 query 传入标签页`
-- [ ] **tag feed 上下文 + heroScope**：`lib/features/profile/
+- [x] **tag feed 上下文 + heroScope**：`lib/features/profile/
       bookmark_tag_feed_page.dart`（L32-46）AppBar 显示 tag + 范围副标题
       （`restrictPublic`/`restrictPrivate` 复用，不做页内切换）；
       `lib/features/profile/profile_illust_feed.dart` heroScope（L101-104）
