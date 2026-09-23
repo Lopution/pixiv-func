@@ -36,47 +36,47 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
 
 ## 阶段 0：Rebaseline 门禁（W1 硬依赖，无产品 commit）
 
-- [ ] **前置确认**：W1（`task/09-22-interaction-outcome-correctness`）已合入
+- [x] **前置确认**：W1（`task/09-22-interaction-outcome-correctness`）已合入
       main；记录其 merge SHA 到本任务 notes。W1 未合入前不得创建实现分支——
       PopScope 显式返回、`readOffset→initialAnchor` 转换、信息 sheet `TagChip`
       与本包同文件且归 W1 owning。
       验证：`git log main --oneline` 含 W1 merge commit。
-- [ ] **分支与复核**：`git switch -c task/09-22-novel-reader-parity`（自 W1 后
+- [x] **分支与复核**：`git switch -c task/09-22-novel-reader-parity`（自 W1 后
       的 main）→ `task.py start`；逐条复核 research 行号对新基线：
       `novel_page.dart` 显式返回已是 `pop()`、`local_novel_reader_page.dart`
       已消费 `initialAnchor` 转换函数（记录其实际位置/返回类型——core 层
       record 还是 features 层 `NovelAnchor`）、信息 sheet `TagChip` 终态。
       若 W1 落地形态与 research 假设不符（如转换函数签名差异），回规划更新
       本文件再继续。
-- [ ] **基线测试**：跑上面聚焦测试清单记录真实基线；确认
+- [x] **基线测试**：跑上面聚焦测试清单记录真实基线；确认
       `novel_reader_chrome_test.dart` 当前断言语义（W1 版双路径 back）。
 
 ## 阶段 1：内核扩展（`novel_reader.dart`；`novel_layout.dart` 预期零改动）
 
-- [ ] **K1 goToPage 可跳页**：`NovelReaderHandle.goToPage` 扩为
+- [x] **K1 goToPage 可跳页**：`NovelReaderHandle.goToPage` 扩为
       `void Function(int page, {bool animate})?`（默认 true 保持现行为）；
       `animate:false` → `_pageController.jumpToPage`。
       测试：`novel_reader_test.dart` 用例——`goToPage(animate:false)` 后单帧
       pump 即到位（无 `MotionTokens.fast` 动画序列）。
       提交：`feat(novel): 阅读器跳转接口支持无动画跳页`
-- [ ] **K2 锚点通知区分来源**：内核标记锚点通知来源（恢复/commit postFrame
+- [x] **K2 锚点通知区分来源**：内核标记锚点通知来源（恢复/commit postFrame
       回显 vs `onPageChanged` 用户翻页；恢复那次程序性 `jumpToPage` 的
       `onPageChanged` 须标为非用户）。签名实现期定（`onAnchorChanged` 加
       source 参数或新增 `onUserAnchorChanged`），契约=舞台只为用户翻页写盘。
       测试：首次布局回显标非用户、tap 翻页标用户、settings 变更重排回显标非用户。
       提交：`feat(novel): 锚点回调区分恢复回显与用户翻页`
-- [ ] **K3 排版失败可见**：`NovelReader` 加可选 `layoutEngine`/`budget` 注入缝；
+- [x] **K3 排版失败可见**：`NovelReader` 加可选 `layoutEngine`/`budget` 注入缝；
       `_relayout` 捕 `NovelLayoutBudgetExceeded`（及排版确定性异常）→
       `_layoutError` 态 → `FeedError(title/error/retryLabel/onRetry)`，
       retry = `_scheduleLayout(force: true)`。
       测试：注入小 budget 触发超限 → `FeedError` 渲染 + retry 再调引擎。
       提交：`fix(novel): 排版预算超限渲染错误态而非未捕获异常`
-- [ ] **K4 章节列表暴露**：handle（或布局回调）暴露只读章节表
+- [x] **K4 章节列表暴露**：handle（或布局回调）暴露只读章节表
       `List<({String title, int pageIndex})>`——来自已 commit layout 的
       `pages` 中 `chapterTitle != null` 项；无章节/无布局 → 空表。
       测试：含 `[[chapter:]]` markup 的实体布局后返回有序 (title,pageIndex)。
       提交：`feat(novel): 阅读器命令面暴露章节列表`
-- [ ] **K5 行长限宽**：`LayoutBuilder` 内排版 viewport 宽 =
+- [x] **K5 行长限宽**：`LayoutBuilder` 内排版 viewport 宽 =
       `min(constraints.maxWidth, settings.fontSize * 40 + 2 * horizontalPadding)`
       传入 `_scheduleLayout`（`NovelLayoutKey.viewport` 随之收窄，缓存键一致）；
       `_NovelPage` 文字列 `Center` 居中（列宽=限宽值）；`zoneForTap`/
@@ -87,7 +87,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
 
 ## 阶段 2：共享舞台抽取 + 在线等价迁移（`novel_page.dart` → `novel_reader_stage.dart`）
 
-- [ ] **S1 舞台抽取**：新建 `lib/features/novel/novel_reader_stage.dart`，搬入
+- [x] **S1 舞台抽取**：新建 `lib/features/novel/novel_reader_stage.dart`，搬入
       `_NovelReaderStage` 全部状态机（`_prefsReady` 闸、`_ChromeBar`、PopScope、
       页脚 tip、顶/底栏、`_SettingsSliderRow`、`_NovelSeriesBar`/
       `_NovelAdjacentBar`、信息/设置弹层）+ `NovelReaderStageSpec` +
@@ -98,12 +98,12 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
       可观察行为零变化：`novel_reader_chrome_test.dart` 不改断言仍绿
       （W1 语义版）；`layering_test` 无新边。
       提交：`refactor(novel): 抽取共享阅读舞台，在线页改为 spec 装配`
-- [ ] **S2 进度写时机门（D1）**：舞台 `onAnchorChanged` 仅对用户翻页来源调
+- [x] **S2 进度写时机门（D1）**：舞台 `onAnchorChanged` 仅对用户翻页来源调
       `binding.save`；恢复回显、设置重排回显、sheet 开关均不写。
       测试：打开（无记录）→ store 无写入；打开（有记录）→ 无写入；
       tap 翻页 → 写一次新锚点；开/关信息 sheet → 无写入。
       提交：`fix(novel): 打开阅读器不再写入未阅读的进度`
-- [ ] **S3 设置 sheet 语义统一**：随舞台共享；slider 范围改读
+- [x] **S3 设置 sheet 语义统一**：随舞台共享；slider 范围改读
       `NovelReaderSettings.minFontSize/maxFontSize/minLineHeight/maxLineHeight`
       （行距 1.1–2.2 → 1.3–2.4，消死区）；信息顺序字号→行距→主题不变；
       `_applySettings` 写穿失败 → `showAppSnackBar` 可见（替 `unawaited` 静默）。
@@ -113,7 +113,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
 
 ## 阶段 3：本地接入（`local_novel_reader_page.dart`）
 
-- [ ] **L1 本地 spec 装配**：删常驻 `AppBar`/`ListTile`；`body` →
+- [x] **L1 本地 spec 装配**：删常驻 `AppBar`/`ListTile`；`body` →
       `NovelReaderStage(spec)`：`novel=_entityFor(novel,text)`（沿用合成实体）、
       `topActions=[]`、`infoSheet=文件信息 builder`、`bodyWrapper=null`、
       `progress=本地 binding`（`load` = `readOffset` → W1 转换函数 →
@@ -124,7 +124,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
       **导入后 `readOffset==null`、打开不翻页退出仍 null（D1/W6 契约）、
       翻页后非 null 且=页首偏移**；有记录重开恢复到上次位置（W1 接线验证）。
       提交：`feat(localnovel): 本地阅读器接入共享舞台`
-- [ ] **L2 文件信息 sheet**：`showAppBottomSheet` + 标题/字数
+- [x] **L2 文件信息 sheet**：`showAppBottomSheet` + 标题/字数
       （`localNovelsChars`)/编码/导入日期；`author` 恒 null 不渲染该行；
       `path` 技术值放次级或不放。新增 l10n 键（文件信息、编码、导入时间等，
       四语 + gen-l10n + lookup）。
@@ -133,7 +133,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
 
 ## 阶段 4：新增能力与宽屏（stage 层，两端同得）
 
-- [ ] **N1 可操作进度 + 目录 sheet**：底栏进度文本 → `InkWell`/`TextButton`
+- [x] **N1 可操作进度 + 目录 sheet**：底栏进度文本 → `InkWell`/`TextButton`
       （a11y 沿用 `novelReadingProgress`）→ 进度 sheet
       （`showAppBottomSheet`）：Slider `0..pageCount-1` 只更新预览标签
       （`页/总页 · %`）、确认 → `handle.goToPage(target, animate:false)`、
@@ -144,7 +144,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
       进度写一次（落页即用户翻页语义）；取消后页码不变；章节条目点击跳
       对应 `pageIndex`。
       提交：`feat(novel): 可操作进度跳转与目录弹层`
-- [ ] **N2 键盘翻页**：舞台层 `Focus(autofocus)` + `onKeyEvent`
+- [x] **N2 键盘翻页**：舞台层 `Focus(autofocus)` + `onKeyEvent`
       `←/→` → 前/后页（`detail_image_pager.dart:44-79` 先例）；sheet 打开时
       焦点自然让渡给路由，不另加守卫。
       测试：`sendKeyEvent(LogicalKeyboardKey.arrowRight/Left)` 翻页断言。
@@ -152,7 +152,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-novel-reader-pa
 
 ## 收尾
 
-- [ ] l10n 四语键全部就位（gen-l10n + `gen_l10n_lookup.py` 产物已提交）；
+- [x] l10n 四语键全部就位（gen-l10n + `gen_l10n_lookup.py` 产物已提交）；
       `flutter analyze --no-pub`、聚焦测试与全量 `flutter test`（噪声按 spec
       判定）、`git diff --check`、`task.py validate` 全绿。
 - [ ] 宽屏/键盘/屏幕阅读器/大 TXT 等本机不可验项在 PR body 逐项标"未验证"，
