@@ -194,7 +194,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：SegmentedButton/Outlined/Filled finder；awaitingPrefill 时
       confirm 禁用保持。
       提交：`refactor(bookmark): 收藏编辑弹层控件与全局一致`
-- [ ] **draft 语义：dirty 确认 + 失败保留**：`_BookmarkEditSheet`——初始值
+- [x] **draft 语义：dirty 确认 + 失败保留**：`_BookmarkEditSheet`——初始值
       基线（已收藏=回填值、新建=public+空 tags）与 `_isDirty` 判定；取消
       （L415）与下滑关闭在 dirty 时先弹 `showAppDialog` 确认（与 W1 统一
       确认层级同形，复用 profileEditLeave* 文案模式或新 `bookmarkEditLeave*`
