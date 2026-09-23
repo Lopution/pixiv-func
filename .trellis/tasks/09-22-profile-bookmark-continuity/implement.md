@@ -124,7 +124,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 3：收藏范围传递与标签页（R6）
 
-- [ ] **范围进路由**：`lib/app/navigation/routes.dart`——`openBookmarkTags`
+- [x] **范围进路由**：`lib/app/navigation/routes.dart`——`openBookmarkTags`
       （L1209-1211）加 `{required UserRestrict restrict}` 形参，写
       `?restrict=<name>` query；`bookmarks/tags` route builder（L585-589）按
       `bookmarks/tag`（L597-600）同模式解析为 `BookmarkRestrict` 传给
