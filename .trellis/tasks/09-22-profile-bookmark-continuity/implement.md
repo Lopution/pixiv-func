@@ -75,7 +75,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：菜单项文案随 follow 态切换、点击调 `followActionsProvider.toggle`、
       私密关注项弹出同一 restrict sheet。
       提交：`feat(profile): 收起态溢出菜单补齐关注等价路径`
-- [ ] **section chips 常驻 + re-tap 回顶**：`lib/features/profile/user_page.dart`
+- [x] **section chips 常驻 + re-tap 回顶**：`lib/features/profile/user_page.dart`
       ——删 `_selectorExpanded`/`_onTabTap` 展开语义（L98、L132-150）；
       `_UserPageState` 持 outer `ScrollController` 传给
       `NestedScrollView(controller:)`（L295）；新增 `_scrollActiveTabToTop()`：
