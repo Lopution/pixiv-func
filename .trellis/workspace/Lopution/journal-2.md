@@ -2,6 +2,7 @@
 
 > Continuation from `journal-1.md` (archived at ~2000 lines)
 > Started: 2026-09-22
+> Started: 2026-09-23
 
 ---
 
@@ -32,6 +33,28 @@
 | `fcca618` | fix(novel): 信息页标签可点击搜索 |
 | `a6c26a4` | fix(settings): 镜像源测试改名应用并测试 |
 | `b530534` | fix(login): 授权 WebView 动作名称与后果一致 |
+## Session 61: W4 作品浏览/查看器/系列流程
+<!-- trellis-session: v=2 fp=252e775d07abf66d -->
+
+**Date**: 2026-09-23
+**Task**: W4 作品浏览/查看器/系列流程
+**Branch**: `task/09-22-artwork-viewer-series-flow`
+
+### Summary
+
+20 个 checkbox 全部落地：AppHaptics 角色 API + 19 处消费点；下载全部常显 + 显式多页选择模式（三形态断言）；查看器会话级 chrome、双击消歧、底栏工具栏、空态页码、键鼠等价（pointerSignalResolver 先到先得修复 Shift+滚轮翻页）、PopScope 仅由缩放态把关；窄屏 compact header + info 跳转；series firstContentId 解析 + 会话内存最近打开 + 开始阅读/返回第 n 话分源动作
+
+### Main Changes
+
+- image_viewer_page.dart 重写手势/键盘/滚轮/PopScope 模型；illust_detail_page.dart 下载模式骨架 + compact header；app_haptics.dart 角色 API；series_* firstContentId + recent_open_store
+
+### Git Commits
+
+(No commits - planning session)
+
+### Testing
+
+- [OK] 全量 1289 通过；analyze 干净；三形态下载模式断言；PopScope×route-replace 用例
 
 ### Status
 
@@ -78,3 +101,6 @@
 ### Next Steps
 
 - W3/W4 消费 ReTapChannel 契约；W4 worktree 继续实现
+### Next Steps
+
+- PR + CI 绿后 merge；W5 novel reader parity 开工
