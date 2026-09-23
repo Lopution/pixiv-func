@@ -183,7 +183,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 5：收藏/关注弹层 FormState（R8）
 
-- [ ] **控件一致性 + 宽屏限宽**：`lib/app/widgets/bookmark_switch_button.dart`
+- [x] **控件一致性 + 宽屏限宽**：`lib/app/widgets/bookmark_switch_button.dart`
       ——`_RestrictSelect` DropdownButton（L470-535）→
       `SegmentedButton<BookmarkRestrict>`（与 follow sheet、标签页一致）；
       取消/确认 MaterialButton+headlineSmall（L391-462）→
