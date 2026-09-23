@@ -165,6 +165,23 @@
 - comment_input.dart：CommentComposerInputState 四态枚举 + 焦点单向桥 + PopScope 面板拦截 + 手动 bottomExtent + LayoutBuilder 宽度驱动网格 + cell/面板/引用条 Semantics + 发送中 spinner
 - comments_page.dart：_CommentFeedView header 槽（根评论+标题随列表滚动，非列表态 SingleChildScrollView 兜底）、GlobalKey<CommentComposerState> + _replyTo 主动聚焦、_send 成功守卫清目标 + AppHaptics.success()、回复页权限错误分支
 - 四语 ARB 新增 commentStampLabel(int)/commentSending + gen-l10n + lookup 再生成；state-management.md 网格表述改响应式契约；comments_replies_test.dart 新增/重写 23 个用例
+## Session 64: W5 novel-reader-parity：在线/本地共享阅读舞台
+<!-- trellis-session: v=2 fp=8f116f5c6de20eee -->
+
+**Date**: 2026-09-23
+**Task**: W5 novel-reader-parity：在线/本地共享阅读舞台
+**Branch**: `task/09-22-novel-reader-parity`
+
+### Summary
+
+NovelReaderStage 共享舞台落地：在线/本地同一 chrome/设置/进度/返回语义；锚点通知区分恢复回显与用户翻页（D1 进度门）；宽屏正文按字号×40 限宽居中；本地 TXT 接入舞台（readOffset null/0 语义保持）；可操作进度滑杆+目录 sheet（无动画远跳）；左右方向键翻页；设置范围对齐模型约束、持久化失败可见；排版预算超限渲染错误态
+
+### Main Changes
+
+- 内核：goToPage(animate:false)、锚点来源标记、章节表暴露、限宽居中、预算超限错误态
+- 舞台：novel_reader_stage.dart 抽取 chrome/设置/进度/binding，在线页 spec 装配
+- 本地：local_novel_reader_page 接入舞台+文件信息 sheet，offset 只由真实翻页写入
+- 新增：进度/目录 sheet（Slider 预览+确认跳页）、键盘左右翻页
 
 ### Git Commits
 
@@ -175,6 +192,25 @@
 ### Testing
 
 - [OK] [OK] test/comments_replies_test.dart 35/35 通过；全量 1327 通过（account_store 2 失败单文件复跑全绿，判并行负载噪声）；analyze/format --set-exit-if-changed/diff --check/task validate 全绿
+| `12ce938` | chore(task): 启动 09-22-novel-reader-parity |
+| `4c19218` | chore(task): 记录 W5 阶段 0 rebaseline 门禁结果 |
+| `6067a68` | feat(novel): 阅读器跳转接口支持无动画跳页 |
+| `00e0b97` | feat(novel): 锚点回调区分恢复回显与用户翻页 |
+| `ee3b0c7` | fix(novel): 排版预算超限渲染错误态而非未捕获异常 |
+| `6576169` | feat(novel): 阅读器命令面暴露章节列表 |
+| `7371b2b` | feat(novel): 宽屏正文按字号相对限宽居中 |
+| `bf04b49` | refactor(novel): 抽取共享阅读舞台，在线页改为 spec 装配 |
+| `f27ea88` | fix(novel): 打开阅读器不再写入未阅读的进度 |
+| `49e0f23` | fix(novel): 阅读设置范围对齐模型约束，持久化失败可见 |
+| `a235d74` | feat(localnovel): 本地阅读器接入共享舞台 |
+| `ea39cf9` | feat(localnovel): 本地小说文件信息弹层 |
+| `b705f44` | feat(novel): 可操作进度跳转与目录弹层 |
+| `b747bfc` | feat(novel): 方向键翻页 |
+| `04a9e98` | chore(task): 勾选 W5 implement 已完成项 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；聚焦 46 项全绿；全量 flutter test 1321 过；git diff --check 净；task.py validate 过
 
 ### Status
 
@@ -183,3 +219,4 @@
 ### Next Steps
 
 - 真机未验证项随 PR 声明：键盘↔面板动画、TalkBack/Narrator 焦点、OEM IME、真机触觉、1.3x 字体、横屏、reduced-motion、俄语长文案、predictive-back
+- PR body 标未验证矩阵：宽屏实机行长、TalkBack/Narrator、桌面焦点让渡、大 TXT CPU/内存、CRLF 渲染
