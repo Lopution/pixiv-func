@@ -141,7 +141,7 @@ widget test 推断通过。
       `.trellis/spec/frontend/state-management.md` 的「10 columns / 5 columns」
       （:302-303）与「10/5 grids」（:338）为响应式契约表述。
       提交：`feat(comments): 表情贴图网格按宽度定列数`
-- [ ] **C2**：emoji/stamp cell 包 `Semantics(button: true, label: emoji 名 /
+- [x] **C2**：emoji/stamp cell 包 `Semantics(button: true, label: emoji 名 /
       stamp id)` + 图片 `excludeFromSemantics`；面板容器 `Semantics(container:
       true)`；新增 l10n key（stamp cell label 带 id 占位，如 `commentStamp`）
       四语 arb + `flutter gen-l10n` + `tool/gen_l10n_lookup.py`。
