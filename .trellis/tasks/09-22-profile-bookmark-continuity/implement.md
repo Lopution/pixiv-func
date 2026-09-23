@@ -93,7 +93,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 2：统计、链接与分享（R3, R4, R5）
 
-- [ ] **可导航统计**：`user_page.dart`/`profile_header_delegate.dart`——`_Stat`
+- [x] **可导航统计**：`user_page.dart`/`profile_header_delegate.dart`——`_Stat`
       （L675-699）与 `_ProfileStatRow`（L457-481）收敛为同一导航控件（header
       用 chip 形态、about 用行形态；`Semantics(button:)`，图标+数值+标签一次
       焦点读出）；统计集 = following/myPixiv/illust/manga/novel/series 六项
