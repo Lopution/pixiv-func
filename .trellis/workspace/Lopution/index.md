@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-2.md`
-- **Total Sessions**: 65
+- **Total Sessions**: 66
 - **Last Active**: 2026-09-23
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-2.md` | ~264 | Active |
+| `journal-2.md` | ~334 | Active |
 | `journal-1.md` | ~2039 | Archived |
 <!-- @@@/auto:active-documents -->
 
@@ -30,6 +30,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 66 | 2026-09-23 | W8 设置表单语义：FormState 四态分类落地与摘要/限宽/dirty 守卫/诊断生命周期 | `699e204`, `b8c0801`, `f1531a6`, `9387631`, `96bd822`, `e7a4192`, `6c93e33`, `2680197`, `6811e9b`, `3de4cd8`, `d3a465d`, `8e69b3b`, `8f2b6d4`, `031ce9e`, `e3680c4`, `43f4333`, `928ed5b`, `fe5ccd6`, `eec6906`, `afb7e0b`, `91e3d09`, `3e89ff6`, `77532a1`, `33e037c`, `f3d4143`, `232ab03`, `593b116`, `996abff`, `6dbbaeb`, `d660fbb`, `dfe41fb`, `7615901`, `cb8b020` | `task/09-22-settings-form-semantics-s5` |
 | 65 | 2026-09-23 | W9 引导登录与内容布局：四阶段收敛引导/登录/WebView/Spotlight 表现层 | `8ea60a0`, `d9c81e6`, `972107c`, `478b927`, `3967359`, `a9e4749`, `528d9f0`, `c1ba35c`, `6a401d5` | `task/09-22-onboarding-auth-content-layout-s4` |
 <<<<<<< HEAD
 | 63 | 2026-09-23 | W7 评论输入状态机收敛：四态互斥/回复页滚动并入/响应式网格/语义/发送进度/触觉接入 | `8b69127` | `task/09-22-comment-input-state` |
