@@ -128,7 +128,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       新 l10n：`localNovelContinue`。
       测试：tap=继续阅读、删除经菜单+统一确认弹层。
       提交：`feat(localnovel): 主操作改为继续阅读，删除下沉更多菜单`
-- [ ] **M6**：`app_breakpoints.dart` 增 `managementContentMaxWidth=840`；
+- [x] **M6**：`app_breakpoints.dart` 增 `managementContentMaxWidth=840`；
       watchlist/localnovels 两页 body 包 `Center+ConstrainedBox`
       （download_tasks 随 stage 3 接入）。
       测试：840/1200dp 限宽断言；320dp 无不可达动作。
