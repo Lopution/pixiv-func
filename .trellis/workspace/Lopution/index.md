@@ -8,7 +8,11 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-2.md`
+<<<<<<< HEAD
 - **Total Sessions**: 63
+=======
+- **Total Sessions**: 64
+>>>>>>> 21345f8 (chore: record journal)
 - **Last Active**: 2026-09-23
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +23,11 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
+<<<<<<< HEAD
 | `journal-2.md` | ~185 | Active |
+=======
+| `journal-2.md` | ~200 | Active |
+>>>>>>> 21345f8 (chore: record journal)
 | `journal-1.md` | ~2039 | Archived |
 <!-- @@@/auto:active-documents -->
 
@@ -30,7 +38,11 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+<<<<<<< HEAD
 | 63 | 2026-09-23 | W7 评论输入状态机收敛：四态互斥/回复页滚动并入/响应式网格/语义/发送进度/触觉接入 | `8b69127` | `task/09-22-comment-input-state` |
+=======
+| 64 | 2026-09-23 | W5 novel-reader-parity：在线/本地共享阅读舞台 | `01729a1`, `fd63b55`, `962a447`, `ad86a6a`, `4bad740`, `ea642a8`, `eac0165`, `935003a`, `54cb511`, `312331e`, `80ebd35`, `c569346`, `1255da5`, `c2583fb`, `2f24059` | `task/09-22-novel-reader-parity` |
+>>>>>>> 21345f8 (chore: record journal)
 | 62 | 2026-09-23 | W3 作者页与收藏范围连续：头部等价路径/统计导航/分享直达/收藏范围传递/编辑弹层收敛 | `ec79394`, `faa3357`, `caeca95`, `7d25df7`, `8694735`, `20d4124`, `d42d766`, `4b6e733`, `80ce7de`, `8f44c24`, `6b5cf94`, `5cbf567`, `af8f881`, `32b6211` | `task/09-22-profile-bookmark-continuity` |
 | 61 | 2026-09-23 | W4 作品浏览/查看器/系列流程 | - | `task/09-22-artwork-viewer-series-flow` |
 | 60 | 2026-09-23 | W2 discovery-query-context：re-tap 通道 + 查询上下文路由化 + 反向搜图任务头 | `8bfda22`, `c867f63`, `05c30b0`, `d0d8bb3`, `22d7857`, `4c3d4fd`, `a9ac774`, `4351125`, `17e4021`, `6e9ff8e`, `a4237f2`, `618c1b6`, `59462bd` | `task/09-22-discovery-query-context` |
