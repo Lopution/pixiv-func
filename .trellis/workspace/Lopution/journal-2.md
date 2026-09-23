@@ -104,3 +104,46 @@
 ### Next Steps
 
 - PR + CI 绿后 merge；W5 novel reader parity 开工
+
+
+## Session 62: W3 作者页与收藏范围连续：头部等价路径/统计导航/分享直达/收藏范围传递/编辑弹层收敛
+<!-- trellis-session: v=2 fp=cfe475e25863fc5b -->
+
+**Date**: 2026-09-23
+**Task**: W3 作者页与收藏范围连续：头部等价路径/统计导航/分享直达/收藏范围传递/编辑弹层收敛
+**Branch**: `task/09-22-profile-bookmark-continuity`
+
+### Summary
+
+作者页头部展开/收起两态同源动作（收起 chrome 完全收起才挂载、溢出菜单补关注等价路径）、作品类型常驻+re-tap 回顶、统计可导航、社交链接打开/复制、分享直达；收藏范围经路由 query 入标签页、tag feed 本地过滤+范围标识、标签列表尾部重试；资料编辑底栏固定保存+预览形态+ContentWidths.form 限宽；收藏 sheet 控件全局一致+draft dirty 三路径确认+失败保留草稿
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `ec79394` | fix(profile): 头部展开/收起动作同源，收起 chrome 完全收起才挂载 |
+| `faa3357` | feat(profile): 收起态溢出菜单补齐关注等价路径 |
+| `caeca95` | feat(profile): 作品类型常驻可见，重复点击固定为回到顶部 |
+| `7d25df7` | feat(profile): 统计项可导航，头部与 about 共用映射 |
+| `8694735` | feat(profile): 社交链接主操作打开、次操作复制 |
+| `20d4124` | feat(profile): 作者分享与作品一致直达，复制链接独立 |
+| `d42d766` | feat(bookmark): 收藏范围经路由 query 传入标签页 |
+| `4b6e733` | fix(profile): 标签 feed 显示范围标识，heroScope 加 bookmarkTag |
+| `80ce7de` | feat(bookmark): 标签 feed 本地过滤已加载内容 |
+| `8f44c24` | fix(bookmark): 标签列表加载失败有尾部重试 |
+| `6b5cf94` | feat(profile): 资料编辑保存入口固定在底栏 |
+| `5cbf567` | feat(profile): 资料编辑预览形态与宽屏限宽 |
+| `af8f881` | refactor(bookmark): 收藏编辑弹层控件与全局一致 |
+| `32b6211` | feat(bookmark): 收藏编辑按 draft 语义，失败保留草稿 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues；全量 flutter test 1322 过（2 项 sqlite lock 并发噪声单跑通过）；bookmark_switch_button 15 项、profile_edit 15 项、user_profile 21 项全绿
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR 合入后真机复核 design §五未验证清单（re-tap 手势竞争、sheet 键盘/限宽、reduced-motion、1.3x 长翻译、TalkBack/Narrator、iPad popover 锚点、长表单底栏）

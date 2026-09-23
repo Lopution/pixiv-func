@@ -8,7 +8,7 @@
 
 <!-- @@@auto:current-status -->
 - **Active File**: `journal-2.md`
-- **Total Sessions**: 61
+- **Total Sessions**: 62
 - **Last Active**: 2026-09-23
 <!-- @@@/auto:current-status -->
 
@@ -19,7 +19,7 @@
 <!-- @@@auto:active-documents -->
 | File | Lines | Status |
 |------|-------|--------|
-| `journal-2.md` | ~120 | Active |
+| `journal-2.md` | ~149 | Active |
 | `journal-1.md` | ~2039 | Archived |
 <!-- @@@/auto:active-documents -->
 
@@ -30,6 +30,7 @@
 <!-- @@@auto:session-history -->
 | # | Date | Title | Commits | Branch |
 |---|------|-------|---------|--------|
+| 62 | 2026-09-23 | W3 作者页与收藏范围连续：头部等价路径/统计导航/分享直达/收藏范围传递/编辑弹层收敛 | `ec79394`, `faa3357`, `caeca95`, `7d25df7`, `8694735`, `20d4124`, `d42d766`, `4b6e733`, `80ce7de`, `8f44c24`, `6b5cf94`, `5cbf567`, `af8f881`, `32b6211` | `task/09-22-profile-bookmark-continuity` |
 | 61 | 2026-09-23 | W4 作品浏览/查看器/系列流程 | - | `task/09-22-artwork-viewer-series-flow` |
 | 60 | 2026-09-23 | W2 discovery-query-context：re-tap 通道 + 查询上下文路由化 + 反向搜图任务头 | `8bfda22`, `c867f63`, `05c30b0`, `d0d8bb3`, `22d7857`, `4c3d4fd`, `a9ac774`, `4351125`, `17e4021`, `6e9ff8e`, `a4237f2`, `618c1b6`, `59462bd` | `task/09-22-discovery-query-context` |
 | 59 | 2026-09-22 | W1 交互结果正确性实现（9 项确定性修复） | `0d376d7`, `a97a5c8`, `cd551ee`, `8f7572a`, `f1f3faf`, `d7223f2`, `ffbf138`, `fcca618`, `a6c26a4`, `b530534` | `task/09-22-interaction-outcome-correctness` |
