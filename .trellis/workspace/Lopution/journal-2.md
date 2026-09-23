@@ -192,21 +192,21 @@ NovelReaderStage 共享舞台落地：在线/本地同一 chrome/设置/进度/�
 ### Testing
 
 - [OK] [OK] test/comments_replies_test.dart 35/35 通过；全量 1327 通过（account_store 2 失败单文件复跑全绿，判并行负载噪声）；analyze/format --set-exit-if-changed/diff --check/task validate 全绿
-| `12ce938` | chore(task): 启动 09-22-novel-reader-parity |
-| `4c19218` | chore(task): 记录 W5 阶段 0 rebaseline 门禁结果 |
-| `6067a68` | feat(novel): 阅读器跳转接口支持无动画跳页 |
-| `00e0b97` | feat(novel): 锚点回调区分恢复回显与用户翻页 |
-| `ee3b0c7` | fix(novel): 排版预算超限渲染错误态而非未捕获异常 |
-| `6576169` | feat(novel): 阅读器命令面暴露章节列表 |
-| `7371b2b` | feat(novel): 宽屏正文按字号相对限宽居中 |
-| `bf04b49` | refactor(novel): 抽取共享阅读舞台，在线页改为 spec 装配 |
-| `f27ea88` | fix(novel): 打开阅读器不再写入未阅读的进度 |
-| `49e0f23` | fix(novel): 阅读设置范围对齐模型约束，持久化失败可见 |
-| `a235d74` | feat(localnovel): 本地阅读器接入共享舞台 |
-| `ea39cf9` | feat(localnovel): 本地小说文件信息弹层 |
-| `b705f44` | feat(novel): 可操作进度跳转与目录弹层 |
-| `b747bfc` | feat(novel): 方向键翻页 |
-| `04a9e98` | chore(task): 勾选 W5 implement 已完成项 |
+| `01729a1` | chore(task): 启动 09-22-novel-reader-parity |
+| `fd63b55` | chore(task): 记录 W5 阶段 0 rebaseline 门禁结果 |
+| `962a447` | feat(novel): 阅读器跳转接口支持无动画跳页 |
+| `ad86a6a` | feat(novel): 锚点回调区分恢复回显与用户翻页 |
+| `4bad740` | fix(novel): 排版预算超限渲染错误态而非未捕获异常 |
+| `ea642a8` | feat(novel): 阅读器命令面暴露章节列表 |
+| `eac0165` | feat(novel): 宽屏正文按字号相对限宽居中 |
+| `935003a` | refactor(novel): 抽取共享阅读舞台，在线页改为 spec 装配 |
+| `54cb511` | fix(novel): 打开阅读器不再写入未阅读的进度 |
+| `312331e` | fix(novel): 阅读设置范围对齐模型约束，持久化失败可见 |
+| `80ebd35` | feat(localnovel): 本地阅读器接入共享舞台 |
+| `c569346` | feat(localnovel): 本地小说文件信息弹层 |
+| `1255da5` | feat(novel): 可操作进度跳转与目录弹层 |
+| `c2583fb` | feat(novel): 方向键翻页 |
+| `2f24059` | chore(task): 勾选 W5 implement 已完成项 |
 
 ### Testing
 
