@@ -158,7 +158,7 @@ widget test 推断通过。
       测试：发送中 spinner + semantics 断言；`sending` false 但 `_busy` true
       窗口仍 busy。
       提交：`feat(comments): 发送中按钮内显示进度`
-- [ ] **D2**：触觉消费——两页 `_send`/`_sendStamp` await 成功返回后（与清
+- [x] **D2**：触觉消费——两页 `_send`/`_sendStamp` await 成功返回后（与清
       目标同点）调 W4 合入封装的「明确震动」档（接口名以 W4 合入物为准，
       参考 PixEz `mediumImpact`）；文本与 stamp 同点同档；composer 内不加
       业务副作用；grep 确认全库无第二 `HapticFeedback` 调用点。
