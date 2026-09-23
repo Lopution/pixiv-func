@@ -75,7 +75,7 @@ widget test 推断通过。
 
 ## 阶段 1：组 A — composer 四态状态机与 insets（R4）
 
-- [ ] **A1**：`lib/features/comments/comment_input.dart`——引入
+- [x] **A1**：`lib/features/comments/comment_input.dart`——引入
       `enum CommentComposerInputState { none, keyboard, emoji, stamp }` 替换
       `_CommentComposerPanel? _panel`（:6、:35）；`initState` 挂 `_focusNode`
       listener 单向收敛键盘态（获焦→keyboard、失焦未进面板→none）；
@@ -89,7 +89,7 @@ widget test 推断通过。
       →none 不离页；keyboard 态不拦截；emoji→stamp 直换）；插入表情后
       `focusNode.hasFocus && 面板关`。互斥回归用例先对旧实现跑红留证据。
       提交：`feat(comments): 输入器收敛为 none/keyboard/emoji/stamp 四态互斥`
-- [ ] **A2**：两页 Scaffold `resizeToAvoidBottomInset: false`
+- [x] **A2**：两页 Scaffold `resizeToAvoidBottomInset: false`
       （comments_page.dart:50、:170）；composer 底部区域 `bottomExtent =
       max(viewInsets.bottom, panelVisible ? panelHeight : 0)`，面板挂 input
       row 下 `SizedBox(height: bottomExtent)`；列表底部 padding
@@ -168,13 +168,13 @@ widget test 推断通过。
 
 ## 收尾
 
-- [ ] `flutter analyze --no-pub` 与全量 `flutter test` 通过（噪声按 spec
+- [x] `flutter analyze --no-pub` 与全量 `flutter test` 通过（噪声按 spec
       判定）；`dart format lib test`、`git diff --check` 干净；
       `task.py validate` 通过。
-- [ ] PR：`gh pr create --fill`——body 显式列「未验证」清单（键盘↔面板
+- [x] PR：`gh pr create --fill`——body 显式列「未验证」清单（键盘↔面板
       动画、TalkBack/Narrator、OEM IME、真机触觉、1.3x 大字体、横屏、
       reduced motion、俄语长文案）；CI 绿后 `gh pr merge --merge`。
-- [ ] 收尾记账：`add_session.py` + `task.py archive`（随本 PR 的最后提交）。
+- [x] 收尾记账：`add_session.py` + `task.py archive`（随本 PR 的最后提交）。
 
 ## 边界（不做）
 
