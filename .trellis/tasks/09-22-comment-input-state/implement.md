@@ -34,18 +34,44 @@ widget test 推断通过。
 
 ## 阶段 0：依赖门禁（阻塞性，无产品提交）
 
-- [ ] 确认 W1 `09-22-interaction-outcome-correctness` 已合入 `main`——
+- [x] 确认 W1 `09-22-interaction-outcome-correctness` 已合入 `main`——
       §5.4 返回契约基线；本包 `PopScope`/back 语义建立在其上。
-- [ ] 确认 W4 `09-22-artwork-viewer-series-flow` 已合入 `main` 且其 `lib/app/`
+      **核实记录（2026-09-23）**：W1 以 PR #56 与 #57 合入
+      （merge `2ebf2b8`、`b8eafb3`），早于本分支基线。
+- [x] 确认 W4 `09-22-artwork-viewer-series-flow` 已合入 `main` 且其 `lib/app/`
       触觉薄封装存在（预期 `lib/app/haptics/`）——记录实际 API 名与「明确
       震动」档调用签名，以 W4 合入物为准。**W4 未合入则本任务到此停止**；
       禁止在 W7 内新建 `lib/app/*haptic*`（§4.11/§5.6）。
-- [ ] Rebaseline：记录当时 `main` SHA；按 `research/codebase-*.md` 复核
+      **核实记录**：W4 以 PR #60 合入（merge `8e8e1ed`，即本分支基线）。
+      实际封装 = `lib/app/haptics/app_haptics.dart`
+      `abstract final class AppHaptics`，按动作角色暴露
+      `select()`/`confirm()`/`success()`/`error()` 四个静态方法。
+      「发送终态·明确震动」档调用签名 = **`AppHaptics.success()`**
+      （内部 `HapticFeedback.mediumImpact`，80ms 节流；
+      W4 design §2.1 契约面写死「保存/发送成功 → success」）。
+      测试观察缝：无注入式 observer，但 `HapticFeedback.vibrate` 走
+      `SystemChannels.platform`，可在 widget test 用
+      `defaultBinaryMessenger.setMockMethodCallHandler` 计数；
+      `AppHaptics.debugReset()` 清节流。全库 `HapticFeedback` 仅
+      `app_haptics.dart` 一处命中（`configure` 挂在 `app.dart:125`）。
+- [x] Rebaseline：记录当时 `main` SHA；按 `research/codebase-*.md` 复核
       owning files 行号（W1/W4 若动了相邻文件需更新引用）；确认追踪矩阵
       #19/#20 未被其他已合入任务吸收；运行
       `flutter test test/comments_replies_test.dart` 记录真实基线。
-- [ ] `git switch -c task/09-22-comment-input-state` 后
+      **核实记录**：基线 `main@8e8e1ed`（research 标称 `8067b2d`）。
+      `git diff 8067b2d..8e8e1ed` 显示 `lib/features/comments/`、
+      `test/comments_replies_test.dart`、`state-management.md` 零改动
+      ——research 行号对本 HEAD 无漂移；漂移仅在 l10n 生成物与新增
+      `app_haptics.dart`。追踪矩阵 #19/#20 无其他合入任务认领。
+      基线测试：`flutter test test/comments_replies_test.dart`
+      **12/12 全绿**（含既有固定 10/5 列断言 :563-599）。
+      设计勘误（评审定案优先于本文件）：A2「列表底部 padding
+      `8 + bottomExtent`」被 design.md「避让责任唯一」条款取代——
+      composer 参与布局即全部避让机制，列表底部只留常数 `8`。
+- [x] `git switch -c task/09-22-comment-input-state` 后
       `python3 ./.trellis/scripts/task.py start .trellis/tasks/09-22-comment-input-state`。
+      **核实记录**：分支 `task/09-22-comment-input-state`，启动记账
+      `3494e1a`，worktree `/root/Pixiv-func-w7`。
 
 ## 阶段 1：组 A — composer 四态状态机与 insets（R4）
 
