@@ -120,7 +120,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `watchlistUnwatch`。
       测试：manga/novel 分支三动作+取消追更；novel 菜单无目录项。
       提交：`feat(watchlist): 区分查看更新、打开目录、继续阅读与取消追更`
-- [ ] **M5**：`local_novels_page.dart`——条目向 `EntityRow` 靠拢；
+- [x] **M5**：`local_novels_page.dart`——条目向 `EntityRow` 靠拢；
       tap=`openLocalNovelReader`；`readOffset != null` 时 meta 显示进度
       文案（null↔0 边界）；trailing delete 图标改 `more_vert`→
       `showAppBottomSheet` 菜单；确认弹层裸 `showDialog`（111-128）改
