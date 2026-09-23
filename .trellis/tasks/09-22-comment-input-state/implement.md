@@ -120,7 +120,7 @@ widget test 推断通过。
       测试：点 `CommentItem` reply pill → composer `focusNode.hasFocus`；
       引用条语义可定位；回复页初始引用条 = 根评论名。
       提交：`feat(comments): 点击回复主动聚焦输入框，引用条补语义`
-- [ ] **B3**：发送成功清除 reply target——两页 `_send` 入口快照 `target`，
+- [x] **B3**：发送成功清除 reply target——两页 `_send` 入口快照 `target`，
       await 成功后仅当 `identical(_replyTarget, target) ||
       _replyTarget?.id == target?.id` 才 `setState(_replyTarget = null)`；
       根页→回顶层，回复页→回落 `?? root`。
