@@ -12,7 +12,7 @@
   "assignee": "Lopution",
   "createdAt": "2026-09-22",
   "completedAt": null,
-  "branch": "task/09-22-settings-form-semantics-s3",
+  "branch": "task/09-22-settings-form-semantics-s4",
   "base_branch": "main",
   "worktree_path": null,
   "commit": null,
@@ -26,6 +26,7 @@
     "rebaseline": "W1 merged via PR #56/#57 (browse=应用并测试/imageSourceApplyAndTest, credentials _clear clears fields + _statusIsError dual color). Focused baseline green on main@8e8e1ed: settings_test+server_display+backup+network_probe 73 tests, pop_repro+mute_store 10 tests. content_widths.dart absent on main — this package creates it (form=520/settings=600/article=700/management=840).",
     "s1_pr": "https://github.com/Lopution/pixiv-func/pull/63",
     "s2_pr": "https://github.com/Lopution/pixiv-func/pull/69",
-    "s3_pr": "https://github.com/Lopution/pixiv-func/pull/71"
+    "s3_pr": "https://github.com/Lopution/pixiv-func/pull/71",
+    "s4_pr": "https://github.com/Lopution/pixiv-func/pull/72"
   }
 }
