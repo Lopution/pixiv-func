@@ -166,7 +166,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `downloadProcessing`（或复用 Running）。
       测试：九态+failureKind=paused 全映射覆盖。
       提交：`feat(settings): 下载九态动作映射对齐术语契约`
-- [ ] **T4**：提交反馈直达——`routes.dart` 追加 `openDownloadTasks`
+- [x] **T4**：提交反馈直达——`routes.dart` 追加 `openDownloadTasks`
       门面（`context.push('/settings/tasks')`）；三处
       `downloadQueuedMessage` SnackBar 加 `action: 查看`
       （`illust_card_actions.dart:90`、`page_image.dart:241`、
