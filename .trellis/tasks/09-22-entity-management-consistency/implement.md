@@ -155,7 +155,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       聚合进度+组级动作。
       测试：聚合渲染断言（组内子项不再出现于顶层）。
       提交：`feat(settings): 下载任务按组聚合父子层级`
-- [ ] **T3**：九态动作映射重写（表见 design.md §二）：
+- [x] **T3**：九态动作映射重写（表见 design.md §二）：
       retryable+paused→**继续**（非 retry 图标）；succeeded→**查看**
       （`openIllust(task.illustId)`）；failed/canceled→重试+移除；
       orphaned→说明+移除；组级映射同步。
