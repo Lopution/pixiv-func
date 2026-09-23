@@ -3,7 +3,7 @@
   "name": "settings-form-semantics",
   "title": "设置表单语义",
   "description": "Roadmap W8：设置摘要、配置归属、immediate/draft/action/destructive 表单语义、诊断生命周期与设置自有弹层迁移。",
-  "status": "planning",
+  "status": "in_progress",
   "dev_type": null,
   "scope": null,
   "package": null,
@@ -12,7 +12,7 @@
   "assignee": "Lopution",
   "createdAt": "2026-09-22",
   "completedAt": null,
-  "branch": null,
+  "branch": "task/09-22-settings-form-semantics-s1",
   "base_branch": "main",
   "worktree_path": null,
   "commit": null,
@@ -22,5 +22,8 @@
   "parent": "09-22-ui-interaction-consistency",
   "relatedFiles": [],
   "notes": "",
-  "meta": {}
+  "meta": {
+    "rebaseline": "W1 merged via PR #56/#57 (browse=应用并测试/imageSourceApplyAndTest, credentials _clear clears fields + _statusIsError dual color). Focused baseline green on main@8e8e1ed: settings_test+server_display+backup+network_probe 73 tests, pop_repro+mute_store 10 tests. content_widths.dart absent on main — this package creates it (form=520/settings=600/article=700/management=840).",
+    "s1_pr": "https://github.com/Lopution/pixiv-func/pull/63"
+  }
 }
