@@ -132,7 +132,7 @@ widget test 推断通过。
 
 ## 阶段 3：组 C — 网格响应式与可达性（R5/R7 网格部分）
 
-- [ ] **C1**（同一 commit 三处落地）：`comment_input.dart` 面板 GridView 外包
+- [x] **C1**（同一 commit 三处落地）：`comment_input.dart` 面板 GridView 外包
       `LayoutBuilder`，`crossAxisCount = (constraints.maxWidth / minExtent)
       .floor()` 加 clamp——emoji minExtent≈48 clamp 3–10，stamp minExtent≈96
       clamp 2–5，spacing 保持 8；**同 commit** 重写
