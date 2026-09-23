@@ -22,5 +22,7 @@
   "parent": "09-22-ui-interaction-consistency",
   "relatedFiles": [],
   "notes": "",
-  "meta": {}
+  "meta": {
+    "rebaseline": "W1 merged via PR #56/#57 (browse=应用并测试/imageSourceApplyAndTest, credentials _clear clears fields + _statusIsError dual color). Focused baseline green on main@8e8e1ed: settings_test+server_display+backup+network_probe 73 tests, pop_repro+mute_store 10 tests. content_widths.dart absent on main — this package creates it (form=520/settings=600/article=700/management=840)."
+  }
 }
