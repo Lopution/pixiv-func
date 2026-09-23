@@ -147,3 +147,39 @@
 ### Next Steps
 
 - PR 合入后真机复核 design §五未验证清单（re-tap 手势竞争、sheet 键盘/限宽、reduced-motion、1.3x 长翻译、TalkBack/Narrator、iPad popover 锚点、长表单底栏）
+
+
+## Session 63: W7 评论输入状态机收敛：四态互斥/回复页滚动并入/响应式网格/语义/发送进度/触觉接入
+<!-- trellis-session: v=2 fp=d6cee1160f0586e1 -->
+
+**Date**: 2026-09-23
+**Task**: W7 评论输入状态机收敛：四态互斥/回复页滚动并入/响应式网格/语义/发送进度/触觉接入
+**Branch**: `task/09-22-comment-input-state`
+
+### Summary
+
+阶段 0 依赖门禁核实（W1/W4 已合并、AppHaptics 角色 API 定位）后，A-D 四组 9 个 checkbox 全部落地：composer 收敛为 none/keyboard/emoji/stamp 四态互斥 + PopScope 仅拦面板；双页手动 insets + 键盘高度采样缓存（280dp 回退）；回复页根评论并入列表滚动、非列表态滚动兜底防溢出；reply pill 主动聚焦 + 引用条 Semantics 容器；发送成功清回复目标（mid-flight 改目标防误清）+ 回复页权限错误分支；emoji/stamp 网格按宽度定列（48dp/96dp cell，3-10/2-5 clamp）；cell button+label 语义 + commentStampLabel/commentSending 四语落地；发送中按钮内 spinner；AppHaptics.success() 接入两页发送成功点（文本/stamp 同点同档，composer 无业务副作用）
+
+### Main Changes
+
+- comment_input.dart：CommentComposerInputState 四态枚举 + 焦点单向桥 + PopScope 面板拦截 + 手动 bottomExtent + LayoutBuilder 宽度驱动网格 + cell/面板/引用条 Semantics + 发送中 spinner
+- comments_page.dart：_CommentFeedView header 槽（根评论+标题随列表滚动，非列表态 SingleChildScrollView 兜底）、GlobalKey<CommentComposerState> + _replyTo 主动聚焦、_send 成功守卫清目标 + AppHaptics.success()、回复页权限错误分支
+- 四语 ARB 新增 commentStampLabel(int)/commentSending + gen-l10n + lookup 再生成；state-management.md 网格表述改响应式契约；comments_replies_test.dart 新增/重写 23 个用例
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8b69127` | feat(comments): 发送成功接入共享触觉反馈 |
+
+### Testing
+
+- [OK] [OK] test/comments_replies_test.dart 35/35 通过；全量 1327 通过（account_store 2 失败单文件复跑全绿，判并行负载噪声）；analyze/format --set-exit-if-changed/diff --check/task validate 全绿
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机未验证项随 PR 声明：键盘↔面板动画、TalkBack/Narrator 焦点、OEM IME、真机触觉、1.3x 字体、横屏、reduced-motion、俄语长文案、predictive-back
