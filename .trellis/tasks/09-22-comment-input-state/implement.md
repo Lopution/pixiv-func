@@ -103,7 +103,7 @@ widget test 推断通过。
 
 ## 阶段 2：组 B — 回复页结构与回复目标（R1/R2/R3）
 
-- [ ] **B1**：`_CommentFeedView` 新增 `Widget? header`（comments_page.dart
+- [x] **B1**：`_CommentFeedView` 新增 `Widget? header`（comments_page.dart
       :272-284）：`itemCount = comments.length + 1 + (header != null ? 1 : 0)`，
       index0=header，末位仍 `FeedTail`；`CommentRepliesPage.build`（:172-214）
       拆除外层 Column 中固定 `CommentItem`/`Padding`，包成 header（根
