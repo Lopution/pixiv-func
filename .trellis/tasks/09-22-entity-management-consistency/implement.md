@@ -87,14 +87,14 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
 分支：`task/09-22-entity-management-consistency-management`（自 stage 1
 合入后的 main 切出）
 
-- [ ] **M1**：`history_page.dart` 选择模式——长按进入（W4 触觉明确震动
+- [x] **M1**：`history_page.dart` 选择模式——长按进入（W4 触觉明确震动
       档），AppBar 换"已选 N"+全选+删除+退出（`primaryContainer`），
       选中条目整行变色+check 不挂次级动作；删除走 `showAppBottomSheet`
       （复用 `_confirmDelete` 460-500 形态）；系统返回退出模式。
       新 l10n：`manage`/`selectAll`/`selectedCount(n)`（四语）。
       测试：进入/勾选/全选/删除确认/退出全链路；长按旧语义用例改写。
       提交：`feat(history): 长按进入选择模式，删除收进管理动作`
-- [ ] **M2**：`history_page.dart` 条目迁移——illust 条目改
+- [x] **M2**：`history_page.dart` 条目迁移——illust 条目改
       `IllustCard(meta: 日期)`；`_KnownIllustEntry` 的 `MediaQuery` 两列
       估高（278-283）改读 `FeedItemExtent.maybeOf`；novel 方形 cell 按
       对象契约对齐（圆角/PressScale/Semantics/类型角标，D4）；
@@ -103,13 +103,13 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `FeedEmpty`（D6）。
       测试：FeedItemExtent 消费断言、日期 meta 渲染、类型可辨。
       提交：`refactor(history): 历史条目迁移至共享对象组件契约`
-- [ ] **M3**：`watchlater_page.dart` + `illust_card_actions.dart:103-148`
+- [x] **M3**：`watchlater_page.dart` + `illust_card_actions.dart:103-148`
       移除后 `showAppSnackBar` 带 `action: 撤销`（`store.add` 幂等）；
       不扩成收藏。
       新 l10n：`undo`、`watchLaterRemoved`。
       测试：移除→撤销→store 复原。
       提交：`feat(watchlater): 移除后支持撤销`
-- [ ] **M4**：`watchlist_page.dart` `_WatchlistEntryTile`（147-238）改
+- [x] **M4**：`watchlist_page.dart` `_WatchlistEntryTile`（147-238）改
       `EntityRow`（48×48 封面、"New"→badge、`user·date·count`→meta）；
       tap=查看更新（manga→`openIllust(latest)`、novel→`openNovel(latest)`）；
       trailing `more_vert`→`showAppBottomSheet`：打开目录（仅 manga，
@@ -120,7 +120,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `watchlistUnwatch`。
       测试：manga/novel 分支三动作+取消追更；novel 菜单无目录项。
       提交：`feat(watchlist): 区分查看更新、打开目录、继续阅读与取消追更`
-- [ ] **M5**：`local_novels_page.dart`——条目向 `EntityRow` 靠拢；
+- [x] **M5**：`local_novels_page.dart`——条目向 `EntityRow` 靠拢；
       tap=`openLocalNovelReader`；`readOffset != null` 时 meta 显示进度
       文案（null↔0 边界）；trailing delete 图标改 `more_vert`→
       `showAppBottomSheet` 菜单；确认弹层裸 `showDialog`（111-128）改
@@ -128,12 +128,12 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       新 l10n：`localNovelContinue`。
       测试：tap=继续阅读、删除经菜单+统一确认弹层。
       提交：`feat(localnovel): 主操作改为继续阅读，删除下沉更多菜单`
-- [ ] **M6**：`app_breakpoints.dart` 增 `managementContentMaxWidth=840`；
+- [x] **M6**：`app_breakpoints.dart` 增 `managementContentMaxWidth=840`；
       watchlist/localnovels 两页 body 包 `Center+ConstrainedBox`
       （download_tasks 随 stage 3 接入）。
       测试：840/1200dp 限宽断言；320dp 无不可达动作。
       提交：`feat(app): 管理列表接入限宽断点`
-- [ ] **M7**：触觉消费接入（W4 owner 薄封装）：进入选择模式=明确震动、
+- [x] **M7**：触觉消费接入（W4 owner 薄封装）：进入选择模式=明确震动、
       勾选=轻触、删除确认弹出=明确震动（history/localnovels）、
       watchlater 撤销=轻触或不加。`lib/` 零 `HapticFeedback` 直调。
       测试：封装调用点断言（可 mock 薄封装）；真机手感标"未验证"。
