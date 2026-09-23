@@ -66,7 +66,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       （L358-456、L498、L594、L650）预期同 commit 更新；新增「0.55–1.0
       区间无 collapsed chrome」「两态动作清单等价（isMe/!isMe）」用例。
       提交：`fix(profile): 头部展开/收起动作同源，收起 chrome 完全收起才挂载`
-- [ ] **收起态 follow 等价路径**：`lib/app/widgets/follow_switch_button.dart`
+- [x] **收起态 follow 等价路径**：`lib/app/widgets/follow_switch_button.dart`
       抽公共入口 `showFollowRestrictSheet`（sheet 本体 L36-114 不变）；
       `profile_header_delegate.dart` 收起菜单他人页加「关注/取消关注」+
       「私密关注」（仅未关注时）项——复用 `followStoreProvider`/
