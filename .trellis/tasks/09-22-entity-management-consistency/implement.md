@@ -35,7 +35,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
 
 ## Stage 0：启动门禁（rebaseline，先于所有分支）
 
-- [ ] 确认 W2/W4/W5 均已合入 `main`；记录新 `main` SHA；复核
+- [x] 确认 W2/W4/W5 均已合入 `main`；记录新 `main` SHA；复核
       design.md §四 文件边界的行号漂移；跑聚焦测试记录真实基线。
       若 W4 未合入：本 leaf 不启动（触觉无源可接，禁止临时封装）。
       若 W5 未合入但其余已合入：可启动，progress variant 条目推后到
@@ -49,35 +49,35 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
 
 分支：`task/09-22-entity-management-consistency-objects`
 
-- [ ] **O1**：新增 `lib/app/widgets/entity_row.dart`（`EntityRow` 槽位
+- [x] **O1**：新增 `lib/app/widgets/entity_row.dart`（`EntityRow` 槽位
       基件：leading/title/subtitle/meta/badge/progress/trailing/
       onTap/onLongPress/selected/semanticLabel；`PressScale`+`Semantics`
       固定；契约见 design.md §二）。
       测试：槽位渲染、selected 整行变色+check、semanticLabel。
       提交：`feat(app): 新增 EntityRow 对象行槽位基件`
-- [ ] **O2**：新增 `lib/app/widgets/novel_entry.dart`（`NovelEntry`
+- [x] **O2**：新增 `lib/app/widgets/novel_entry.dart`（`NovelEntry`
       compact=56×72 r4 / regular=68×88 r6 / ranking(rank:) 三 variant；
       默认 key `novel-<id>`、默认动作 `openNovel`、占位图走 ClipRRect；
       progress 槽预留，null↔0 边界见 design.md §二）。
       测试：三 variant 渲染、key、tap→openNovel、占位圆角。
       提交：`feat(app): 新增 NovelEntry 单契约条目及命名 variant`
-- [ ] **O3**：`lib/app/widgets/feed/illust_card.dart` 徽标容器统一
+- [x] **O3**：`lib/app/widgets/feed/illust_card.dart` 徽标容器统一
       （共享圆角/底色/内边距，语义色注入；四角定位不变）+ `rank` 与
       `meta` 可选槽；**不动** fitWidth 裁切与 Hero/屏蔽路径。
       测试：徽标容器一致性断言、rank 徽标渲染、fitWidth 回归。
       提交：`feat(app): 统一 IllustCard 徽标容器并新增排名与 meta 槽`
-- [ ] **O4**：迁移 5 个小说调用点（行级边界，W2/W3 已合入前提）：
+- [x] **O4**：迁移 5 个小说调用点（行级边界，W2/W3 已合入前提）：
       `recommended_home_page.dart:362`→compact；
       `novel_ranking_page.dart:183`→ranking(rank: index+1)；
       `search_result_page.dart:247`、`new_page.dart:382`、
       `profile_novel_feed.dart:96`→regular。
       测试：各调用点既有测试更新；主动作不丢断言。
       提交：`refactor(features): 小说条目调用点迁移至 NovelEntry`
-- [ ] **O5**：排行接入：`ranking_page.dart` itemBuilder（228-231）传
+- [x] **O5**：排行接入：`ranking_page.dart` itemBuilder（228-231）传
       `IllustCard(rank: index + 1)`（O4 已含 novel 榜）。
       测试：rank 徽标出现在榜单条目。
       提交：`feat(ranking): 排行条目接入排名变体`
-- [ ] **O6**：删除 `lib/app/widgets/novel_card.dart` 与
+- [x] **O6**：删除 `lib/app/widgets/novel_card.dart` 与
       `lib/app/widgets/novel_row.dart`（owning leaf 明确删除，父 §8）。
       测试：全量 analyze + 受影响测试回归。
       提交：`refactor(app): 删除 NovelCard 与 NovelRow 双实现`
