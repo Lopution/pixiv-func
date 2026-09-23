@@ -21,6 +21,6 @@
   "children": [],
   "parent": "09-22-ui-interaction-consistency",
   "relatedFiles": [],
-  "notes": "",
+  "notes": "阶段0 rebaseline 门禁(2026-09-22, 基线 origin/main@8e8e1ed):\n- W1 已合入: PR#56 merge=2ebf2b8, PR#57 merge=b8eafb3(archive/journal).\n- novel_page.dart 显式返回已是 Navigator.pop() (L135 BackButton, L355 顶栏 back); PopScope canPop=!_chromeVisible 系统返回先关 chrome.\n- local_novel_reader_page.dart 消费 W1 转换 novelAnchorForReadOffset (lib/core/localnovel/read_offset_anchor.dart), 返回 core 层 record ({String paragraphId, int offset})? —— 本地 binding.load 负责包装成 NovelAnchor.\n- 信息 sheet TagChip 终态: onTap=pop+openSearchResults (novel_page.dart L575-587).\n- 基线测试: novel_reader/chrome/settings + local_novel_page + markup_hardening 31 例全绿.\n- 行号漂移: 仅 ±几行, 无结构差异, 按 implement.md 继续.",
   "meta": {}
 }
