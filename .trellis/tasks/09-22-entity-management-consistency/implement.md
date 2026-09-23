@@ -144,7 +144,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
 分支：`task/09-22-entity-management-consistency-downloads`（自 stage 2
 合入后的 main 切出）
 
-- [ ] **T1**：`download_manager.dart` 新增 `dismiss(taskId)`/
+- [x] **T1**：`download_manager.dart` 新增 `dismiss(taskId)`/
       `clearTerminal()`（仅终态可移除；`_jobs` 出队+恢复记录清理+
       `changes` 通知；不改 pause/cancel/retry/recover 与 `_complete`
       恰好一次契约——D2 核心层增量）。
