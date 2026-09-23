@@ -150,7 +150,7 @@ widget test 推断通过。
 
 ## 阶段 4：组 D — 发送态与终态反馈（R6/R7）
 
-- [ ] **D1**：发送 IconButton 在 `_disabled` 期间换
+- [x] **D1**：发送 IconButton 在 `_disabled` 期间换
       `SizedBox(18×18, CircularProgressIndicator(strokeWidth: 2))` +
       semantics label（新 l10n key `commentSending`，四语）；`_busy` 与
       `sending` 重叠保留不合并（mutationKey 含 target id 的提前 false 为
