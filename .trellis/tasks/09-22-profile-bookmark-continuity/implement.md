@@ -171,7 +171,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       （L137-179，W1 产物）不动；`listenManual` 保活注释（L114-125）保持。
       测试：滚动任意位置保存按钮可见可达；W1 的 dirty/clean 返回断言保持绿。
       提交：`feat(profile): 资料编辑保存入口固定在底栏`
-- [ ] **预览形态 + 宽屏限宽**：同文件——`_ImageField`（L459-508）拆分：
+- [x] **预览形态 + 宽屏限宽**：同文件——`_ImageField`（L459-508）拆分：
       头像 `PersonAvatar` 圆形（+ring）、背景 `PixivImage.detail` 宽条 cover
       预览（同 header 形态），已选尺寸 subtitle 保留；整页
       `LayoutBuilder`+`Center`+`ConstrainedBox`（expanded 断点起列宽
