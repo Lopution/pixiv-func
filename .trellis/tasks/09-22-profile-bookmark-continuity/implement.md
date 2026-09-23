@@ -144,7 +144,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：heroScope 断言（bookmarkTag null 与非空不同 scope）；AppBar
       副标题断言。
       提交：`fix(profile): 标签 feed 显示范围标识，heroScope 加 bookmarkTag`
-- [ ] **tag feed 本地过滤**：`bookmark_tag_feed_page.dart` 加过滤输入
+- [x] **tag feed 本地过滤**：`bookmark_tag_feed_page.dart` 加过滤输入
       （AppBar 内或 pinned 行），页面内存态 `_filter`；
       `profile_illust_feed.dart` 加可选过滤参数（默认 null 不过滤），渲染层
       对已加载 entities 做标题/标签 contains（大小写不敏感）；无匹配显示
