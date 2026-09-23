@@ -262,3 +262,73 @@ NovelReaderStage 共享舞台落地：在线/本地同一 chrome/设置/进度/�
 ### Next Steps
 
 - PR body 已声明未验证项：WebView2 缺失态真机、桌面端实机错误卡行为、两端真机端到端登录
+
+
+## Session 66: W8 设置表单语义：FormState 四态分类落地与摘要/限宽/dirty 守卫/诊断生命周期
+<!-- trellis-session: v=2 fp=207049c95d8c86e3 -->
+
+**Date**: 2026-09-23
+**Task**: W8 设置表单语义：FormState 四态分类落地与摘要/限宽/dirty 守卫/诊断生命周期
+**Branch**: `task/09-22-settings-form-semantics-s5`
+
+### Summary
+
+五阶段串行合入（PR #63/#69/#71/#72/#80）：s1 SettingsTile 摘要槽+settingsNarrowBody 限宽 600+persistSettings 收敛+根页全量摘要与历史直达；s2 dirty 守卫 helper+浏览页重排+pixivHistory 归并+屏蔽动词改解除+主题语言 Semantics selected；s3 账号切换 busy+凭据清除确认+翻译配置态摘要+命名模板 invalid 禁保存+SAF 人类可读名；s4 网络页摘要优先级+高级页统一草稿与重置确认+探测先摘要后细节+帧探针生命周期分离与 _frames cap；s5 仓库链接打开/复制+更新失败五态分文案+备份两段策略流（等权选择→同权确认）+术语全量核对+宽度矩阵验收。
+
+### Main Changes
+
+- s1：SettingsTile.subtitle、settingsNarrowBody(ContentWidths.settings=600)、persistSettings 收敛删 _persistNetwork/_write、根页全量摘要+查看历史直达
+- s2：guardDraft/confirmDiscardDraft dirty 守卫、浏览页偏好优先重排、pixivHistory 归并历史页、屏蔽解除动词+失败输入恢复+pending 可视、主题语言 Semantics(selected)
+- s3：账号切换 busy、凭据清除确认+dirty 守卫、翻译页已配置摘要（core hasBaidu/hasLlm 存在性读法）、命名模板 invalid 禁保存、safTreeDisplayName 纯 Dart 解码+raw URI 下沉
+- s4：网络主页摘要优先级+第三方可达性说明、高级页页级 draft 单保存+恢复默认值确认、probe 总览区+明细折叠、帧探针 dispose 不 stop+录制状态条+_frames cap 10000 FIFO
+- s5：仓库 tile launchUrl 打开+trailing 复制、更新检查 offline/rateLimited/invalid/busy/failed 五态分文案+apply canceled/failed 分开、备份导入两段 showAppDialog（等权策略选择继续禁用→同权确认标题复述后果）、术语核对+宽度矩阵（320/390/600/840/1200+横屏+1.3x）无溢出断言、弹窗 scrollable 修横屏溢出
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `699e204` | chore(task): 启动 09-22-settings-form-semantics |
+| `b8c0801` | refactor(settings): SettingsTile 增摘要槽并收敛 persistSettings 副本 |
+| `f1531a6` | feat(settings): 根页入口显示当前值摘要并直达历史 |
+| `9387631` | feat(settings): 设置页内容栏限宽 600 |
+| `96bd822` | chore(task): 记录阶段 0 rebaseline 基线 |
+| `e7a4192` | chore(task): 记录 s1 PR 链接 |
+| `6c93e33` | chore(task): 切换阶段分支 s2 |
+| `2680197` | feat(settings): draft 表单 dirty 离开确认 helper |
+| `6811e9b` | feat(settings): 浏览页偏好优先重排与自定义图源草稿守卫 |
+| `3de4cd8` | feat(settings): 历史记录开关归并历史设置页 |
+| `d3a465d` | feat(settings): 主题语言选中态补语义通道 |
+| `8e69b3b` | fix(settings): 屏蔽解除动词与失败输入恢复对齐术语 |
+| `8f2b6d4` | chore(task): 记录 s2 PR 链接 |
+| `031ce9e` | chore(task): 切换阶段分支 s3 |
+| `e3680c4` | feat(settings): 账号切换补 busy 态 |
+| `43f4333` | feat(settings): 凭据清除加确认并接 dirty 守卫 |
+| `928ed5b` | feat(settings): 翻译页凭据入口显示配置状态 |
+| `fe5ccd6` | fix(settings): 命名模板无效时禁用保存并接草稿守卫 |
+| `eec6906` | feat(settings): 保存位置主视图人类可读名 |
+| `afb7e0b` | chore(task): 记录 s3 PR 链接 |
+| `91e3d09` | chore(task): 切换阶段分支 s4 |
+| `3e89ff6` | feat(settings): 网络页摘要优先级与可达性说明 |
+| `77532a1` | feat(settings): 网络高级页统一草稿与重置确认 |
+| `33e037c` | feat(settings): 网络探测先摘要后细节 |
+| `f3d4143` | feat(settings): 帧探针录制生命周期与控制页分离 |
+| `232ab03` | chore(task): 记录 s4 PR 链接 |
+| `593b116` | chore(task): 切换阶段分支 s5 |
+| `996abff` | feat(settings): 仓库链接可打开与复制 |
+| `6dbbaeb` | fix(settings): 更新失败按可行动原因区分文案 |
+| `d660fbb` | fix(settings): 备份导入先选策略再同权确认 |
+| `dfe41fb` | chore(settings): 术语表全量核对 |
+| `7615901` | fix(settings): 备份导入弹窗横屏可滚动并补宽度矩阵验收 |
+| `cb8b020` | chore(task): 记录 s5 PR 链接 |
+
+### Testing
+
+- [OK] flutter analyze --no-pub 0 issues；聚焦 122 全绿+rebase 后 83 全绿；全量 flutter test 1505 通过；git diff --check 净；task.py validate 过
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR body 已标未验证：真机 launchUrl/剪贴板 OEM 差异、TalkBack/Narrator 弹窗朗读、桌面实机宽度矩阵、俄语长标题观感
