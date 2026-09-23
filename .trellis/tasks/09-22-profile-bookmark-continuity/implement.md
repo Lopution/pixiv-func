@@ -164,7 +164,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 4：资料编辑布局（R7，消费 W1 契约）
 
-- [ ] **固定保存入口**：`lib/features/profile/profile_edit_page.dart`——
+- [x] **固定保存入口**：`lib/features/profile/profile_edit_page.dart`——
       `FilledButton.icon`（L424-433）移出 ListView 至
       `Scaffold.bottomNavigationBar`（SafeArea 包裹，宽屏与表单同列限宽居中）；
       submitting/confirmed 禁用（L316-319）不变；`_attemptPop`/`PopScope`
