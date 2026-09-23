@@ -173,7 +173,7 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `user_page.dart:268`；W3/W4 文件行级接触）。
       测试：action 点击 → `/settings/tasks` 导航断言。
       提交：`feat(download): 提交反馈可直达任务页`
-- [ ] **T5**：download_tasks 选择模式（批量移除终态/批量取消）+
+- [x] **T5**：download_tasks 选择模式（批量移除终态/批量取消）+
       限宽接入（M6 的 `managementContentMaxWidth`）+ 补
       `restorationId`（watchlist/localnovels 亦顺手补，声明式小改）+
       触觉（进入选择/勾选/取消确认）。
