@@ -113,7 +113,7 @@ widget test 推断通过。
       测试：长根评论下回复列表首帧 ≥1 条回复可见；header 计入 itemCount
       不破坏 `FeedTail` 索引与 loadMore 触发。
       提交：`feat(comments): 根评论并入回复列表滚动`
-- [ ] **B2**：两页持有 `GlobalKey<CommentComposerState>`；`onReply` 回调
+- [x] **B2**：两页持有 `GlobalKey<CommentComposerState>`；`onReply` 回调
       `setState` 目标后调 `_composerKey.currentState?.focusForReply()`；
       引用条补 `Semantics(container: true)`（关闭按钮 tooltip 与
       `onCancelReply` 不变；回复页 `replyTarget ?? root` 默认态保留）。
