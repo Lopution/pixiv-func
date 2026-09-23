@@ -112,7 +112,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       行保持 `SelectableText`。
       测试：override opener 断言 url、失败 snackbar 可见、复制写剪贴板。
       提交：`feat(profile): 社交链接主操作打开、次操作复制`
-- [ ] **分享直达**：删 `_showProfileShare`（user_page.dart L541-581）；
+- [x] **分享直达**：删 `_showProfileShare`（user_page.dart L541-581）；
       onShare → `shareServiceProvider.share(SharePayload.user(...),
       sharePositionOrigin: shareOriginOf(触发按钮 context))`（修掉整屏 rect），
       `copiedToClipboard` → `linkCopied` snackbar（同

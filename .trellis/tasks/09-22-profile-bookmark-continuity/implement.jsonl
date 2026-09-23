@@ -9,7 +9,7 @@
 {"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/codebase-feeds-and-scope.md", "reason": "范围/类型参数模型、收藏标签链路断点、feed controller 与 l10n 现状"}
 {"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/codebase-overlays-forms.md", "reason": "弹层入口现状（已是 showApp* 无替换工作）、资料编辑/收藏 sheet/下载 dialog 的 FormState 差距"}
 {"file": ".trellis/tasks/09-22-profile-bookmark-continuity/research/external-pixez-m3.md", "reason": "PixEz 作者页 re-tap/统计导航/分享直达先例与 M3 flexible app bar 语义"}
-{"file": ".trellis/tasks/09-22-discovery-query-context/research/implementation-draft.md", "reason": "re-tap 回顶通道契约来源（BranchSlidePager same-index 广播 + 页面内 same-index 规则）——本包消费不自建"}
+{"file": ".trellis/tasks/archive/2026-09/09-22-discovery-query-context/research/implementation-draft.md", "reason": "re-tap 回顶通道契约来源（BranchSlidePager same-index 广播 + 页面内 same-index 规则）——本包消费不自建；来源任务已归档"}
 {"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "Tab/Predictive Back/Hero/Route Restoration 契约、material_ui 阴影、键盘 inset 与 chip 边框已知坑"}
 {"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "Flutter 3.47.2 工具链、loopback 噪声判定、回归测试须对旧实现失败、终态断言要求"}
 {"file": ".trellis/spec/frontend/state-management.md", "reason": "BookmarkStore/FollowStore 非乐观 mutation 协议（confirm await + entry.error 读取依据）、PagedFeedState、provider override 测试模式"}
