@@ -53,7 +53,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 1：作者页头部等价路径与 re-tap（R1, R2）
 
-- [ ] **统一动作源 + 挂载阈值**：`lib/features/profile/profile_header_delegate.dart`
+- [x] **统一动作源 + 挂载阈值**：`lib/features/profile/profile_header_delegate.dart`
       ——动作收敛为单一描述清单（share / follow-or-edit / restrict /
       bookmarkTags / downloadAll / more），`_CollapsedProfile` 溢出菜单
       （L539-573）与 `_ExpandedProfile` 动作行（L479-503）由同一清单生成：
@@ -66,7 +66,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       （L358-456、L498、L594、L650）预期同 commit 更新；新增「0.55–1.0
       区间无 collapsed chrome」「两态动作清单等价（isMe/!isMe）」用例。
       提交：`fix(profile): 头部展开/收起动作同源，收起 chrome 完全收起才挂载`
-- [ ] **收起态 follow 等价路径**：`lib/app/widgets/follow_switch_button.dart`
+- [x] **收起态 follow 等价路径**：`lib/app/widgets/follow_switch_button.dart`
       抽公共入口 `showFollowRestrictSheet`（sheet 本体 L36-114 不变）；
       `profile_header_delegate.dart` 收起菜单他人页加「关注/取消关注」+
       「私密关注」（仅未关注时）项——复用 `followStoreProvider`/
@@ -75,7 +75,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：菜单项文案随 follow 态切换、点击调 `followActionsProvider.toggle`、
       私密关注项弹出同一 restrict sheet。
       提交：`feat(profile): 收起态溢出菜单补齐关注等价路径`
-- [ ] **section chips 常驻 + re-tap 回顶**：`lib/features/profile/user_page.dart`
+- [x] **section chips 常驻 + re-tap 回顶**：`lib/features/profile/user_page.dart`
       ——删 `_selectorExpanded`/`_onTabTap` 展开语义（L98、L132-150）；
       `_UserPageState` 持 outer `ScrollController` 传给
       `NestedScrollView(controller:)`（L295）；新增 `_scrollActiveTabToTop()`：
@@ -93,7 +93,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 2：统计、链接与分享（R3, R4, R5）
 
-- [ ] **可导航统计**：`user_page.dart`/`profile_header_delegate.dart`——`_Stat`
+- [x] **可导航统计**：`user_page.dart`/`profile_header_delegate.dart`——`_Stat`
       （L675-699）与 `_ProfileStatRow`（L457-481）收敛为同一导航控件（header
       用 chip 形态、about 用行形态；`Semantics(button:)`，图标+数值+标签一次
       焦点读出）；统计集 = following/myPixiv/illust/manga/novel/series 六项
@@ -103,7 +103,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：各项点击断言 tab index + `_workSection`；myPixiv 在他人页无
       button 语义；series 项存在并导航到 series section。
       提交：`feat(profile): 统计项可导航，头部与 about 共用映射`
-- [ ] **社交链接打开/复制**：`user_page.dart` `_ProfileAbout`（L426-429）
+- [x] **社交链接打开/复制**：`user_page.dart` `_ProfileAbout`（L426-429）
       webpage/twitterUrl/pawooUrl 行改「值 + 打开 + 复制」——主操作 tap/图标
       = `outboundUrlOpenerProvider.openExternal`（android_intent_channel.dart
       L98-114），失败 snackbar 复用 `illustDetailOpenLinkFailed`（参照
@@ -112,7 +112,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       行保持 `SelectableText`。
       测试：override opener 断言 url、失败 snackbar 可见、复制写剪贴板。
       提交：`feat(profile): 社交链接主操作打开、次操作复制`
-- [ ] **分享直达**：删 `_showProfileShare`（user_page.dart L541-581）；
+- [x] **分享直达**：删 `_showProfileShare`（user_page.dart L541-581）；
       onShare → `shareServiceProvider.share(SharePayload.user(...),
       sharePositionOrigin: shareOriginOf(触发按钮 context))`（修掉整屏 rect），
       `copiedToClipboard` → `linkCopied` snackbar（同
@@ -124,7 +124,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 3：收藏范围传递与标签页（R6）
 
-- [ ] **范围进路由**：`lib/app/navigation/routes.dart`——`openBookmarkTags`
+- [x] **范围进路由**：`lib/app/navigation/routes.dart`——`openBookmarkTags`
       （L1209-1211）加 `{required UserRestrict restrict}` 形参，写
       `?restrict=<name>` query；`bookmarks/tags` route builder（L585-589）按
       `bookmarks/tag`（L597-600）同模式解析为 `BookmarkRestrict` 传给
@@ -136,7 +136,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：路由解析（`?restrict=private` → 页面初始 private）；/me 收藏 tab
       私密范围下进标签页断言初始选中 private。
       提交：`feat(bookmark): 收藏范围经路由 query 传入标签页`
-- [ ] **tag feed 上下文 + heroScope**：`lib/features/profile/
+- [x] **tag feed 上下文 + heroScope**：`lib/features/profile/
       bookmark_tag_feed_page.dart`（L32-46）AppBar 显示 tag + 范围副标题
       （`restrictPublic`/`restrictPrivate` 复用，不做页内切换）；
       `lib/features/profile/profile_illust_feed.dart` heroScope（L101-104）
@@ -144,7 +144,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：heroScope 断言（bookmarkTag null 与非空不同 scope）；AppBar
       副标题断言。
       提交：`fix(profile): 标签 feed 显示范围标识，heroScope 加 bookmarkTag`
-- [ ] **tag feed 本地过滤**：`bookmark_tag_feed_page.dart` 加过滤输入
+- [x] **tag feed 本地过滤**：`bookmark_tag_feed_page.dart` 加过滤输入
       （AppBar 内或 pinned 行），页面内存态 `_filter`；
       `profile_illust_feed.dart` 加可选过滤参数（默认 null 不过滤），渲染层
       对已加载 entities 做标题/标签 contains（大小写不敏感）；无匹配显示
@@ -153,7 +153,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：注入实体后过滤减少渲染数、清空恢复、无匹配提示、过滤不触发
       loadMore/refresh。
       提交：`feat(bookmark): 标签 feed 本地过滤已加载内容`
-- [ ] **标签列表分页三态**：`bookmark_tags_page.dart` `_TagList`（L78-138）
+- [x] **标签列表分页三态**：`bookmark_tags_page.dart` `_TagList`（L78-138）
       尾部——`loadingMore` → spinner、`loadMoreError != null` → 失败行 +
       重试（调 `loadMore()`，文案复用 `profileLoadMoreFailed`/`profileRetry`
       或新增 bookmark* key）、`!hasMore` → 结束态；不新建平行 tail 组件
@@ -164,14 +164,14 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 4：资料编辑布局（R7，消费 W1 契约）
 
-- [ ] **固定保存入口**：`lib/features/profile/profile_edit_page.dart`——
+- [x] **固定保存入口**：`lib/features/profile/profile_edit_page.dart`——
       `FilledButton.icon`（L424-433）移出 ListView 至
       `Scaffold.bottomNavigationBar`（SafeArea 包裹，宽屏与表单同列限宽居中）；
       submitting/confirmed 禁用（L316-319）不变；`_attemptPop`/`PopScope`
       （L137-179，W1 产物）不动；`listenManual` 保活注释（L114-125）保持。
       测试：滚动任意位置保存按钮可见可达；W1 的 dirty/clean 返回断言保持绿。
       提交：`feat(profile): 资料编辑保存入口固定在底栏`
-- [ ] **预览形态 + 宽屏限宽**：同文件——`_ImageField`（L459-508）拆分：
+- [x] **预览形态 + 宽屏限宽**：同文件——`_ImageField`（L459-508）拆分：
       头像 `PersonAvatar` 圆形（+ring）、背景 `PixivImage.detail` 宽条 cover
       预览（同 header 形态），已选尺寸 subtitle 保留；整页
       `LayoutBuilder`+`Center`+`ConstrainedBox`（expanded 断点起列宽
@@ -183,7 +183,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
 
 ## 阶段 5：收藏/关注弹层 FormState（R8）
 
-- [ ] **控件一致性 + 宽屏限宽**：`lib/app/widgets/bookmark_switch_button.dart`
+- [x] **控件一致性 + 宽屏限宽**：`lib/app/widgets/bookmark_switch_button.dart`
       ——`_RestrictSelect` DropdownButton（L470-535）→
       `SegmentedButton<BookmarkRestrict>`（与 follow sheet、标签页一致）；
       取消/确认 MaterialButton+headlineSmall（L391-462）→
@@ -194,7 +194,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：SegmentedButton/Outlined/Filled finder；awaitingPrefill 时
       confirm 禁用保持。
       提交：`refactor(bookmark): 收藏编辑弹层控件与全局一致`
-- [ ] **draft 语义：dirty 确认 + 失败保留**：`_BookmarkEditSheet`——初始值
+- [x] **draft 语义：dirty 确认 + 失败保留**：`_BookmarkEditSheet`——初始值
       基线（已收藏=回填值、新建=public+空 tags）与 `_isDirty` 判定；取消
       （L415）与下滑关闭在 dirty 时先弹 `showAppDialog` 确认（与 W1 统一
       确认层级同形，复用 profileEditLeave* 文案模式或新 `bookmarkEditLeave*`
