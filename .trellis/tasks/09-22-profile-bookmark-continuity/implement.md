@@ -103,7 +103,7 @@ iPad popover、1.3x 长翻译可读性、reduced-motion 路径等，见 design.m
       测试：各项点击断言 tab index + `_workSection`；myPixiv 在他人页无
       button 语义；series 项存在并导航到 series section。
       提交：`feat(profile): 统计项可导航，头部与 about 共用映射`
-- [ ] **社交链接打开/复制**：`user_page.dart` `_ProfileAbout`（L426-429）
+- [x] **社交链接打开/复制**：`user_page.dart` `_ProfileAbout`（L426-429）
       webpage/twitterUrl/pawooUrl 行改「值 + 打开 + 复制」——主操作 tap/图标
       = `outboundUrlOpenerProvider.openExternal`（android_intent_channel.dart
       L98-114），失败 snackbar 复用 `illustDetailOpenLinkFailed`（参照
