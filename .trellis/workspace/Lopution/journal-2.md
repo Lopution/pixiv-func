@@ -36,3 +36,45 @@
 ### Status
 
 [OK] **Completed**
+
+
+## Session 60: W2 discovery-query-context：re-tap 通道 + 查询上下文路由化 + 反向搜图任务头
+<!-- trellis-session: v=2 fp=9f816c8945538c91 -->
+
+**Date**: 2026-09-23
+**Task**: W2 discovery-query-context：re-tap 通道 + 查询上下文路由化 + 反向搜图任务头
+**Branch**: `task/09-22-discovery-query-context`
+
+### Summary
+
+发现页查询上下文连续（W2）12 项全部落地：ReTapChannel 事件通道（ChangeNotifier，同槽连点不丢信号，移交 W3 复用）、排行/小说排行/推荐/新作分类与查询参数全部路由化（context.replace 回写 + didUpdateWidget 抑制自回显）、推荐与新作 TabBar 去缩字改滚动、新作类型选择器常驻且 re-tap 固定回顶、搜索筛选 13 字段 URL round-trip、热门标签自适应网格不丢项、结果页查询头可改+筛选摘要 chips+空态修改入口、建议项区分填入/立即搜索、反向搜图常驻任务头。trellis-check 全绿（修掉了 lookup.dart 幻影格式 diff + 补写了三个缺失的路由 round-trip 测试 + 更新 home_bar golden）；全量 1270 测试通过；analyze/format/diff-check/validate 全绿。桌面滚轮手感/进程死亡恢复/弹栈-回顶时序/大字号/屏幕阅读器未验证，移交 W10。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8bfda22` | chore(task): 启动 09-22-discovery-query-context |
+| `c867f63` | feat(nav): 新增 branch re-tap 回顶广播通道 |
+| `05c30b0` | feat(ranking): 重复点击当前榜单回到顶部 |
+| `d0d8bb3` | feat(ranking): 小说排行接入滑动切换与 mode 路由参数 |
+| `22d7857` | feat(recommended): 内容类型接入路由参数 |
+| `4c3d4fd` | feat(recommended): 标签不缩字、re-tap 回顶、刷新错误就近提示 |
+| `a9ac774` | feat(new): 范围与类型接入路由参数 |
+| `4351125` | feat(new): 类型选择器常驻，re-tap 固定回顶 |
+| `17e4021` | fix(search): 路由序列化补齐全部筛选字段 |
+| `6e9ff8e` | feat(search): 热门标签自适应网格并接入 re-tap |
+| `a4237f2` | feat(search): 结果页查询头可编辑并补筛选摘要 |
+| `618c1b6` | feat(search): 建议项区分填入与立即搜索 |
+| `59462bd` | feat(search): 反向搜图常驻图片与引擎任务头 |
+
+### Testing
+
+- [OK] flutter analyze 0 issues; flutter test 1270/1270; 聚焦套件 root_swipe_switcher/search_catalog/new_content_feed/reverse_image/navigation_restoration/recommended_home 全绿
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- W3/W4 消费 ReTapChannel 契约；W4 worktree 继续实现
