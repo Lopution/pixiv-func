@@ -332,3 +332,47 @@ NovelReaderStage 共享舞台落地：在线/本地同一 chrome/设置/进度/�
 ### Next Steps
 
 - PR body 已标未验证：真机 launchUrl/剪贴板 OEM 差异、TalkBack/Narrator 弹窗朗读、桌面实机宽度矩阵、俄语长标题观感
+
+
+## Session 67: W6 实体管理一致性:下载任务页对齐管理页规范(downloads stage)
+<!-- trellis-session: v=2 fp=935be2df6b136600 -->
+
+**Date**: 2026-09-24
+**Task**: W6 实体管理一致性:下载任务页对齐管理页规范(downloads stage)
+**Branch**: `task/09-22-entity-management-consistency-downloads`
+
+### Summary
+
+DownloadManager 新增终态清理 API;任务页组聚合、选择模式批量动作、九态动作映射、Snackbar 直达任务页、840 限宽与触觉分级
+
+### Main Changes
+
+- DownloadManager: dismiss(taskId)/clearTerminal() 终态清理 API(任务项+组槽+恢复记录+changes 通知)
+- 下载任务页:组聚合父子层级渲染;选择模式(长摁/动作进入)支持全选、批量取消与批量移除(showAppDialog 确认)
+- 九态动作映射对齐术语契约;新增 downloadViewResult/downloadRemoveRecord/downloadProcessing 等四语言 l10n 键
+- 下载提交 SnackBar 增加『查看』直达 /settings/tasks;页面限宽 600→840(management);ListView restorationId 补齐
+- 触觉分级:进入选择模式与确认弹窗 confirm()(heavyImpact),选择切换 select()(selectionClick)
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `bddd1d2` | feat(download): 新增终态任务移除与清空 API |
+| `51fd476` | feat(settings): 下载任务按组聚合父子层级 |
+| `ddde95d` | feat(settings): 下载九态动作映射对齐术语契约 |
+| `f63dbed` | feat(download): 提交反馈可直达任务页 |
+| `4072841` | feat(settings): 下载任务选择模式与限宽接入 |
+
+### Testing
+
+- [OK] flutter analyze --no-pub 干净;dart format --set-exit-if-changed 与 git diff --check 通过
+- [OK] download_tasks_page_test 7 项全过(批量取消/移除、840 限宽、平台通道触觉断言);local_novel/watchlist 回归全过
+- [OK] 全量 flutter test 1546 项全过(EXIT 0)
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- 真机验证:触觉反馈、TalkBack、宽度矩阵、1.3x 字体缩放

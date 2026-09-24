@@ -144,18 +144,18 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
 分支：`task/09-22-entity-management-consistency-downloads`（自 stage 2
 合入后的 main 切出）
 
-- [ ] **T1**：`download_manager.dart` 新增 `dismiss(taskId)`/
+- [x] **T1**：`download_manager.dart` 新增 `dismiss(taskId)`/
       `clearTerminal()`（仅终态可移除；`_jobs` 出队+恢复记录清理+
       `changes` 通知；不改 pause/cancel/retry/recover 与 `_complete`
       恰好一次契约——D2 核心层增量）。
       测试：core 单测（终态可删/非终态 no-op/清空计数/记录清理）。
       提交：`feat(download): 新增终态任务移除与清空 API`
-- [ ] **T2**：`download_tasks_page.dart` 父子层级——子任务按
+- [x] **T2**：`download_tasks_page.dart` 父子层级——子任务按
       `snapshot.groupId` 聚合缩进于组卡下；未入组平铺；组卡头=组状态+
       聚合进度+组级动作。
       测试：聚合渲染断言（组内子项不再出现于顶层）。
       提交：`feat(settings): 下载任务按组聚合父子层级`
-- [ ] **T3**：九态动作映射重写（表见 design.md §二）：
+- [x] **T3**：九态动作映射重写（表见 design.md §二）：
       retryable+paused→**继续**（非 retry 图标）；succeeded→**查看**
       （`openIllust(task.illustId)`）；failed/canceled→重试+移除；
       orphaned→说明+移除；组级映射同步。
@@ -166,14 +166,14 @@ python3 ./.trellis/scripts/task.py validate .trellis/tasks/09-22-entity-manageme
       `downloadProcessing`（或复用 Running）。
       测试：九态+failureKind=paused 全映射覆盖。
       提交：`feat(settings): 下载九态动作映射对齐术语契约`
-- [ ] **T4**：提交反馈直达——`routes.dart` 追加 `openDownloadTasks`
+- [x] **T4**：提交反馈直达——`routes.dart` 追加 `openDownloadTasks`
       门面（`context.push('/settings/tasks')`）；三处
       `downloadQueuedMessage` SnackBar 加 `action: 查看`
       （`illust_card_actions.dart:90`、`page_image.dart:241`、
       `user_page.dart:268`；W3/W4 文件行级接触）。
       测试：action 点击 → `/settings/tasks` 导航断言。
       提交：`feat(download): 提交反馈可直达任务页`
-- [ ] **T5**：download_tasks 选择模式（批量移除终态/批量取消）+
+- [x] **T5**：download_tasks 选择模式（批量移除终态/批量取消）+
       限宽接入（M6 的 `managementContentMaxWidth`）+ 补
       `restorationId`（watchlist/localnovels 亦顺手补，声明式小改）+
       触觉（进入选择/勾选/取消确认）。
