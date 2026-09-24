@@ -376,3 +376,62 @@ DownloadManager 新增终态清理 API;任务页组聚合、选择模式批量�
 ### Next Steps
 
 - 真机验证:触觉反馈、TalkBack、宽度矩阵、1.3x 字体缩放
+
+
+## Session 68: W10 动效集成与最终验收：reduced-motion 三注入、跨包契约闸口与验收台账关闭
+<!-- trellis-session: v=2 fp=c94e221ee9e5b15b -->
+
+**Date**: 2026-09-24
+**Task**: W10 动效集成与最终验收：reduced-motion 三注入、跨包契约闸口与验收台账关闭
+**Branch**: `task/09-22-motion-integration-acceptance`
+
+### Summary
+
+路线图收尾：W1–W9 合入核对后按证据做 8 项窄修复（平台 reduceMotion 并入 MotionTokens.enabled、DragToDismiss/详情分页器/小说阅读器/SnackBar 过闸、motion 别名删除、收藏 tagInput 残文入脏判定、小说偏好读取失败落错误态）；C1–C10 逐契约回归全部落地；产出 acceptance-ledger.md 并关闭父追踪矩阵
+
+### Main Changes
+
+- 阶段1 rebaseline：9/9 leaf completed+archived（origin/main@5dbef81），在途 PR #79/#82/#85 记 in-flight
+- 阶段2 窄修复 8 项：MotionTokens.enabled 并入 accessibilityFeatures.reduceMotion；DragToDismiss 取消/结束返回过闸；详情分页器时长走 tokens；小说 chrome/翻页过闸；FuncSemanticTokens.motion* 别名删除；SnackBar 动画样式过闸（design 二审撤销豁免）；收藏 _isDirty 并入 tagInput 残文（W3 已知项）；小说 _loadPrefs 失败落 FeedError+retry（W9 已知项）
+- 阶段3 回归 C1–C10：反馈通道/动效常量静态闸口、SnackBar margin+样式、re-tap 回顶不刷新、恢复等级逐页核对、hero 单一空间链、分类 tap/drag 双注入一致、键盘不位移主控件、§5.7 术语表冻结测试、FormState/BackAndCancel 三处抽查（补 novel reader PopScope 第三腿）、三优先页语义树断言
+- 阶段4：acceptance-ledger.md 全量台账（implemented/unit-widget-tested/未验证/in-flight 分级）；父 astra-review-traceability 44 行状态列刷新+非 Astra 契约项标注+§8 关闭注记；父 implement.md W10 汇总勾选
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `3836f04` | chore(task): 启动 09-22-motion-integration-acceptance |
+| `7eb3efe` | docs(trellis): W10 验收基线与 W1–W9 合入核对 |
+| `a0fc077` | fix(motion): MotionTokens.enabled 覆盖平台 reduceMotion |
+| `29dc188` | fix(motion): DragToDismiss 返回动画接入 reduced-motion 闸 |
+| `95eceb3` | fix(illust): 详情分页器时长走 MotionTokens 闸口 |
+| `7db3596` | fix(novel): 阅读器 chrome 与翻页动画接入 reduced-motion 闸 |
+| `46d1d0c` | chore(theme): 删除未使用的 motion 别名字段 |
+| `d237870` | fix(app): SnackBar 动画样式接入 reduced-motion 闸（design 二审撤销豁免） |
+| `734f943` | fix(bookmark): tagInput 残文并入草稿脏判定 |
+| `6cd01b4` | fix(novel): 阅读器偏好读取失败落错误态 |
+| `785f70d` | test(architecture): 反馈通道与动效常量单一来源静态闸口 |
+| `01f34e7` | test(app): SnackBar 分支根 margin 与动画样式回归 |
+| `910198b` | test(nav): re-tap 当前标签回顶且不触发刷新 |
+| `c06af21` | test(nav): 查询上下文恢复等级声明逐页核对 |
+| `4af922b` | test(motion): feed→detail→viewer 单一空间链回归 |
+| `4352fd6` | test(nav): 同级分类点击/拖动双注入一致性回归 |
+| `89cb800` | test(form): 键盘展开不位移主控件 |
+| `3f73032` | test(l10n): §5.7 动作术语表对照回归 |
+| `d2c464c` | test(regression): FormState/BackAndCancel 三处抽查 |
+| `de886f1` | test(a11y): 三优先页语义树代表路径断言 |
+| `37fa065` | docs(trellis): W10 最终验收矩阵与追踪矩阵关闭 |
+
+### Testing
+
+- [OK] dart format 0 changed；flutter analyze --no-pub 0 issues；git diff --check clean；task.py validate ✓
+- [OK] 全量 flutter test：149 文件 +1529 全绿；3 个 loopback 文件（oauth_service/download_manager/tls_sni）环境缺陷噪声——自标 environment-flaky/loopback workaround，全量中 oauth 记录 loopback still failing after retries，与本分支零重叠
+- [OK] 冲突标记精确扫描 lib/test/.trellis 零命中；rebase 至 origin/main@d798027 零冲突
+
+### Status
+
+[OK] **Completed**
+
+### Next Steps
+
+- PR body 同步台账 §9 未验证面清单（设备/桌面 runtime/AT/性能/体感/进程死亡/长翻译/视觉等价人工复核）；CI 绿后 merge
