@@ -435,3 +435,29 @@ DownloadManager 新增终态清理 API;任务页组聚合、选择模式批量�
 ### Next Steps
 
 - PR body 同步台账 §9 未验证面清单（设备/桌面 runtime/AT/性能/体感/进程死亡/长翻译/视觉等价人工复核）；CI 绿后 merge
+
+
+## Session 69: interaction-followups: 十项窄修复收口（A1-E1）
+<!-- trellis-session: v=2 fp=65731698b1d7f15e -->
+
+**Date**: 2026-09-24
+**Task**: interaction-followups: 十项窄修复收口（A1-E1）
+**Branch**: `task/09-24-interaction-followups`
+
+### Summary
+
+收口 09-22 验收遗留的十项窄修复：收藏弹层预填锁与键盘收缩、资料页头部操作可达性/活跃标签 re-tap/标签槽决策序、宽屏侧栏与底栏共用导航入口、阅读器进度口径/锚点可观测/LRU/保存失败文案、入场错峰限定首屏批；父任务停止点与 W6 措辞同步实际合入形态。flutter analyze 0 issue，全量 1602 测试通过。
+
+### Git Commits
+
+| Hash | Message |
+|------|---------|
+| `8fea226` | docs(trellis): 父任务停止点与 W6 措辞同步实际实现 |
+
+### Testing
+
+- [OK] flutter test --no-pub: 1602 passed; flutter analyze: 0 issues; task.py validate: pass
+
+### Status
+
+[OK] **Completed**
