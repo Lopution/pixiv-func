@@ -1,0 +1,6 @@
+{"file": ".trellis/spec/frontend/quality-guidelines.md", "reason": "工具链/format门禁/loopback测试噪声判定"}
+{"file": ".trellis/spec/frontend/component-guidelines.md", "reason": "组件与页面约定"}
+{"file": ".trellis/spec/frontend/state-management.md", "reason": "provider"}
+{"file": ".trellis/spec/guides/code-reuse-thinking-guide.md", "reason": "复用优先，不新建平行实现"}
+{"file": ".trellis/spec/frontend/directory-structure.md", "reason": "文件归属"}
+{"file": ".trellis/tasks/archive/2026-09/09-22-motion-integration-acceptance/acceptance-ledger.md", "reason": "W10"}
